@@ -345,10 +345,10 @@ updateLayout: function () {
     {
         var horizontalScale = game_play_area.offsetWidth / gameWidth;
 
-        var resized = document.getElementById('resized');
-        resized.style.transform = 'scale(' + horizontalScale + ')';
+        var div = document.getElementById('resized');
+        div.style.transform = 'scale(' + horizontalScale + ')';
 
-        var scaledHeight = (resized.offsetHeight * horizontalScale);
+        var scaledHeight = (div.offsetHeight * horizontalScale);
         game_play_area.style.height = scaledHeight+'px';
 
     }

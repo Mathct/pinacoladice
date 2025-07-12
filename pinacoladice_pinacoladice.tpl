@@ -2,7 +2,13 @@
 
 
 <div id="resized">
-  <div class="carre"></div>
+  <div id="board">
+
+  <div class="carre">
+  
+  </div>
+
+  </div>
 </div>
 
 
