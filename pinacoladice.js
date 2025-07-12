@@ -67,6 +67,8 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
+
+            //// CONNECTIONS CLICK
             dojo.query(".carre").connect('onclick', this, 'onSelect' )
             
 
@@ -324,6 +326,32 @@ isReadOnly: function () {
     return (
         this.isSpectator || typeof g_replayFrom != "undefined" || g_archive_mode
     );
+},
+
+//////// RESIZED
+
+onScreenWidthChange: function () {
+this.updateLayout();
+},
+
+updateLayout: function () {
+
+    var gameWidth = 2000;
+    
+
+    game_play_area = document.getElementById('game_play_area');
+
+    if(game_play_area.offsetWidth <= 2000)
+    {
+        var horizontalScale = game_play_area.offsetWidth / gameWidth;
+
+        var resized = document.getElementById('resized');
+        resized.style.transform = 'scale(' + horizontalScale + ')';
+
+        var scaledHeight = (resized.offsetHeight * horizontalScale);
+        game_play_area.style.height = scaledHeight+'px';
+
+    }
 },
 
 

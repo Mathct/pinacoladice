@@ -1,10 +1,9 @@
 {OVERALL_GAME_HEADER}
 
-<div id="carreid1" class="carre"></div>
-<br>
-<div id="carreid2" class="carre"></div>
 
-
+<div id="resized">
+  <div class="carre"></div>
+</div>
 
 
 

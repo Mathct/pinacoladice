@@ -13,22 +13,31 @@
  *
  */
 
-.carre {
-    height: 50px;
-    width: 50px;
-    background-color: red;
-    
-}
 
-.selectable {
-    cursor: pointer;
+#resized {
+  
+  transform-origin: top left;
+  width: 2000px;
+  height: 2000px;
+  background-color: red;
+  position: relative;
+  margin: 0 auto;
    
 }
 
-.selectable.carre {
-    border: 1px solid black;
-   
+.carre{
+  height: 200px;
+  width: 200px;
+  background-color: blue;
+  position: absolute;
+  top: 10%;
+  left: 10%;
 }
+
+
+
+
+
 
 
 
