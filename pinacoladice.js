@@ -336,22 +336,6 @@ this.updateLayout();
 
 updateLayout: function () {
 
-    var gameWidth = 2000;
-    
-
-    game_play_area = document.getElementById('game_play_area');
-
-    if(game_play_area.offsetWidth <= 2000)
-    {
-        var horizontalScale = game_play_area.offsetWidth / gameWidth;
-
-        var div = document.getElementById('resized');
-        div.style.transform = 'scale(' + horizontalScale + ')';
-
-        var scaledHeight = (div.offsetHeight * horizontalScale);
-        game_play_area.style.height = scaledHeight+'px';
-
-    }
 },
 
 

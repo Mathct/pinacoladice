@@ -14,14 +14,13 @@
  */
 
 
-#resized {
+#board_id {
   
-  transform-origin: top left;
-  width: 2000px;
-  height: 2000px;
-  background-color: red;
+  width: 890px;
+  height: 890px;
   position: relative;
   margin: 0 auto;
+  margin-top: 10px;
    
 }
 
@@ -30,9 +29,95 @@
   width: 200px;
   background-color: blue;
   position: absolute;
-  top: 10%;
-  left: 10%;
+  
 }
+
+#carre1 {
+  top: 0;
+  left: 0;
+}
+
+#carre2 {
+  top: 0;
+  left: 230px;
+}
+
+#carre3 {
+  top: 0;
+  left: 460px;
+}
+
+
+#carre4 {
+  top: 0;
+  right: 0;
+}
+
+#carre5 {
+  top: 230px;
+  left: 0;
+}
+
+#carre6 {
+  top: 230px;
+  left: 230px;
+}
+
+#carre7 {
+  top: 230px;
+  left: 460px;
+}
+
+
+#carre8 {
+  top: 230px;
+  right: 0;
+}
+
+#carre9 {
+  top: 460px;
+  left: 0;
+}
+
+#carre10 {
+  top: 460px;
+  left: 230px;
+}
+
+#carre11 {
+  top: 460px;
+  left: 460px;
+}
+
+
+#carre12 {
+  top: 460px;
+  right: 0;
+}
+
+#carre13 {
+  bottom: 0;
+  left: 0;
+}
+
+#carre14 {
+  bottom: 0;
+  left: 230px;
+}
+
+#carre15 {
+  bottom: 0;
+  left: 460px;
+}
+
+
+#carre16 {
+  bottom: 0;
+  right: 0;
+}
+
+
+
 
 
 

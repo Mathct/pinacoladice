@@ -38,6 +38,6 @@ class Pending extends APP_GameClass
 
     function NormalTurn($parg1, $parg2, $varg1, $varg2)
     {
-        
+        game::$instance->addPendingFirst($this->player_id, "NormalTurn");
     }
 }
