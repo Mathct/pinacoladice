@@ -1,7 +1,62 @@
 {OVERALL_GAME_HEADER}
 
 
-<div id="resized_id">
+
+
+<div id="dice_content">
+<div class="scene">
+      <div class="dice" id="dice1">
+        <div class="face face1"></div>
+        <div class="face face2"></div>
+        <div class="face face3"></div>
+        <div class="face face4"></div>
+        <div class="face face5"></div>
+        <div class="face face6"></div>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="dice" id="dice2">
+        <div class="face face1"></div>
+        <div class="face face2"></div>
+        <div class="face face3"></div>
+        <div class="face face4"></div>
+        <div class="face face5"></div>
+        <div class="face face6"></div>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="dice" id="dice3">
+        <div class="face face1"></div>
+        <div class="face face2"></div>
+        <div class="face face3"></div>
+        <div class="face face4"></div>
+        <div class="face face5"></div>
+        <div class="face face6"></div>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="dice" id="dice4">
+        <div class="face face1"></div>
+        <div class="face face2"></div>
+        <div class="face face3"></div>
+        <div class="face face4"></div>
+        <div class="face face5"></div>
+        <div class="face face6"></div>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="dice" id="dice5">
+        <div class="face face1"></div>
+        <div class="face face2"></div>
+        <div class="face face3"></div>
+        <div class="face face4"></div>
+        <div class="face face5"></div>
+        <div class="face face6"></div>
+      </div>
+    </div>
+
+  </div>
+
   <div id="board_id">
 
     <div id="carre1" class="carre"></div>
@@ -24,7 +79,6 @@
   </div>
 
   
-</div>
 
 
 

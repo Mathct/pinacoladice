@@ -20,24 +20,48 @@ class Pending extends APP_GameClass
         $this->player_color = $p['player_color'];
     }
     
-    function argNormalTurn($parg1, $parg2)
+    function argNormalTurn($parg1, $parg2) // DICEE 1
     {
         $ret = array();
         $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} blabla2');
-        $ret['titleyou'] = clienttranslate('${you} blabla1');
+        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
+        $ret['titleyou'] = clienttranslate('${you} must roll the dice');
 
+        for($i=1; $i<=5; $i++)
+        {
+            $ret["selectable_dice"][] = 'dice'.$i;
+        }
 
-        $ret['buttons'][]='cancel';
-        $ret['buttons'][]='pass';
+        $ret['buttons'][]='continue';
+        
+        
         
         return $ret;
     }
 
     function NormalTurn($parg1, $parg2, $varg1, $varg2)
     {
-        game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+        if($varg1 == 'continue')
+        {
+            
+            game::$instance->notifyAllPlayers(
+                    'dice',
+                    '',
+                    array(
+                        'player_name' => $this->player_name,
+                        'player_id' => $this->player_id,
+                        
+                    )
+                );
+            game::$instance->addPending($this->player_id, "NormalTurn");
+        }
+        else
+        {
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+        }
+        
     }
 }

@@ -44,3 +44,19 @@ CREATE TABLE IF NOT EXISTS `pending` (
   `arg4` varchar(50) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
+
+CREATE TABLE IF NOT EXISTS `dice` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `showdice` int(2) unsigned DEFAULT 0,
+  `dice1` int(2) unsigned DEFAULT 1,
+  `dice2` int(2) unsigned DEFAULT 1, 
+  `dice3` int(2) unsigned DEFAULT 1, 
+  `dice4` int(2) unsigned DEFAULT 1, 
+  `dice5` int(2) unsigned DEFAULT 1, 
+  `blockrolldice1` int(2) unsigned DEFAULT 0,
+  `blockrolldice2` int(2) unsigned DEFAULT 0,
+  `blockrolldice3` int(2) unsigned DEFAULT 0,
+  `blockrolldice4` int(2) unsigned DEFAULT 0,
+  `blockrolldice5` int(2) unsigned DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;

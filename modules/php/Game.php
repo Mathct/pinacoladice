@@ -111,25 +111,8 @@ class Game extends \Table
         $this->reattributeColorsBasedOnPreferences($players, $gameinfos["player_colors"]);
         $this->reloadPlayersBasicInfos();
 
-        // Init global values with their initial values.
-
-        // Dummy content.
-        // $this->setGameStateInitialValue("my_first_global_variable", 0);
-
-        // Init game statistics.
-        //
-        // NOTE: statistics used in this file must be defined in your `stats.inc.php` file.
-
-        // Dummy content.
-        // $this->initStat("table", "table_teststat1", 0);
-        // $this->initStat("player", "player_teststat1", 0);
-
-        // TODO: Setup the initial game situation here.
-
-        // Activate first player once everything has been initialized and ready.
-        ///$this->activeNextPlayer();
-
-        /************ Init Pending *****/
+        
+        self::DbQuery("INSERT INTO dice () VALUES ()");
 
                 
         foreach( $players as $player_id => $player )
@@ -161,6 +144,11 @@ protected function getAllDatas()
     $result["players"] = $this->getCollectionFromDb(
         "SELECT `player_id` `id`, `player_score` `score` FROM `player`"
     );
+
+    $result['forcedFaces'] = self::getObjectListFromDB("SELECT dice1, dice2, dice3, dice4, dice5 FROM dice");
+    $result['blockdice'] = self::getObjectListFromDB("SELECT blockrolldice1, blockrolldice2, blockrolldice3, blockrolldice4, blockrolldice5 FROM dice");
+    $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id =1 ");
+
 
     // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
@@ -214,7 +202,7 @@ function checkArgs($arg1)
     {
         $ret = self::argPlayerTurn();
 
-        if(!in_array($arg1,$ret['selectable']) && !in_array($arg1,$ret['buttons']))
+        if(!in_array($arg1,$ret['selectable']) && !in_array($arg1,$ret['selectable_dice']) && !in_array($arg1,$ret['buttons']))
         {
             throw new feException( "Not a valid selection");
         }

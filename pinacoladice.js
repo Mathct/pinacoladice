@@ -67,9 +67,14 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
+            this.initDice();
+
+            console.log(gamedatas.forcedFaces[0])
+            console.log(gamedatas.blockdice[0])
 
             //// CONNECTIONS CLICK
             dojo.query(".carre").connect('onclick', this, 'onSelect' )
+            dojo.query(".dice").connect('onclick', this, 'onSelect' )
             
 
             console.log( "Ending game setup" );
@@ -117,6 +122,16 @@ function (dojo, declare) {
                         dojo.query("#"+this.args.selected[sid]).addClass("selected");
                     }
                 }
+
+                for( var sid in this.args.selectable_dice)
+                {
+                    if(this.isCurrentPlayerActive())
+                    {
+                        dojo.query("#"+this.args.selectable_dice[sid]).addClass("selectable");
+                    
+                    }
+                }
+
 
           
 
@@ -185,11 +200,11 @@ function (dojo, declare) {
                                      
                                 if(args.buttons[nb] == "cancel")
                                 {
-                                this.addActionButton( 'cancel', _("Cancel") ,'onOpButton', null, null, 'gray' );
+                                this.addActionButton( 'cancel', _("Cancel") ,'onOpButton', null, null, 'red' );
                                 }
                                 if(args.buttons[nb] == "pass")
                                 {
-                                this.addActionButton( 'pass', _("Pass") ,'onOpButton', null, null, 'gray' );
+                                this.addActionButton( 'pass', _("Pass") ,'onOpButton', null, null, 'red' );
                                 }
                                 if(args.buttons[nb] == "yes") 
                                 {
@@ -200,6 +215,15 @@ function (dojo, declare) {
                                 {
                                 this.addActionButton( 'no', _("No") ,'onOpButton', null, null, 'red' );
                                 }
+                                if(args.buttons[nb] == "dice") 
+                                {
+                                this.addActionButton( 'dice', _("Dice") ,'onOpButton', null, null, 'blue' );
+                                }
+                                if(args.buttons[nb] == "continue") 
+                                {
+                                this.addActionButton( 'continue', _("Continue") ,'onOpButton', null, null, 'blue' );
+                                }
+                            
                             }
                                       
                             
@@ -338,6 +362,75 @@ updateLayout: function () {
 
 },
 
+/// ROLL DICE
+
+initDice: function () {
+    this.diceElements = [
+        document.getElementById('dice1'),
+        document.getElementById('dice2'),
+        document.getElementById('dice3'),
+        document.getElementById('dice4'),
+        document.getElementById('dice5')
+    ];
+
+    this.faceRotations = {
+        1: { x: 0,   y: 0 },
+        2: { x: 0,   y: -90 },
+        3: { x: 0,   y: -180 },
+        4: { x: 0,   y: 90 },
+        5: { x: -90, y: 0 },
+        6: { x: 90,  y: 0 }
+    };
+
+    this.forcedFaces = [this.gamedatas.forcedFaces[0].dice1, this.gamedatas.forcedFaces[0].dice2, this.gamedatas.forcedFaces[0].dice3, this.gamedatas.forcedFaces[0].dice4, this.gamedatas.forcedFaces[0].dice5];       // default faces
+    this.shouldRotate = [this.gamedatas.blockdice[0].blockrolldice1, this.gamedatas.blockdice[0].blockrolldice2, this.gamedatas.blockdice[0].blockrolldice3, this.gamedatas.blockdice[0].blockrolldice4, this.gamedatas.blockdice[0].blockrolldice5]; // animation per dice
+
+    // Initial display of dice faces
+    this.diceElements.forEach((dice, index) => {
+        const face = this.forcedFaces[index];
+        const rotation = this.faceRotations[face];
+
+        // Apply the rotation instantly without animation
+        dice.style.transition = "none";
+        dice.style.transform = `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`;
+    });
+
+    
+},
+
+rollDiceTwice: function () {
+    this.rollDice(); // Premier lancer
+    setTimeout(() => {
+        this.rollDice(); // Deuxième lancer
+    }, 100);
+    setTimeout(() => {
+        this.rollDice(); // 3eme lancer
+    }, 200);
+},
+
+rollDice: function () {
+    
+
+    this.diceElements.forEach((dice, index) => {
+        const face = this.forcedFaces[index];
+        const target = this.faceRotations[face];
+
+        if (this.shouldRotate[index] == 0) {
+            const fullTurnsX = Math.floor(Math.random() * 10 + 10) * 360;
+            const fullTurnsY = Math.floor(Math.random() * 10 + 10) * 360;
+            const finalX = fullTurnsX + target.x;
+            const finalY = fullTurnsY + target.y;
+
+            dice.style.transition = "transform 2s cubic-bezier(0.23, 1, 0.32, 1)";
+            dice.style.transform = `rotateX(${finalX}deg) rotateY(${finalY}deg)`;
+        } else {
+            dice.style.transition = "none";
+            dice.style.transform = `rotateX(${target.x}deg) rotateY(${target.y}deg)`;
+        }
+    });
+},
+    
+
 
 /////////////////////////////////////////////////////////////////////////////////  
 //         _____  _                       _                  _   _             
@@ -398,34 +491,27 @@ updateLayout: function () {
         {
             console.log( 'notifications subscriptions setup' );
             
-            // TODO: here, associate your game notifications with local methods
-            
-            // Example 1: standard notification handling
-            // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-            
-            // Example 2: standard notification handling + tell the user interface to wait
-            //            during 3 seconds after calling the method in order to let the players
-            //            see what is happening in the game.
-            // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-            // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
-            // 
+            dojo.subscribe( 'dice', this, "notif_dice" );
         },  
         
-        // TODO: from this point and below, you can write your game notifications handling methods
-        
-        /*
-        Example:
-        
-        notif_cardPlayed: function( notif )
+        notif_dice: function( notif )
         {
-            console.log( 'notif_cardPlayed' );
-            console.log( notif );
-            
-            // Note: notif.args contains the arguments specified during you "notifyAllPlayers" / "notifyPlayer" PHP call
-            
-            // TODO: play the card in the user interface.
-        },    
-        
-        */
+            var dice = document.getElementById('dice_content')
+            dice.style.display = "flex";
+            this.rollDiceTwice();
+               
+        },
+
+
+
+
+
+
+
+
+
+
+
+
    });             
 });
