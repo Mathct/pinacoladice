@@ -632,15 +632,11 @@ rollDice: function () {
         notif_masklock: function( notif )
         {
 
-            console.warn('masklock')
             for($i = 1; $i <=5; $i++)
             {
                 var dice = document.getElementById('blockdice'+$i)
                 dice.classList.remove("block");
             }
-
-            
-
         },
 
 
