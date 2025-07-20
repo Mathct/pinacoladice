@@ -28,12 +28,13 @@
   width: 100%;
   height: 80px;
   background-color: white;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   gap: 20px;
-  /* display: none; */
-}
+  display: none;
+  
+ }
 
 .carre{
   height: 180px;
@@ -169,6 +170,33 @@ button {
 
 .selectable {
   cursor: pointer;
+}
+
+.selectable_dice {
+  cursor: pointer;
+}
+
+.blockdice {
+  width: 20px;
+  height: 25px;
+  top: 100%;
+  left: 100%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  background-image: url('img/cadena.png');
+  background-size: 100% 100%;
+  z-index: 10;
+   /* Effet visuel caché */
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(0.8);
+  transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+.blockdice.block {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 

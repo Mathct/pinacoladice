@@ -147,7 +147,8 @@ protected function getAllDatas()
 
     $result['forcedFaces'] = self::getObjectListFromDB("SELECT dice1, dice2, dice3, dice4, dice5 FROM dice");
     $result['blockdice'] = self::getObjectListFromDB("SELECT blockrolldice1, blockrolldice2, blockrolldice3, blockrolldice4, blockrolldice5 FROM dice");
-    $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id =1 ");
+    $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
+   
 
 
     // TODO: Gather all information about current game situation (visible by player $current_player_id).
@@ -209,6 +210,206 @@ function checkArgs($arg1)
         
     }
 
+function Result($dice) {
+    $result = [];
+
+    //RESUTATS:
+    // 0 = tous les dès differents // pas de combinaisons
+    // 1 = 1 paire
+    // 2 = 2 paires
+    // 3 = brelan
+    // 4 = full
+    // 5 = carre
+    // 6 = yam's
+    // 7 = petite suite
+    // 8 = grande suite
+    // 9 = tous les dés pairs
+    // 10 = tous les dés impairs
+    // 11 = somme <= 9
+    // 12 = somme = 12,13,14
+    // 13 = somme = 22,23,24
+    // 14 = somme >= 26
+
+    // 1 paire
+    foreach ($dice as $val) {
+        if (array_count_values($dice)[$val] >= 2) {
+            if(!in_array(1, $result))
+            $result[] = 1;
+            
+        }
+    }
+
+
+
+    //2 paires
+    // Compter les occurrences de chaque valeur
+        $counts = array_count_values($dice);
+
+        // Initialiser le compteur de paires
+        $nbPaires = 0;
+
+        // Parcourir les occurrences
+        foreach ($counts as $val => $count) {
+            if ($count >= 2) {
+                $nbPaires++;
+            }
+        }
+
+        // Vérifier s'il y a au moins 2 paires différentes
+        if ($nbPaires >= 2) {
+            if (!in_array(2, $result)) {
+                $result[] = 2; // Exemple : on ajoute 2 pour "double paire"
+            }
+        }
+
+
+
+
+    //brelan
+    foreach ($dice as $val) {
+        if (array_count_values($dice)[$val] >= 3) {
+            if(!in_array(3, $result))
+            $result[] = 3;
+            
+        }
+    }
+
+    // Full : un brelan + une paire de valeur différente
+    $counts = array_count_values($dice);
+    $hasThree = false;
+    $hasTwo = false;
+
+    foreach ($counts as $val => $count) {
+        if ($count == 3) $hasThree = true;
+        if ($count == 2) $hasTwo = true;
+    }
+
+    if ($hasThree && $hasTwo && !in_array(4, $result)) {
+        $result[] = 4;
+    }
+
+    //carre
+    foreach ($dice as $val) {
+        if (array_count_values($dice)[$val] >= 4) {
+            if(!in_array(5, $result))
+            $result[] = 5;
+
+            if(!in_array(2, $result))
+            $result[] = 2;
+            
+        }
+    }
+
+   
+
+    //yams
+    foreach ($dice as $val) {
+        if (array_count_values($dice)[$val] >= 5) {
+            if(!in_array(6, $result))
+            $result[] = 6;
+
+            if(!in_array(5, $result))
+            $result[] = 5;
+
+            if(!in_array(4, $result))
+            $result[] = 4;
+
+            if(!in_array(3, $result))
+            $result[] = 3;
+
+            if(!in_array(2, $result))
+            $result[] = 2;
+
+            if(!in_array(1, $result))
+            $result[] = 1;
+            
+        }
+    }
+
+    // petites et grandes suites (7 et 8)
+    $unique = array_unique($dice);
+    sort($unique);
+    $count = count($unique);
+
+    // grande suite
+    if ($count == 5 && $unique[4] - $unique[0] == 4 &&
+        $unique[1] - $unique[0] == 1 &&
+        $unique[2] - $unique[1] == 1 &&
+        $unique[3] - $unique[2] == 1 &&
+        $unique[4] - $unique[3] == 1) {
+
+        if (!in_array(7, $result)) $result[] = 7; // petite suite
+        if (!in_array(8, $result)) $result[] = 8; // grande suite
+    } else {
+        // sinon, on cherche une suite de 4 consécutifs
+        for ($i = 0; $i <= $count - 4; $i++) {
+            $slice = array_slice($unique, $i, 4);
+            if ($slice[3] - $slice[0] == 3 &&
+                $slice[1] - $slice[0] == 1 &&
+                $slice[2] - $slice[1] == 1 &&
+                $slice[3] - $slice[2] == 1) {
+
+                if (!in_array(7, $result)) $result[] = 7; // petite suite
+                
+            }
+        }
+    }
+
+    //pairs
+    $allEven = true;
+    foreach ($dice as $val) {
+        if ($val % 2 !== 0) {
+            $allEven = false;
+            break;
+        }
+    }
+    if ($allEven && !in_array(9, $result)) {
+        $result[] = 9;
+    }
+
+    //impairs
+    $allOdd = true;
+    foreach ($dice as $val) {
+        if ($val % 2 === 0) {
+            $allOdd = false;
+            break;
+        }
+    }
+    if ($allOdd && !in_array(10, $result)) {
+        $result[] = 10;
+    }
+
+    //sommes
+
+    $sum = array_sum($dice);
+
+    // somme <= 9 → code 11
+    if ($sum <= 9 && !in_array(11, $result)) {
+        $result[] = 11;
+    }
+
+    // somme = 12, 13, 14 → code 12
+    if (in_array($sum, [12, 13, 14]) && !in_array(12, $result)) {
+        $result[] = 12;
+    }
+
+    // somme = 22, 23, 24 → code 13
+    if (in_array($sum, [22, 23, 24]) && !in_array(13, $result)) {
+        $result[] = 13;
+    }
+
+    // somme >= 26 → code 14
+    if ($sum >= 26 && !in_array(14, $result)) {
+        $result[] = 14;
+    }
+
+    sort($result);
+    if(count($result) == 0)
+    {
+       $result[] = 0;
+    }
+    return $result;
+}
 
 
 
@@ -232,7 +433,6 @@ function checkArgs($arg1)
         $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
         $this->callPending($pending, true, $arg1);
         self::DbQuery("delete from pending where id=".$pending['id']);
-        $this->giveExtraTime(self::getActivePlayerId());
         $this->gamestate->nextState( 'next');
         
     }
@@ -245,7 +445,63 @@ function checkArgs($arg1)
         $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
         $this->callPending($pending, true, $arg1);
         self::DbQuery("delete from pending where id=".$pending['id']);
-        $this->giveExtraTime(self::getActivePlayerId());
+        $this->gamestate->nextState( 'next');
+        
+    }
+
+    public function actBlock(string $arg1, string $arg2)
+    {
+
+        self::checkArgs($arg1);
+        
+        if ($arg2 != null){
+            $explode = explode('_', $arg2);
+
+            for ($i = 1; $i <=5; $i++)
+            {
+                $diceblock = 'blockrolldice'.$i;
+
+                if(in_array($i, $explode))
+                {
+                    self::DbQuery("UPDATE dice set {$diceblock} = 1");
+                }
+
+                else {
+                    self::DbQuery("UPDATE dice set {$diceblock} = 0");
+                }
+            }
+
+           
+        }
+
+        else {
+
+            for ($i = 1; $i <=5; $i++)
+            {
+                $diceblock = 'blockrolldice'.$i;
+                self::DbQuery("UPDATE dice set {$diceblock} = 0");
+            }
+            
+        }
+
+        $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+        $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
+        for ($i = 1; $i <=5; $i++)
+        {
+            game::$instance->notifyAllPlayers(
+                        'displayblock',
+                        '',
+                        array(
+                            'dice' => $i,
+                            'block' => $block[$i -1]
+                        )
+            );
+        }
+        
+                
+        $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
+        $this->callPending($pending, true, $arg1);
+        self::DbQuery("delete from pending where id=".$pending['id']);
         $this->gamestate->nextState( 'next');
         
     }

@@ -67,11 +67,10 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
+            this.setupBoard();
             this.initDice();
 
-            console.log(gamedatas.forcedFaces[0])
-            console.log(gamedatas.blockdice[0])
-
+            
             //// CONNECTIONS CLICK
             dojo.query(".carre").connect('onclick', this, 'onSelect' )
             dojo.query(".dice").connect('onclick', this, 'onSelect' )
@@ -123,11 +122,13 @@ function (dojo, declare) {
                     }
                 }
 
+                console.warn(this.args.selectable_dice)
+
                 for( var sid in this.args.selectable_dice)
                 {
                     if(this.isCurrentPlayerActive())
                     {
-                        dojo.query("#"+this.args.selectable_dice[sid]).addClass("selectable");
+                        dojo.query("#"+this.args.selectable_dice[sid]).addClass("selectable_dice");
                     
                     }
                 }
@@ -171,6 +172,7 @@ function (dojo, declare) {
 
             dojo.query(".selectable").removeClass("selectable");
             dojo.query(".selected").removeClass("selected");
+            dojo.query(".selectable_dice").removeClass("selectable_dice");
             
             switch( stateName )
             {
@@ -222,6 +224,14 @@ function (dojo, declare) {
                                 if(args.buttons[nb] == "continue") 
                                 {
                                 this.addActionButton( 'continue', _("Continue") ,'onOpButton', null, null, 'blue' );
+                                }
+                                if(args.buttons[nb] == "roll") 
+                                {
+                                this.addActionButton( 'roll', _("Roll the dice") ,'onOpButton', null, null, 'blue' );
+                                }
+                                if(args.buttons[nb] == "block") 
+                                {
+                                this.addActionButton( 'block', _("Roll the dice") ,'onOpBlock', null, null, 'blue' );
                                 }
                             
                             }
@@ -362,9 +372,24 @@ updateLayout: function () {
 
 },
 
-/// ROLL DICE
+/// SETUP BOARD
+
+setupBoard: function () {
+
+    
+    if(this.gamedatas.showdice == 1)
+    {
+        var dice = document.getElementById('dice_content')
+        dice.style.display = "flex";
+    }
+    
+},
+
+/// INIT AND ROLL DICE
 
 initDice: function () {
+
+    
     this.diceElements = [
         document.getElementById('dice1'),
         document.getElementById('dice2'),
@@ -385,6 +410,13 @@ initDice: function () {
     this.forcedFaces = [this.gamedatas.forcedFaces[0].dice1, this.gamedatas.forcedFaces[0].dice2, this.gamedatas.forcedFaces[0].dice3, this.gamedatas.forcedFaces[0].dice4, this.gamedatas.forcedFaces[0].dice5];       // default faces
     this.shouldRotate = [this.gamedatas.blockdice[0].blockrolldice1, this.gamedatas.blockdice[0].blockrolldice2, this.gamedatas.blockdice[0].blockrolldice3, this.gamedatas.blockdice[0].blockrolldice4, this.gamedatas.blockdice[0].blockrolldice5]; // animation per dice
 
+    this.shouldRotate.forEach((val, index) => {
+    if (val == 1) {
+        var dice = document.getElementById('blockdice'+(index+1));
+        dice.classList.add("block");
+    }
+    });
+
     // Initial display of dice faces
     this.diceElements.forEach((dice, index) => {
         const face = this.forcedFaces[index];
@@ -394,6 +426,9 @@ initDice: function () {
         dice.style.transition = "none";
         dice.style.transform = `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`;
     });
+
+   
+
 
     
 },
@@ -451,7 +486,7 @@ rollDice: function () {
 
             
              
-            if( !this.isCurrentPlayerActive() || !(evt.currentTarget.classList.contains('selectable')) )
+            if( !this.isCurrentPlayerActive() || (!(evt.currentTarget.classList.contains('selectable')) && !(evt.currentTarget.classList.contains('selectable_dice'))))
             {   
                 return; 
             }
@@ -460,6 +495,42 @@ rollDice: function () {
             {
                 
                 this.bgaPerformAction('actSelect', { arg1: evt.currentTarget.id });
+            }
+
+            if(this.isCurrentPlayerActive() && evt.currentTarget.classList.contains('selectable_dice'))
+            {
+                const id = evt.currentTarget.id; 
+                const num = Number(id.match(/\d+/)[0]); 
+
+                const dice = document.getElementById("blockdice" + num);
+                if(dice.classList.contains("block"))
+                {
+                    dice.classList.remove("block");
+                    dojo.removeClass( 'block', 'disabled');
+                }
+                
+                else
+                {
+                    dice.classList.add("block");
+
+                    // Récupère tous les dés
+                    const allDice = [
+                        document.getElementById('blockdice1'),
+                        document.getElementById('blockdice2'),
+                        document.getElementById('blockdice3'),
+                        document.getElementById('blockdice4'),
+                        document.getElementById('blockdice5')
+                    ];
+
+                    // Vérifie si TOUS les dés ont la classe "block"
+                    const allHaveBlock = allDice.every(dice => dice.classList.contains('block'));
+
+                    if (allHaveBlock) {
+                        dojo.addClass( 'block', 'disabled');
+                    }
+                }
+                               
+                
             }
 
         },
@@ -471,6 +542,26 @@ rollDice: function () {
             dojo.stopEvent( evt );
             
             this.bgaPerformAction('actButton', { arg1: evt.currentTarget.id });
+            
+            
+
+        },
+
+        onOpBlock: function(evt)
+        {
+            
+            // Preventing default browser reaction
+            dojo.stopEvent( evt );
+
+            // const rolldice = Array.from(document.querySelectorAll('.blockdice:not(.block)')).map(el => el.id);
+            // const numbers = rolldice.map(item => parseInt(item.match(/\d+/)[0], 10));
+
+            const rolldice = Array.from(document.querySelectorAll('.blockdice.block')).map(el => el.id);
+            const numbers = rolldice.map(item => parseInt(item.match(/\d+/)[0], 10));
+            const blockdice = numbers.join('_');
+
+                    
+           this.bgaPerformAction('actBlock', { arg1: evt.currentTarget.id, arg2: blockdice });
             
             
 
@@ -491,16 +582,67 @@ rollDice: function () {
         {
             console.log( 'notifications subscriptions setup' );
             
-            dojo.subscribe( 'dice', this, "notif_dice" );
+            dojo.subscribe( 'rolldice', this, "notif_rolldice" );
+            dojo.subscribe( 'maskdice', this, "notif_maskdice" );
+            dojo.subscribe( 'displayblock', this, "notif_displayblock" );
+            dojo.subscribe( 'masklock', this, "notif_masklock" );
         },  
         
-        notif_dice: function( notif )
+        notif_rolldice: function( notif )
         {
             var dice = document.getElementById('dice_content')
             dice.style.display = "flex";
+
+            this.forcedFaces = notif.args.roll;
+            this.shouldRotate = notif.args.block;
+
             this.rollDiceTwice();
                
         },
+
+        notif_maskdice: function( notif )
+        {
+
+            var dice = document.getElementById('dice_content')
+            dice.style.display = "none";
+
+        },
+
+        notif_displayblock: function( notif )
+        {
+            var dice = document.getElementById('blockdice'+notif.args.dice)
+            
+            if(notif.args.block == 0)
+            {
+                dice.classList.remove("block");
+
+            }
+
+            if(notif.args.block == 1)
+            {
+                dice.classList.add("block");
+
+            }
+            
+            
+
+        },
+
+
+        notif_masklock: function( notif )
+        {
+
+            console.warn('masklock')
+            for($i = 1; $i <=5; $i++)
+            {
+                var dice = document.getElementById('blockdice'+$i)
+                dice.classList.remove("block");
+            }
+
+            
+
+        },
+
 
 
 

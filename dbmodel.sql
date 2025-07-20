@@ -59,4 +59,4 @@ CREATE TABLE IF NOT EXISTS `dice` (
   `blockrolldice4` int(2) unsigned DEFAULT 0,
   `blockrolldice5` int(2) unsigned DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

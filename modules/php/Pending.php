@@ -20,7 +20,7 @@ class Pending extends APP_GameClass
         $this->player_color = $p['player_color'];
     }
     
-    function argNormalTurn($parg1, $parg2) // DICEE 1
+    function argNormalTurn($parg1, $parg2) // DICE 1
     {
         $ret = array();
         $ret["selectable"] = array();
@@ -30,12 +30,8 @@ class Pending extends APP_GameClass
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
         $ret['titleyou'] = clienttranslate('${you} must roll the dice');
 
-        for($i=1; $i<=5; $i++)
-        {
-            $ret["selectable_dice"][] = 'dice'.$i;
-        }
-
-        $ret['buttons'][]='continue';
+        
+        $ret['buttons'][]='roll';
         
         
         
@@ -44,24 +40,274 @@ class Pending extends APP_GameClass
 
     function NormalTurn($parg1, $parg2, $varg1, $varg2)
     {
-        if($varg1 == 'continue')
+        
+        self::DbQuery("UPDATE dice set showdice = 1");
+        $result = [];
+        $block = [0, 0, 0, 0, 0];
+        for($i =1; $i<=5;  $i++)
         {
+            $rand = bga_rand(1, 6);
+            $result[] = $rand;
+            $dice = 'dice'.$i;
+            self::DbQuery("UPDATE dice set {$dice} = $rand");
+
+        }
+        
+        
+        game::$instance->notifyAllPlayers(
+                'rolldice',
+                '',
+                array(
+                    'player_name' => $this->player_name,
+                    'player_id' => $this->player_id,
+                    'roll' => $result,
+                    'block' => $block,
+                )
+            );
+        
+        game::$instance->giveExtraTime($this->player_id);
+        game::$instance->addPending($this->player_id, "Roll2");
+        
+        
+    }
+
+
+    function argRoll2($parg1, $parg2) // DICE 2
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
+        $ret['titleyou'] = clienttranslate('First Roll: ${you} can block and unblock dice and re-roll');
+
+        $resultdice = [];
+        for($i = 1; $i <= 5; $i++)
+        {
+            $dice = 'dice'.$i;
+            $resultdice[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+
+        }
+        
+        $combinaisons = game::$instance->Result($resultdice);
+        
+
+        for($i=1; $i<=5; $i++)
+        {
+            $ret["selectable_dice"][] = 'dice'.$i;
+        }
+
+        $ret['buttons'][]='block';
+        
+        
+        
+        return $ret;
+    }
+
+    function Roll2($parg1, $parg2, $varg1, $varg2)
+    {
+        if($varg1 == 'block')
+        {          
+            $result = [];
+            $index = 0;
+            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
+            
+
+            foreach ($block as $etat)
+            {
+                $dice = 'dice'.($index+1);
+
+                if($etat == 0)
+                {
+                    $rand = bga_rand(1, 6);
+                    $result[] = $rand;
+                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                }
+
+                if($etat == 1)
+                {
+                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                }
+
+                $index++;
+                
+            }
+          
+            
             
             game::$instance->notifyAllPlayers(
-                    'dice',
+                    'rolldice',
                     '',
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
-                        
+                        'roll' => $result,
+                        'block' => $block,
                     )
                 );
-            game::$instance->addPending($this->player_id, "NormalTurn");
+            
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPending($this->player_id, "Roll3");
         }
+        
         else
         {
-            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+
+            
         }
         
     }
+
+    function argRoll3($parg1, $parg2) // DICE 3
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
+        $ret['titleyou'] = clienttranslate('2nd Roll: ${you} can block and unblock dice and re-roll');
+
+        $resultdice = [];
+        for($i = 1; $i <= 5; $i++)
+        {
+            $dice = 'dice'.$i;
+            $resultdice[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+
+        }
+        
+        $combinaisons = game::$instance->Result($resultdice);
+        
+
+        for($i=1; $i<=5; $i++)
+        {
+            $ret["selectable_dice"][] = 'dice'.$i;
+        }
+
+        $ret['buttons'][]='block';
+        
+        
+        
+        return $ret;
+    }
+
+    function Roll3($parg1, $parg2, $varg1, $varg2)
+    {
+        if($varg1 == 'block')
+        {          
+            $result = [];
+            $index = 0;
+            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
+            
+
+            foreach ($block as $etat)
+            {
+                $dice = 'dice'.($index+1);
+
+                if($etat == 0)
+                {
+                    $rand = bga_rand(1, 6);
+                    $result[] = $rand;
+                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                }
+
+                if($etat == 1)
+                {
+                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                }
+
+                $index++;
+                
+            }
+          
+            
+            
+            game::$instance->notifyAllPlayers(
+                    'rolldice',
+                    '',
+                    array(
+                        'player_name' => $this->player_name,
+                        'player_id' => $this->player_id,
+                        'roll' => $result,
+                        'block' => $block,
+                    )
+                );
+            
+            
+
+            
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPending($this->player_id, "Last");
+        }
+        
+        else
+        {
+           
+        }
+        
+    }
+
+    function argLast($parg1, $parg2) // DICE 3
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
+        $ret['titleyou'] = clienttranslate('3rd Roll: ${you} blabla');
+
+
+        $ret['buttons'][]='continue';
+        
+        
+        
+        return $ret;
+    }
+
+    function Last($parg1, $parg2, $varg1, $varg2)
+    {                   
+
+            game::$instance->notifyAllPlayers(
+                    'maskdice',
+                    '',
+                    array(
+                        
+                    )
+                );
+
+            game::$instance->notifyAllPlayers(
+                    'masklock',
+                    '',
+                    array(
+                        
+                    )
+                );
+
+            self::DbQuery("UPDATE dice set showdice = 0");
+            self::DbQuery("UPDATE dice set blockrolldice1 = 0");
+            self::DbQuery("UPDATE dice set blockrolldice2 = 0");
+            self::DbQuery("UPDATE dice set blockrolldice3 = 0");
+            self::DbQuery("UPDATE dice set blockrolldice4 = 0");
+            self::DbQuery("UPDATE dice set blockrolldice5 = 0");
+
+            
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+    }
+        
+       
+        
+    
+
+
+
+
+
+
+
+
 }
