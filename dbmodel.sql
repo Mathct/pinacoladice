@@ -60,3 +60,18 @@ CREATE TABLE IF NOT EXISTS `dice` (
   `blockrolldice5` int(2) unsigned DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `bocks` (
+  `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `card_type` int(11) NOT NULL, 
+  `card_type_arg` int(11) NOT NULL,
+  `card_location` varchar(50) NOT NULL,
+  `card_location_arg` int(11) NOT NULL,
+  PRIMARY KEY (`card_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- id = id
+-- type = numero du bock (1 à 25)
+-- type_arg = face 1 ou 2
+-- location = deck ou board 
+-- location_arg = position

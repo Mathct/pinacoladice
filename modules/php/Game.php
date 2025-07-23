@@ -32,7 +32,7 @@ class Game extends \Table
      * Your global variables labels:
      *
      * Here, you can assign labels to global variables you are using for this game. You can use any number of global
-     * variables with IDs between 10 and 99. If your game has options (variants), you also have to associate here a
+     * variables with IDs between 10 and 99. If your game has options (variants), you also have to associate console.warnhere a
      * label to the corresponding ID in `gameoptions.inc.php`.
      *
      * NOTE: afterward, you can get/set the global variables with `getGameStateValue`, `setGameStateInitialValue` or
@@ -53,6 +53,9 @@ class Game extends \Table
         
         
         self::$instance = $this; // ATTENTION
+
+        $this->bocks= self::getNew("module.common.deck");
+        $this->bocks->init("bocks");
 
         
     }
@@ -113,6 +116,40 @@ class Game extends \Table
 
         
         self::DbQuery("INSERT INTO dice () VALUES ()");
+
+
+        /* init bocks */
+
+        for ($i = 1; $i <= 25; $i++) {
+
+            $bocks[] = array('type' => $i, 'type_arg' => 1, 'nbr' => 1);
+        }
+
+        $this->bocks->createCards($bocks, 'deck');
+        $this->bocks->shuffle('deck');
+
+        /* place bock */
+
+        $nbreplayers = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
+
+        for ($i = 1; $i <= 16; $i++) 
+        {
+        $this->bocks->pickCardForLocation('deck', 'board', $i);
+        }
+
+        if($nbreplayers == 3)
+        {
+
+            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location_arg IN (1, 4, 6, 7, 10, 11, 13, 16)");
+        }
+
+        if($nbreplayers == 4)
+        {
+
+            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location = 'board'");
+        }
+
+
 
                 
         foreach( $players as $player_id => $player )
