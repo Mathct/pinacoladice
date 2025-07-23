@@ -122,7 +122,7 @@ function (dojo, declare) {
                     }
                 }
 
-                console.warn(this.args.selectable_dice)
+                
 
                 for( var sid in this.args.selectable_dice)
                 {
