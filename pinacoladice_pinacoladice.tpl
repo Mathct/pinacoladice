@@ -65,22 +65,22 @@
 
   <div id="board_id">
 
-    <div id="carre1" class="carre"></div>
-    <div id="carre2" class="carre"></div>
-    <div id="carre3" class="carre"></div>
-    <div id="carre4" class="carre"></div>
-    <div id="carre5" class="carre"></div>
-    <div id="carre6" class="carre"></div>
-    <div id="carre7" class="carre"></div>
-    <div id="carre8" class="carre"></div>
-    <div id="carre9" class="carre"></div>
-    <div id="carre10" class="carre"></div>
     <div id="carre11" class="carre"></div>
     <div id="carre12" class="carre"></div>
     <div id="carre13" class="carre"></div>
     <div id="carre14" class="carre"></div>
-    <div id="carre15" class="carre"></div>
-    <div id="carre16" class="carre"></div>
+    <div id="carre21" class="carre"></div>
+    <div id="carre22" class="carre"></div>
+    <div id="carre23" class="carre"></div>
+    <div id="carre24" class="carre"></div>
+    <div id="carre31" class="carre"></div>
+    <div id="carre32" class="carre"></div>
+    <div id="carre33" class="carre"></div>
+    <div id="carre34" class="carre"></div>
+    <div id="carre41" class="carre"></div>
+    <div id="carre42" class="carre"></div>
+    <div id="carre43" class="carre"></div>
+    <div id="carre44" class="carre"></div>
   
   </div>
 
@@ -93,6 +93,14 @@
 
 
 <script type="text/javascript">
+
+var jstpl_bockA='<div id="bock_${id}" class="bockA" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
+var jstpl_bockB='<div id="bock_${id}" class="bockB" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
+
+var jstpl_score1='<div id="score1_${id}" class="score1" style="top: ${x}%; left: ${y}%;"></div>';
+var jstpl_score2='<div id="score2_${id}" class="score2" style="top: ${x}%; left: ${y}%;"></div>';
+
+var jstpl_token='<div id="token_${type}_${player}" class="token" style="background-position-x: ${x}%;"></div>';
 
 </script>  
 

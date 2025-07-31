@@ -67,6 +67,8 @@ CREATE TABLE IF NOT EXISTS `bocks` (
   `card_type_arg` int(11) NOT NULL,
   `card_location` varchar(50) NOT NULL,
   `card_location_arg` int(11) NOT NULL,
+  `score1` int(10) unsigned DEFAULT 0,
+  `score2` int(10) unsigned DEFAULT 0,
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

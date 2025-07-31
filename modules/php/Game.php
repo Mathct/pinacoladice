@@ -132,7 +132,19 @@ class Game extends \Table
 
         $nbreplayers = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
 
-        for ($i = 1; $i <= 16; $i++) 
+        for ($i = 11; $i <= 14; $i++) 
+        {
+        $this->bocks->pickCardForLocation('deck', 'board', $i);
+        }
+        for ($i = 21; $i <= 24; $i++) 
+        {
+        $this->bocks->pickCardForLocation('deck', 'board', $i);
+        }
+        for ($i = 31; $i <= 34; $i++) 
+        {
+        $this->bocks->pickCardForLocation('deck', 'board', $i);
+        }
+        for ($i = 41; $i <= 44; $i++) 
         {
         $this->bocks->pickCardForLocation('deck', 'board', $i);
         }
@@ -140,7 +152,7 @@ class Game extends \Table
         if($nbreplayers == 3)
         {
 
-            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location_arg IN (1, 4, 6, 7, 10, 11, 13, 16)");
+            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location_arg IN (11, 14, 22, 23, 32, 33, 41, 44)");
         }
 
         if($nbreplayers == 4)
@@ -179,12 +191,18 @@ protected function getAllDatas()
     // Get information about players.
     // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
     $result["players"] = $this->getCollectionFromDb(
-        "SELECT `player_id` `id`, `player_score` `score` FROM `player`"
+        "SELECT `player_id` `id`, `player_score` `score`, `player_color` `color` FROM `player`"
     );
+
+    $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
+
+    $result['bocks'] = self::getObjectListFromDB( "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
 
     $result['forcedFaces'] = self::getObjectListFromDB("SELECT dice1, dice2, dice3, dice4, dice5 FROM dice");
     $result['blockdice'] = self::getObjectListFromDB("SELECT blockrolldice1, blockrolldice2, blockrolldice3, blockrolldice4, blockrolldice5 FROM dice");
     $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
+
+    // $result['BOCK_A'] = $this->_BOCK_A;
    
 
 
@@ -248,14 +266,15 @@ function checkArgs($arg1)
     }
 
 function Result($dice) {
+
     $result = [];
 
     //RESUTATS:
     // 0 = tous les dès differents // pas de combinaisons
     // 1 = 1 paire
-    // 2 = 2 paires
+    // 2 = 2 paires differentes
     // 3 = brelan
-    // 4 = full
+    // 4 = full val diff
     // 5 = carre
     // 6 = yam's
     // 7 = petite suite
@@ -264,14 +283,14 @@ function Result($dice) {
     // 10 = tous les dés impairs
     // 11 = somme <= 9
     // 12 = somme = 12,13,14
-    // 13 = somme = 22,23,24
+    // 13 = somme = 21,22,23
     // 14 = somme >= 26
 
-    // 1 paire
+    // paires
     foreach ($dice as $val) {
         if (array_count_values($dice)[$val] >= 2) {
-            if(!in_array(1, $result))
-            $result[] = 1;
+            if(!in_array("1_".$val, $result))
+            $result[] = "1_".$val;
             
         }
     }
@@ -295,7 +314,7 @@ function Result($dice) {
         // Vérifier s'il y a au moins 2 paires différentes
         if ($nbPaires >= 2) {
             if (!in_array(2, $result)) {
-                $result[] = 2; // Exemple : on ajoute 2 pour "double paire"
+                $result[] = "2"; 
             }
         }
 
@@ -305,8 +324,8 @@ function Result($dice) {
     //brelan
     foreach ($dice as $val) {
         if (array_count_values($dice)[$val] >= 3) {
-            if(!in_array(3, $result))
-            $result[] = 3;
+            if(!in_array("3_".$val, $result))
+            $result[] = "3_".$val;
             
         }
     }
@@ -322,17 +341,18 @@ function Result($dice) {
     }
 
     if ($hasThree && $hasTwo && !in_array(4, $result)) {
-        $result[] = 4;
+        $result[] = "4";
     }
 
     //carre
     foreach ($dice as $val) {
         if (array_count_values($dice)[$val] >= 4) {
             if(!in_array(5, $result))
-            $result[] = 5;
+            $result[] = "5";
+            if (!in_array(2, $result)) {
+                $result[] = "2"; 
+            }
 
-            if(!in_array(2, $result))
-            $result[] = 2;
             
         }
     }
@@ -343,24 +363,13 @@ function Result($dice) {
     foreach ($dice as $val) {
         if (array_count_values($dice)[$val] >= 5) {
             if(!in_array(6, $result))
-            $result[] = 6;
+            $result[] = "6";
+            if (!in_array(4, $result)) {
+                $result[] = "4"; 
+            }
 
-            if(!in_array(5, $result))
-            $result[] = 5;
-
-            if(!in_array(4, $result))
-            $result[] = 4;
-
-            if(!in_array(3, $result))
-            $result[] = 3;
-
-            if(!in_array(2, $result))
-            $result[] = 2;
-
-            if(!in_array(1, $result))
-            $result[] = 1;
-            
         }
+        
     }
 
     // petites et grandes suites (7 et 8)
@@ -375,8 +384,8 @@ function Result($dice) {
         $unique[3] - $unique[2] == 1 &&
         $unique[4] - $unique[3] == 1) {
 
-        if (!in_array(7, $result)) $result[] = 7; // petite suite
-        if (!in_array(8, $result)) $result[] = 8; // grande suite
+        if (!in_array(7, $result)) $result[] = "7"; // petite suite
+        if (!in_array(8, $result)) $result[] = "8"; // grande suite
     } else {
         // sinon, on cherche une suite de 4 consécutifs
         for ($i = 0; $i <= $count - 4; $i++) {
@@ -386,7 +395,7 @@ function Result($dice) {
                 $slice[2] - $slice[1] == 1 &&
                 $slice[3] - $slice[2] == 1) {
 
-                if (!in_array(7, $result)) $result[] = 7; // petite suite
+                if (!in_array(7, $result)) $result[] = "7"; // petite suite
                 
             }
         }
@@ -401,7 +410,7 @@ function Result($dice) {
         }
     }
     if ($allEven && !in_array(9, $result)) {
-        $result[] = 9;
+        $result[] = "9";
     }
 
     //impairs
@@ -413,7 +422,7 @@ function Result($dice) {
         }
     }
     if ($allOdd && !in_array(10, $result)) {
-        $result[] = 10;
+        $result[] = "10";
     }
 
     //sommes
@@ -422,29 +431,31 @@ function Result($dice) {
 
     // somme <= 9 → code 11
     if ($sum <= 9 && !in_array(11, $result)) {
-        $result[] = 11;
+        $result[] = "11";
     }
 
     // somme = 12, 13, 14 → code 12
     if (in_array($sum, [12, 13, 14]) && !in_array(12, $result)) {
-        $result[] = 12;
+        $result[] = "12";
     }
 
-    // somme = 22, 23, 24 → code 13
-    if (in_array($sum, [22, 23, 24]) && !in_array(13, $result)) {
-        $result[] = 13;
+    // somme = 21, 22, 23 → code 13
+    if (in_array($sum, [21, 22, 23]) && !in_array(13, $result)) {
+        $result[] = "13";
     }
 
     // somme >= 26 → code 14
     if ($sum >= 26 && !in_array(14, $result)) {
-        $result[] = 14;
+        $result[] = "14";
     }
 
     sort($result);
     if(count($result) == 0)
     {
-       $result[] = 0;
+       $result[] = "0";
     }
+
+    
     return $result;
 }
 

@@ -58,7 +58,7 @@ function (dojo, declare) {
         {
             console.log( "Starting game setup" );
 
-                       
+                                   
             // TODO: Set up your game interface here, according to "gamedatas"
 
             this.players = gamedatas.players; // A RAJOUTER POUR MOTEUR (UTILITY METHODS)
@@ -72,7 +72,6 @@ function (dojo, declare) {
 
             
             //// CONNECTIONS CLICK
-            dojo.query(".carre").connect('onclick', this, 'onSelect' )
             dojo.query(".dice").connect('onclick', this, 'onSelect' )
             
 
@@ -105,12 +104,12 @@ function (dojo, declare) {
             
             case 'playerTurn':
                 this.args = args.args;
-                for( var sid in this.args.selectable)
-                {
-                    if(this.isCurrentPlayerActive())
-                    {
-                        dojo.query("#"+this.args.selectable[sid]).addClass("selectable");
-                    
+
+                for (let sid in this.args.selectable) {
+                    if (this.isCurrentPlayerActive()) {
+                        setTimeout(() => {
+                            dojo.query("#" + this.args.selectable[sid]).addClass("selectable");
+                        }, 1000);
                     }
                 }
 
@@ -131,6 +130,20 @@ function (dojo, declare) {
                         dojo.query("#"+this.args.selectable_dice[sid]).addClass("selectable_dice");
                     
                     }
+                }
+
+                if(this.args.noselectable)
+                {
+                    for( let sid in this.args.noselectable)
+                    {
+                        if(this.isCurrentPlayerActive())
+                        {
+                            setTimeout(() => {
+                            dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
+                            }, 1000);
+                        }
+                    }
+
                 }
 
 
@@ -169,10 +182,28 @@ function (dojo, declare) {
         onLeavingState: function( stateName )
         {
             console.log( 'Leaving state: '+stateName );
-
-            dojo.query(".selectable").removeClass("selectable");
+           
             dojo.query(".selected").removeClass("selected");
             dojo.query(".selectable_dice").removeClass("selectable_dice");
+
+            // dojo.query(".selectable").removeClass("selectable");
+            // dojo.query(".noselectable").removeClass("noselectable");
+
+            dojo.query(".selectable").addClass("reverse-selectable");
+            dojo.query(".noselectable").addClass("reverse-noselectable");
+
+            setTimeout(() => 
+            {
+            dojo.query(".selectable").removeClass("selectable");
+            dojo.query(".noselectable").removeClass("noselectable");
+            dojo.query(".reverse-selectable").removeClass("reverse-selectable");
+            dojo.query(".reverse-noselectable").removeClass("reverse-noselectable");
+
+            }, "1000");
+            
+            
+
+                     
             
             switch( stateName )
             {
@@ -224,6 +255,11 @@ function (dojo, declare) {
                                 if(args.buttons[nb] == "continue") 
                                 {
                                 this.addActionButton( 'continue', _("Continue") ,'onOpButton', null, null, 'blue' );
+                                    dojo.addClass( 'continue', 'disabled');
+                                    setTimeout(() => 
+                                    {
+                                        dojo.removeClass( 'continue', 'disabled');
+                                    }, "2000");
                                 }
                                 if(args.buttons[nb] == "roll") 
                                 {
@@ -231,7 +267,12 @@ function (dojo, declare) {
                                 }
                                 if(args.buttons[nb] == "block") 
                                 {
-                                this.addActionButton( 'block', _("Roll the dice") ,'onOpBlock', null, null, 'blue' );
+                                    this.addActionButton( 'block', _("Roll the dice") ,'onOpBlock', null, null, 'blue' );
+                                    dojo.addClass( 'block', 'disabled');
+                                    setTimeout(() => 
+                                    {
+                                        dojo.removeClass( 'block', 'disabled');
+                                    }, "2000");
                                 }
                             
                             }
@@ -382,8 +423,324 @@ setupBoard: function () {
         var dice = document.getElementById('dice_content')
         dice.style.display = "flex";
     }
+
     
+    for( var bock in this.gamedatas.bocks)   
+    {
+        var bock = this.gamedatas.bocks[bock];
+        this.addBock(bock.type, bock.type_arg, bock.location_arg);
+        if((bock.score1 != 0)||(bock.score2 != 0))
+        {
+            this.addToken(bock.type, bock.score1, bock.score2);
+        }
+    }
+
 },
+
+
+// CREATION DES BOCKS
+
+addBock: function (type, type_arg, location_arg) {
+
+if(type_arg == 1)
+{
+    if(type>= 1 && type <=5)
+    dojo.place( this.format_block( 'jstpl_bockA', {
+        id: type,
+        x: (type-1)*(-100),
+        y: 0,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 6 && type <=10)
+    dojo.place( this.format_block( 'jstpl_bockA', {
+        id: type,
+        x: (type-6)*(-100),
+        y: -100,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 11 && type <=15)
+    dojo.place( this.format_block( 'jstpl_bockA', {
+        id: type,
+        x: (type-11)*(-100),
+        y: -200,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 16 && type <=20)
+    dojo.place( this.format_block( 'jstpl_bockA', {
+        id: type,
+        x: (type-16)*(-100),
+        y: -300,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 21 && type <=25)
+    dojo.place( this.format_block( 'jstpl_bockA', {
+        id: type,
+        x: (type-21)*(-100),
+        y: -400,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    dojo.query("#bock_"+type).connect('onclick', this, 'onSelect' );
+    
+
+    if(type <=7)
+    {
+        dojo.place( this.format_block( 'jstpl_score1', {
+            id: type,
+            x: 67.2,
+            y: 69.4,
+                
+                                
+        } ) , 'bock_'+type );
+    }
+
+    if(type >= 8 && type <=13)
+    {
+        dojo.place( this.format_block( 'jstpl_score1', {
+            id: type,
+            x: 70.6,
+            y: 69.4,
+                
+                                
+        } ) , 'bock_'+type );
+    }
+
+    if(type >= 14)
+    {
+        dojo.place( this.format_block( 'jstpl_score1', {
+            id: type,
+            x: 62.8,
+            y: 70.6,
+                
+                                
+        } ) , 'bock_'+type );
+    }
+
+
+}
+
+if(type_arg == 2)
+{
+    if(type>= 1 && type <=5)
+    dojo.place( this.format_block( 'jstpl_bockB', {
+        id: type,
+        x: (type-1)*(-100),
+        y: 0,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 6 && type <=10)
+    dojo.place( this.format_block( 'jstpl_bockB', {
+        id: type,
+        x: (type-6)*(-100),
+        y: -100,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 11 && type <=15)
+    dojo.place( this.format_block( 'jstpl_bockB', {
+        id: type,
+        x: (type-11)*(-100),
+        y: -200,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 16 && type <=20)
+    dojo.place( this.format_block( 'jstpl_bockB', {
+        id: type,
+        x: (type-16)*(-100),
+        y: -300,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 21 && type <=25)
+    dojo.place( this.format_block( 'jstpl_bockB', {
+        id: type,
+        x: (type-21)*(-100),
+        y: -400,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    dojo.query("#bock_"+type).connect('onclick', this, 'onSelect' ); 
+
+    if(type <=7)
+    {
+        dojo.place( this.format_block( 'jstpl_score1', {
+            id: type,
+            x: 67.2,
+            y: 69.4,
+                
+                                
+        } ) , 'bock_'+type );
+
+        dojo.place( this.format_block( 'jstpl_score2', {
+            id: type,
+            x: 48.3,
+            y: 69.4,
+                
+                                
+        } ) , 'bock_'+type );
+    }
+
+    if(type >= 8 && type <=13)
+    {
+        dojo.place( this.format_block( 'jstpl_score1', {
+            id: type,
+            x: 70.6,
+            y: 69.4,
+                
+                                
+        } ) , 'bock_'+type );
+
+        dojo.place( this.format_block( 'jstpl_score2', {
+            id: type,
+            x: 51.7,
+            y: 69.4,
+                
+                                
+        } ) , 'bock_'+type );
+
+        
+    }
+
+    if(type >= 14)
+    {
+        dojo.place( this.format_block( 'jstpl_score1', {
+            id: type,
+            x: 62.8,
+            y: 70.6,
+                
+                                
+        } ) , 'bock_'+type );
+
+        dojo.place( this.format_block( 'jstpl_score2', {
+            id: type,
+            x: 43.9,
+            y: 70.6,
+                
+                                
+        } ) , 'bock_'+type );
+    }
+    
+}
+
+},
+
+// CREATION DES TOKENS
+
+addToken: function (type, score1, score2) {
+
+    
+    if(score1 != 0)
+    {
+        if(this.gamedatas.players[score1].color == 'f18400')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: 0,
+                                    
+            } ) , 'score1_'+type );
+        }
+
+        if(this.gamedatas.players[score1].color == '542583')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: -100,
+                                    
+            } ) , 'score1_'+type );
+        }
+
+        if(this.gamedatas.players[score1].color == 'd7da00')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: -200,
+                                    
+            } ) , 'score1_'+type );
+        }
+
+        if(this.gamedatas.players[score1].color == 'e84041')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: -300,
+                                    
+            } ) , 'score1_'+type );
+        }
+
+
+
+    }
+
+    if(score2 != 0)
+    {
+
+        if(this.gamedatas.players[score1].color == 'f18400')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: 0,
+                                    
+            } ) , 'score2_'+type );
+        }
+
+        if(this.gamedatas.players[score1].color == '542583')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: -100,
+                                    
+            } ) , 'score2_'+type );
+        }
+
+        if(this.gamedatas.players[score1].color == 'd7da00')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: -200,
+                                    
+            } ) , 'score2_'+type );
+        }
+
+        if(this.gamedatas.players[score1].color == 'e84041')
+        {
+            dojo.place( this.format_block( 'jstpl_token', {
+                type: type,
+                player: score1,
+                x: -300,
+                                    
+            } ) , 'score2_'+type );
+        }
+        
+    }
+
+
+},
+
+
+
 
 /// INIT AND ROLL DICE
 

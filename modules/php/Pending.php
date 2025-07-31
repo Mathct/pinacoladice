@@ -32,9 +32,8 @@ class Pending extends APP_GameClass
 
         
         $ret['buttons'][]='roll';
-        
-        
-        
+
+                
         return $ret;
     }
 
@@ -76,13 +75,17 @@ class Pending extends APP_GameClass
     {
         $ret = array();
         $ret["selectable"] = array();
+        $ret["noselectable"] = array();
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
         $ret['titleyou'] = clienttranslate('First Roll: ${you} can block and unblock dice and re-roll');
 
+        //// dice result
+
         $resultdice = [];
+        
         for($i = 1; $i <= 5; $i++)
         {
             $dice = 'dice'.$i;
@@ -92,11 +95,36 @@ class Pending extends APP_GameClass
         
         $combinaisons = game::$instance->Result($resultdice);
         
-
         for($i=1; $i<=5; $i++)
         {
             $ret["selectable_dice"][] = 'dice'.$i;
         }
+
+
+        //// match combinaison
+
+        $matchingCombi = [];
+        foreach (game::$instance->_BOCK_A as $index => $data) {
+            if (in_array($data['dice'], $combinaisons)) {
+                $matchingCombi[] = $index;
+            }
+        }
+
+        foreach ($matchingCombi as $match)
+        {
+            $ret["selectable"][] = 'bock_'.$match;
+        }
+
+        //// no match combinaison
+
+        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $noselectable = array_diff($allbocks, $matchingCombi);
+        foreach ($noselectable as $bock)
+        {
+            $ret["noselectable"][] = 'bock_'.$bock;
+        }
+
+
 
         $ret['buttons'][]='block';
         
@@ -179,11 +207,31 @@ class Pending extends APP_GameClass
         }
         
         $combinaisons = game::$instance->Result($resultdice);
+
+         //// match combinaison
+        $matchingCombi = [];
+        foreach (game::$instance->_BOCK_A as $index => $data) {
+            if (in_array($data['dice'], $combinaisons)) {
+                $matchingCombi[] = $index;
+            }
+        }
+
+        foreach ($matchingCombi as $match)
+        {
+            $ret["selectable"][] = 'bock_'.$match;
+        }
         
 
         for($i=1; $i<=5; $i++)
         {
             $ret["selectable_dice"][] = 'dice'.$i;
+        }
+
+        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $noselectable = array_diff($allbocks, $matchingCombi);
+        foreach ($noselectable as $bock)
+        {
+            $ret["noselectable"][] = 'bock_'.$bock;
         }
 
         $ret['buttons'][]='block';
@@ -259,6 +307,37 @@ class Pending extends APP_GameClass
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
         $ret['titleyou'] = clienttranslate('3rd Roll: ${you} blabla');
+
+
+        $resultdice = [];
+        for($i = 1; $i <= 5; $i++)
+        {
+            $dice = 'dice'.$i;
+            $resultdice[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+
+        }
+        
+        $combinaisons = game::$instance->Result($resultdice);
+
+         //// match combinaison
+        $matchingCombi = [];
+        foreach (game::$instance->_BOCK_A as $index => $data) {
+            if (in_array($data['dice'], $combinaisons)) {
+                $matchingCombi[] = $index;
+            }
+        }
+
+        foreach ($matchingCombi as $match)
+        {
+            $ret["selectable"][] = 'bock_'.$match;
+        }
+
+        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $noselectable = array_diff($allbocks, $matchingCombi);
+        foreach ($noselectable as $bock)
+        {
+            $ret["noselectable"][] = 'bock_'.$bock;
+        }
 
 
         $ret['buttons'][]='continue';
