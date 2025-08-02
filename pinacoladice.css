@@ -30,7 +30,7 @@
   background-color: white;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
   display: none;
   
  }
@@ -127,8 +127,8 @@
 }
 
 .scene {
-      width: 50px;
-      height: 50px;
+    width: 50px;
+    height: 50px;
     perspective: 1000px;
   }
 
@@ -193,7 +193,7 @@ button {
   }
   to {
     transform: scale(1.03);
-    filter: brightness(1.2) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
+    filter: brightness(1) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
     
   }
 }
@@ -205,7 +205,7 @@ button {
   }
   to {
     transform: scale(0.75);
-    filter: brightness(0.7) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
+    filter: brightness(0.8) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
   }
 }
 
@@ -225,7 +225,7 @@ button {
 @keyframes reverseScaleAndFilterOut {
   from {
     transform: scale(1.03);
-    filter: brightness(1.2) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
+    filter: brightness(1) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
   }
   to {
     transform: scale(1);
@@ -235,7 +235,7 @@ button {
 
 @keyframes reverseScaleAndFilterIn {
   from {
-    transform: scale(0.75);
+    transform: scale(0.8);
     filter: brightness(0.8) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
   }
   to {
@@ -317,8 +317,8 @@ button {
 
 .token{
 
-  height: 30px;
-  width: 30px;
+  height: 35px;
+  width: 35px;
   position: absolute;
   background-image: url("img/token.jpg");
   background-size: 400% 100%;

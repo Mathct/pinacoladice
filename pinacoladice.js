@@ -496,8 +496,8 @@ if(type_arg == 1)
     {
         dojo.place( this.format_block( 'jstpl_score1', {
             id: type,
-            x: 67.2,
-            y: 69.4,
+            x: 66.1,
+            y: 67.8,
                 
                                 
         } ) , 'bock_'+type );
@@ -507,8 +507,8 @@ if(type_arg == 1)
     {
         dojo.place( this.format_block( 'jstpl_score1', {
             id: type,
-            x: 70.6,
-            y: 69.4,
+            x: 69.4,
+            y: 68.3,
                 
                                 
         } ) , 'bock_'+type );
@@ -518,8 +518,8 @@ if(type_arg == 1)
     {
         dojo.place( this.format_block( 'jstpl_score1', {
             id: type,
-            x: 62.8,
-            y: 70.6,
+            x: 61.7,
+            y: 69.4,
                 
                                 
         } ) , 'bock_'+type );
@@ -581,16 +581,16 @@ if(type_arg == 2)
     {
         dojo.place( this.format_block( 'jstpl_score1', {
             id: type,
-            x: 67.2,
-            y: 69.4,
+            x: 66.1,
+            y: 67.8,
                 
                                 
         } ) , 'bock_'+type );
 
         dojo.place( this.format_block( 'jstpl_score2', {
             id: type,
-            x: 48.3,
-            y: 69.4,
+            x: 46.7,
+            y: 67.8,
                 
                                 
         } ) , 'bock_'+type );
@@ -600,16 +600,16 @@ if(type_arg == 2)
     {
         dojo.place( this.format_block( 'jstpl_score1', {
             id: type,
-            x: 70.6,
-            y: 69.4,
+            x: 69.4,
+            y: 68.3,
                 
                                 
         } ) , 'bock_'+type );
 
         dojo.place( this.format_block( 'jstpl_score2', {
             id: type,
-            x: 51.7,
-            y: 69.4,
+            x: 50,
+            y: 68.3,
                 
                                 
         } ) , 'bock_'+type );
@@ -621,16 +621,16 @@ if(type_arg == 2)
     {
         dojo.place( this.format_block( 'jstpl_score1', {
             id: type,
-            x: 62.8,
-            y: 70.6,
+            x: 61.7,
+            y: 69.4,
                 
                                 
         } ) , 'bock_'+type );
 
         dojo.place( this.format_block( 'jstpl_score2', {
             id: type,
-            x: 43.9,
-            y: 70.6,
+            x: 42.2,
+            y: 69.4,
                 
                                 
         } ) , 'bock_'+type );
@@ -667,7 +667,7 @@ addToken: function (type, score1, score2) {
             } ) , 'score1_'+type );
         }
 
-        if(this.gamedatas.players[score1].color == 'd7da00')
+        if(this.gamedatas.players[score1].color == 'bbbd02')
         {
             dojo.place( this.format_block( 'jstpl_token', {
                 type: type,
@@ -694,41 +694,41 @@ addToken: function (type, score1, score2) {
     if(score2 != 0)
     {
 
-        if(this.gamedatas.players[score1].color == 'f18400')
+        if(this.gamedatas.players[score2].color == 'f18400')
         {
             dojo.place( this.format_block( 'jstpl_token', {
                 type: type,
-                player: score1,
+                player: score2,
                 x: 0,
                                     
             } ) , 'score2_'+type );
         }
 
-        if(this.gamedatas.players[score1].color == '542583')
+        if(this.gamedatas.players[score2].color == '542583')
         {
             dojo.place( this.format_block( 'jstpl_token', {
                 type: type,
-                player: score1,
+                player: score2,
                 x: -100,
                                     
             } ) , 'score2_'+type );
         }
 
-        if(this.gamedatas.players[score1].color == 'd7da00')
+        if(this.gamedatas.players[score2].color == 'bbbd02')
         {
             dojo.place( this.format_block( 'jstpl_token', {
                 type: type,
-                player: score1,
+                player: score2,
                 x: -200,
                                     
             } ) , 'score2_'+type );
         }
 
-        if(this.gamedatas.players[score1].color == 'e84041')
+        if(this.gamedatas.players[score2].color == 'e84041')
         {
             dojo.place( this.format_block( 'jstpl_token', {
                 type: type,
-                player: score1,
+                player: score2,
                 x: -300,
                                     
             } ) , 'score2_'+type );
