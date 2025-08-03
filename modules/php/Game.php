@@ -459,6 +459,33 @@ function Result($dice) {
     return $result;
 }
 
+function initDice(){
+
+    game::$instance->notifyAllPlayers(
+            'maskdice',
+            '',
+            array(
+                
+            )
+        );
+
+    game::$instance->notifyAllPlayers(
+            'masklock',
+            '',
+            array(
+                
+            )
+        );
+
+    self::DbQuery("UPDATE dice set showdice = 0");
+    self::DbQuery("UPDATE dice set blockrolldice1 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice2 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice3 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice4 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice5 = 0");
+
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////// 

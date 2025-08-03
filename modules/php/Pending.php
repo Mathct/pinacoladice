@@ -220,6 +220,8 @@ class Pending extends APP_GameClass
         else
         {
 
+
+
             
         }
         
@@ -475,32 +477,11 @@ class Pending extends APP_GameClass
     function Last($parg1, $parg2, $varg1, $varg2)
     {                   
 
-            game::$instance->notifyAllPlayers(
-                    'maskdice',
-                    '',
-                    array(
-                        
-                    )
-                );
-
-            game::$instance->notifyAllPlayers(
-                    'masklock',
-                    '',
-                    array(
-                        
-                    )
-                );
-
-            self::DbQuery("UPDATE dice set showdice = 0");
-            self::DbQuery("UPDATE dice set blockrolldice1 = 0");
-            self::DbQuery("UPDATE dice set blockrolldice2 = 0");
-            self::DbQuery("UPDATE dice set blockrolldice3 = 0");
-            self::DbQuery("UPDATE dice set blockrolldice4 = 0");
-            self::DbQuery("UPDATE dice set blockrolldice5 = 0");
-
-            
-            game::$instance->giveExtraTime($this->player_id);
-            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+          
+        game::$instance->initDice();
+        game::$instance->giveExtraTime($this->player_id);
+        game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+        
     }
         
        
