@@ -79,8 +79,8 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
-        $ret['titleyou'] = clienttranslate('First Roll: ${you} can block or unblock dice and re-roll');
+        $ret['title'] = clienttranslate('${actplayer} must place a coktail token onto a coaster or roll the dice');
+        
 
         //// dice result
 
@@ -153,6 +153,15 @@ class Pending extends APP_GameClass
         }
 
 
+        if(count($ret["selectable"]) == 0)
+        {
+            $ret['titleyou'] = clienttranslate('First Roll: ${you} must block or unblock dice and re-roll');
+        }
+
+        else
+        {
+            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a coktail token onto a coaster or block or unblock dice and re-roll');
+        }
 
         $ret['buttons'][]='block';
         
@@ -223,8 +232,8 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
-        $ret['titleyou'] = clienttranslate('2nd Roll: ${you} can block or unblock dice and re-roll');
+        $ret['title'] = clienttranslate('${actplayer} must place a coktail token onto a coaster or roll the dice');
+        
 
         //// dice result
 
@@ -294,6 +303,16 @@ class Pending extends APP_GameClass
         foreach ($noselectable as $bock)
         {
             $ret["noselectable"][] = 'bock_'.$bock;
+        }
+
+        if(count($ret["selectable"]) == 0)
+        {
+            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must block or unblock dice and re-roll');
+        }
+
+        else
+        {
+            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a coktail token onto a coaster or block or unblock dice and re-roll');
         }
 
 
@@ -369,8 +388,8 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must roll the dice');
-        $ret['titleyou'] = clienttranslate('3rd Roll: ${you} blabla');
+        $ret['title'] = clienttranslate('${actplayer} must place a coktail token or pass');
+        
 
 
         $resultdice = [];
@@ -433,6 +452,16 @@ class Pending extends APP_GameClass
         foreach ($noselectable as $bock)
         {
             $ret["noselectable"][] = 'bock_'.$bock;
+        }
+
+        if(count($ret["selectable"]) == 0)
+        {
+            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must pass');
+        }
+
+        else
+        {
+            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must place a coktail token onto a coaster');
         }
 
 
