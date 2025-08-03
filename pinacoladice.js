@@ -417,6 +417,58 @@ updateLayout: function () {
 
 setupBoard: function () {
 
+    for( var player_id in this.gamedatas.players )   
+    {
+                                         
+            var player_board_div = $('player_board_'+player_id);
+            dojo.place( this.format_block('jstpl_reservetokencontainer', {id: player_id} ), player_board_div );
+
+            for(let i = this.gamedatas.players[player_id].token; i>0; i--){
+
+                if(this.gamedatas.players[player_id].color == 'f18400')
+                {
+                    dojo.place( this.format_block( 'jstpl_reservetoken', {
+                        nb: i,
+                        player: player_id,
+                        x: 0,
+                                            
+                    } ) , 'reservetokencontainer_'+player_id );
+                }
+
+                if(this.gamedatas.players[player_id].color == '542583')
+                {
+                    dojo.place( this.format_block( 'jstpl_reservetoken', {
+                        nb: i,
+                        player: player_id,
+                        x: -100,
+                                            
+                    } ) , 'reservetokencontainer_'+player_id );
+                }
+
+                if(this.gamedatas.players[player_id].color == 'bbbd02')
+                {
+                    dojo.place( this.format_block( 'jstpl_reservetoken', {
+                        nb: i,
+                        player: player_id,
+                        x: -200,
+                                            
+                    } ) , 'reservetokencontainer_'+player_id );
+                }
+
+                if(this.gamedatas.players[player_id].color == 'e84041')
+                {
+                    dojo.place( this.format_block( 'jstpl_reservetoken', {
+                        nb: i,
+                        player: player_id,
+                        x: -300,
+                                            
+                    } ) , 'reservetokencontainer_'+player_id );
+                }
+
+            }
+
+
+    }
     
     if(this.gamedatas.showdice == 1)
     {

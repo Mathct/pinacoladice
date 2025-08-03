@@ -77,3 +77,5 @@ CREATE TABLE IF NOT EXISTS `bocks` (
 -- type_arg = face 1 ou 2
 -- location = deck ou board 
 -- location_arg = position
+
+ALTER TABLE `player` ADD `player_token` int(5) NOT NULL DEFAULT 6;

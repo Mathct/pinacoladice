@@ -80,7 +80,7 @@ class Pending extends APP_GameClass
         $ret["selected"] = array();
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
-        $ret['titleyou'] = clienttranslate('First Roll: ${you} can block and unblock dice and re-roll');
+        $ret['titleyou'] = clienttranslate('First Roll: ${you} can block or unblock dice and re-roll');
 
         //// dice result
 
@@ -100,25 +100,53 @@ class Pending extends APP_GameClass
             $ret["selectable_dice"][] = 'dice'.$i;
         }
 
+        $allBocks = self::getObjectListFromDB( "SELECT card_type type, card_type_arg type_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
+        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
 
         //// match combinaison
 
         $matchingCombi = [];
         foreach (game::$instance->_BOCK_A as $index => $data) {
-            if (in_array($data['dice'], $combinaisons)) {
-                $matchingCombi[] = $index;
+            if ((in_array($data['dice'], $combinaisons))&&(in_array($index, $allBocksOnBoard))) {
+
+                foreach($allBocks as $bock)
+                {
+
+                    if($bock['type'] == $index)
+                    {
+                    
+                        if($bock['type_arg'] == 1)
+                        {                            
+                            if($bock['score1'] == 0)
+                            {
+                                $matchingCombi[] = $index;
+                            }
+                        }
+
+                        if($bock['type_arg'] == 2)
+                        {
+                            if((($bock['score1'] == 0)||($bock['score2'] == 0))&&($bock['score1'] != $this->player_id)&&($bock['score2'] != $this->player_id))
+                            {
+                                $matchingCombi[] = $index;
+                            }
+                        }
+                    }
+                    
+                }
+                
+                
             }
         }
-
+      
+       
         foreach ($matchingCombi as $match)
         {
             $ret["selectable"][] = 'bock_'.$match;
         }
 
         //// no match combinaison
-
-        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
-        $noselectable = array_diff($allbocks, $matchingCombi);
+        
+        $noselectable = array_diff($allBocksOnBoard, $matchingCombi);
         foreach ($noselectable as $bock)
         {
             $ret["noselectable"][] = 'bock_'.$bock;
@@ -196,9 +224,12 @@ class Pending extends APP_GameClass
         $ret["selected"] = array();
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
-        $ret['titleyou'] = clienttranslate('2nd Roll: ${you} can block and unblock dice and re-roll');
+        $ret['titleyou'] = clienttranslate('2nd Roll: ${you} can block or unblock dice and re-roll');
+
+        //// dice result
 
         $resultdice = [];
+        
         for($i = 1; $i <= 5; $i++)
         {
             $dice = 'dice'.$i;
@@ -207,32 +238,65 @@ class Pending extends APP_GameClass
         }
         
         $combinaisons = game::$instance->Result($resultdice);
-
-         //// match combinaison
-        $matchingCombi = [];
-        foreach (game::$instance->_BOCK_A as $index => $data) {
-            if (in_array($data['dice'], $combinaisons)) {
-                $matchingCombi[] = $index;
-            }
-        }
-
-        foreach ($matchingCombi as $match)
-        {
-            $ret["selectable"][] = 'bock_'.$match;
-        }
         
-
         for($i=1; $i<=5; $i++)
         {
             $ret["selectable_dice"][] = 'dice'.$i;
         }
 
-        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
-        $noselectable = array_diff($allbocks, $matchingCombi);
+        $allBocks = self::getObjectListFromDB( "SELECT card_type type, card_type_arg type_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
+        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+
+        //// match combinaison
+
+        $matchingCombi = [];
+        foreach (game::$instance->_BOCK_A as $index => $data) {
+            if ((in_array($data['dice'], $combinaisons))&&(in_array($index, $allBocksOnBoard))) {
+
+                foreach($allBocks as $bock)
+                {
+
+                    if($bock['type'] == $index)
+                    {
+                    
+                        if($bock['type_arg'] == 1)
+                        {                            
+                            if($bock['score1'] == 0)
+                            {
+                                $matchingCombi[] = $index;
+                            }
+                        }
+
+                        if($bock['type_arg'] == 2)
+                        {
+                            if((($bock['score1'] == 0)||($bock['score2'] == 0))&&($bock['score1'] != $this->player_id)&&($bock['score2'] != $this->player_id))
+                            {
+                                $matchingCombi[] = $index;
+                            }
+                        }
+                    }
+                    
+                }
+                
+                
+            }
+        }
+      
+       
+        foreach ($matchingCombi as $match)
+        {
+            $ret["selectable"][] = 'bock_'.$match;
+        }
+
+        //// no match combinaison
+        
+        $noselectable = array_diff($allBocksOnBoard, $matchingCombi);
         foreach ($noselectable as $bock)
         {
             $ret["noselectable"][] = 'bock_'.$bock;
         }
+
+
 
         $ret['buttons'][]='block';
         
@@ -319,21 +383,53 @@ class Pending extends APP_GameClass
         
         $combinaisons = game::$instance->Result($resultdice);
 
-         //// match combinaison
+        $allBocks = self::getObjectListFromDB( "SELECT card_type type, card_type_arg type_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
+        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+
+        //// match combinaison
+
         $matchingCombi = [];
         foreach (game::$instance->_BOCK_A as $index => $data) {
-            if (in_array($data['dice'], $combinaisons)) {
-                $matchingCombi[] = $index;
+            if ((in_array($data['dice'], $combinaisons))&&(in_array($index, $allBocksOnBoard))) {
+
+                foreach($allBocks as $bock)
+                {
+
+                    if($bock['type'] == $index)
+                    {
+                    
+                        if($bock['type_arg'] == 1)
+                        {                            
+                            if($bock['score1'] == 0)
+                            {
+                                $matchingCombi[] = $index;
+                            }
+                        }
+
+                        if($bock['type_arg'] == 2)
+                        {
+                            if((($bock['score1'] == 0)||($bock['score2'] == 0))&&($bock['score1'] != $this->player_id)&&($bock['score2'] != $this->player_id))
+                            {
+                                $matchingCombi[] = $index;
+                            }
+                        }
+                    }
+                    
+                }
+                
+                
             }
         }
-
+      
+       
         foreach ($matchingCombi as $match)
         {
             $ret["selectable"][] = 'bock_'.$match;
         }
 
-        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
-        $noselectable = array_diff($allbocks, $matchingCombi);
+        //// no match combinaison
+        
+        $noselectable = array_diff($allBocksOnBoard, $matchingCombi);
         foreach ($noselectable as $bock)
         {
             $ret["noselectable"][] = 'bock_'.$bock;

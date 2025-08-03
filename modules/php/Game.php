@@ -191,7 +191,7 @@ protected function getAllDatas()
     // Get information about players.
     // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
     $result["players"] = $this->getCollectionFromDb(
-        "SELECT `player_id` `id`, `player_score` `score`, `player_color` `color` FROM `player`"
+        "SELECT `player_id` `id`, `player_score` `score`, `player_color` `color`, `player_token` `token` FROM `player`"
     );
 
     $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
