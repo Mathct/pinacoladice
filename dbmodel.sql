@@ -79,3 +79,5 @@ CREATE TABLE IF NOT EXISTS `bocks` (
 -- location_arg = position
 
 ALTER TABLE `player` ADD `player_token` int(5) NOT NULL DEFAULT 6;
+ALTER TABLE `player` ADD `player_positionplace` int(5) NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_end` int(5) NOT NULL DEFAULT 0;

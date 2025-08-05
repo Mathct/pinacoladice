@@ -101,7 +101,7 @@ var jstpl_score1='<div id="score1_${id}" class="score1" style="top: ${x}%; left:
 var jstpl_score2='<div id="score2_${id}" class="score2" style="top: ${x}%; left: ${y}%;"></div>';
 
 var jstpl_token='<div id="token_${type}_${player}" class="token" style="background-position-x: ${x}%;"></div>';
-var jstpl_reservetoken='<div id="resertoken_${nb}_${player}" class="token" style="background-position-x: ${x}%;"></div>';
+var jstpl_reservetoken='<div id="reservetoken_${nb}_${player}" class="token" style="background-position-x: ${x}%;"></div>';
 
 var jstpl_reservetokencontainer='<div id="reservetokencontainer_${id}" class="reservetokencontainer"></div>';
 

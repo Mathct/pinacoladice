@@ -219,7 +219,62 @@ class Pending extends APP_GameClass
         
         else
         {
+            $explode = explode('_', $varg1);
+            $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
+            $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
+            $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+            
+            $positionscore = 0;
+            $score = 0;
 
+            if($type_arg == 1)
+            {
+                self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                $positionscore = 1;
+                $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
+            }
+
+            if($type_arg == 2)
+            {
+                if($score2 == 0)
+                {
+                    self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    $positionscore = 2;
+                    $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
+                }
+
+                else
+                {
+                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    $positionscore = 1;
+                    $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
+                }
+            }
+
+            $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
+            self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
+            self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+            
+
+            game::$instance->notifyAllPlayers(
+                    'moveToken',
+                    '',
+                    array(
+                        'player_id' => $this->player_id,
+                        'reserve_token' => $reserveToken,
+                        'bock' => $explode[1],
+                        'score_position' => $positionscore
+                    )
+            );
+
+            game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+
+            game::$instance->positionPlace($this->player_id);
+            game::$instance->adjScore($this->player_id, $explode[1]);
+            game::$instance->majScore();
+            game::$instance->initDice();
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
 
 
             
@@ -378,6 +433,62 @@ class Pending extends APP_GameClass
         
         else
         {
+            $explode = explode('_', $varg1);
+            $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
+            $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
+            $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+            
+            $positionscore = 0;
+            $score = 0;
+
+            if($type_arg == 1)
+            {
+                self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                $positionscore = 1;
+                $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
+            }
+
+            if($type_arg == 2)
+            {
+                if($score2 == 0)
+                {
+                    self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    $positionscore = 2;
+                    $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
+                }
+
+                else
+                {
+                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    $positionscore = 1;
+                    $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
+                }
+            }
+
+            $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
+            self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
+            self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+            
+
+            game::$instance->notifyAllPlayers(
+                    'moveToken',
+                    '',
+                    array(
+                        'player_id' => $this->player_id,
+                        'reserve_token' => $reserveToken,
+                        'bock' => $explode[1],
+                        'score_position' => $positionscore
+                    )
+            );
+
+            game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+
+            game::$instance->positionPlace($this->player_id);
+            game::$instance->adjScore($this->player_id, $explode[1]);
+            game::$instance->majScore();
+            game::$instance->initDice();
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
            
         }
         
@@ -475,13 +586,80 @@ class Pending extends APP_GameClass
     }
 
     function Last($parg1, $parg2, $varg1, $varg2)
-    {                   
+    {   
+        if($varg1 == "continue")
+        {
+            game::$instance->initDice();
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+
+        }  
+        
+        else
+        {
+            $explode = explode('_', $varg1);
+            $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
+            $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
+            $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+            
+            $positionscore = 0;
+            $score = 0;
+
+            if($type_arg == 1)
+            {
+                self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                $positionscore = 1;
+                $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
+            }
+
+            if($type_arg == 2)
+            {
+                if($score2 == 0)
+                {
+                    self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    $positionscore = 2;
+                    $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
+                }
+
+                else
+                {
+                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    $positionscore = 1;
+                    $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
+                }
+            }
+
+            $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
+            self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
+            self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+            
+
+            game::$instance->notifyAllPlayers(
+                    'moveToken',
+                    '',
+                    array(
+                        'player_id' => $this->player_id,
+                        'reserve_token' => $reserveToken,
+                        'bock' => $explode[1],
+                        'score_position' => $positionscore
+                    )
+            );
+
+            game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+
+            game::$instance->positionPlace($this->player_id);
+            game::$instance->adjScore($this->player_id, $explode[1]);
+            game::$instance->majScore();
+            game::$instance->initDice();
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+
+
+        }
 
           
-        game::$instance->initDice();
-        game::$instance->giveExtraTime($this->player_id);
-        game::$instance->addPendingFirst($this->player_id, "NormalTurn");
         
+
     }
         
        

@@ -486,6 +486,63 @@ function initDice(){
 
 }
 
+function majScore() {
+
+    $players = self::getObjectListFromDB( "SELECT player_id FROM player", true );
+    foreach($players as $player)
+    {
+
+        $score = self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id={$player}");
+        game::$instance->notifyAllPlayers(
+            'score',
+            '',
+            array(
+                'player_id' => $player,
+                'score' => $score
+                
+            )
+        );
+
+    }
+
+
+}
+
+function adjScore($id, $type) {
+
+    $adj = 0;
+    $location = self::getUniqueValueFromDB("SELECT card_location_arg FROM bocks WHERE card_type={$type}");
+
+    $tests = [$location -1, $location+1, $location+10, $location -10, $location-11, $location-9, $location+9, $location+11];
+
+    foreach ($tests as $test) {
+        
+        $emplacement1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_location_arg={$test}");
+        $emplacement2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_location_arg={$test}");
+
+        if(($emplacement1 == $id)||($emplacement2 == $id))
+        {
+            $adj++;
+        }
+
+    }
+
+    self::DbQuery("UPDATE player SET player_score = player_score + $adj WHERE player_id={$id}");
+
+}
+
+function positionPlace($id) {
+
+    $position = self::getUniqueValueFromDB("SELECT player_positionplace FROM player WHERE player_id={$id}");
+    if($position == 0)
+    {
+        $newposition = count(self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_positionplace != 0", true )) + 1;
+        self::DbQuery("UPDATE player SET player_positionplace = $newposition WHERE player_id={$id}");
+    }
+
+
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////// 

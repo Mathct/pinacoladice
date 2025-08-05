@@ -109,7 +109,7 @@ function (dojo, declare) {
                     if (this.isCurrentPlayerActive()) {
                         setTimeout(() => {
                             dojo.query("#" + this.args.selectable[sid]).addClass("selectable");
-                        }, 1000);
+                        }, 1500);
                     }
                 }
 
@@ -140,7 +140,7 @@ function (dojo, declare) {
                         {
                             setTimeout(() => {
                             dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
-                            }, 1000);
+                            }, 1500);
                         }
                     }
 
@@ -186,24 +186,21 @@ function (dojo, declare) {
             dojo.query(".selected").removeClass("selected");
             dojo.query(".selectable_dice").removeClass("selectable_dice");
 
-            // dojo.query(".selectable").removeClass("selectable");
-            // dojo.query(".noselectable").removeClass("noselectable");
-
-            dojo.query(".selectable").addClass("reverse-selectable");
+            dojo.query(".selectable").removeClass("selectable");
+            
+            // dojo.query(".selectable").addClass("reverse-selectable");
             dojo.query(".noselectable").addClass("reverse-noselectable");
 
             setTimeout(() => 
             {
-            dojo.query(".selectable").removeClass("selectable");
+            // dojo.query(".selectable").removeClass("selectable");
             dojo.query(".noselectable").removeClass("noselectable");
-            dojo.query(".reverse-selectable").removeClass("reverse-selectable");
+            // dojo.query(".reverse-selectable").removeClass("reverse-selectable");
             dojo.query(".reverse-noselectable").removeClass("reverse-noselectable");
 
             }, "1000");
             
-            
-
-                     
+                                 
             
             switch( stateName )
             {
@@ -995,6 +992,8 @@ rollDice: function () {
             dojo.subscribe( 'maskdice', this, "notif_maskdice" );
             dojo.subscribe( 'displayblock', this, "notif_displayblock" );
             dojo.subscribe( 'masklock', this, "notif_masklock" );
+            dojo.subscribe( 'moveToken', this, "notif_moveToken" );
+            dojo.subscribe( 'score', this, "notif_score" );
         },  
         
         notif_rolldice: function( notif )
@@ -1047,6 +1046,26 @@ rollDice: function () {
                 dice.classList.remove("block");
             }
         },
+
+
+        notif_moveToken: function( notif )
+        {
+            const element = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
+            element.id = "token_"+notif.args.bock+"_"+notif.args.player_id;
+
+            const enfant = element.id;
+            const parent = "score"+notif.args.score_position+"_"+notif.args.bock;
+
+            this.attachToNewParentNoDestroy( enfant, parent );
+            this.slideToObject(enfant, parent ).play();
+        },
+
+        notif_score: function( notif )
+        {
+            this.scoreCtrl[ notif.args.player_id].toValue( notif.args.score);
+            
+        },
+
 
 
 

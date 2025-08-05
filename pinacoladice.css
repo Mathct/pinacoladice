@@ -175,7 +175,7 @@ button {
 
 .selectable {
   cursor: pointer;
-  animation: scaleAndFilterOut 1s forwards;
+  /* animation: scaleAndFilterOut 1s forwards; */
  
 }
 
@@ -185,7 +185,7 @@ button {
   
 }
 
-@keyframes scaleAndFilterOut {
+/* @keyframes scaleAndFilterOut {
   from {
     transform: scale(1);
     filter: brightness(1) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
@@ -196,7 +196,7 @@ button {
     filter: brightness(1) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
     
   }
-}
+} */
 
 @keyframes scaleAndFilterIn {
   from {
@@ -211,18 +211,18 @@ button {
 
 /* SELECTABLES INVERSE ET NO-SELECTABLES INVERSE + ANIMATIONS */
 
-.reverse-selectable {
+/* .reverse-selectable {
   animation: reverseScaleAndFilterOut 1s forwards;
   transform-origin: center center;
     
-}
+} */
 
 .reverse-noselectable {
   animation: reverseScaleAndFilterIn 1s forwards;
   transform-origin: center center;
 }
 
-@keyframes reverseScaleAndFilterOut {
+/* @keyframes reverseScaleAndFilterOut {
   from {
     transform: scale(1.03);
     filter: brightness(1) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
@@ -231,7 +231,7 @@ button {
     transform: scale(1);
     filter: brightness(1) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
   }
-}
+} */
 
 @keyframes reverseScaleAndFilterIn {
   from {
@@ -297,8 +297,8 @@ button {
 }
 
 .score1{
-  height: 30px;
-  width: 30px;
+  height: 35px;
+  width: 35px;
   border-radius: 50%;
   position: absolute;
   z-index: 10;
@@ -306,8 +306,8 @@ button {
 }
 
 .score2{
-  height: 30px;
-  width: 30px;
+  height: 35px;
+  width: 35px;
   border-radius: 50%;
   position: absolute;
   z-index: 10;
@@ -319,16 +319,13 @@ button {
 
   height: 35px;
   width: 35px;
-  /* position: absolute; */
   background-image: url("img/token.jpg");
   background-size: 400% 100%;
   z-index: 10;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 1px solid white; 
-  /* filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
-  -webkit-filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9)); */
-
+  border: 1px solid white;
+ 
 }
 
 /*PLAYER BOARD */
