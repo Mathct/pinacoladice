@@ -105,6 +105,9 @@ var jstpl_reservetoken='<div id="reservetoken_${nb}_${player}" class="token" sty
 
 var jstpl_reservetokencontainer='<div id="reservetokencontainer_${id}" class="reservetokencontainer"></div>';
 
+var jstpl_firstplayercontainer='<div id="firstplayercontainer_${id}" class="firstplayercontainer"></div>';
+var jstpl_firstplayer='<div id="firstplayer" class="first_${mode}"></div>';
+
 </script>  
 
 {OVERALL_GAME_FOOTER}

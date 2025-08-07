@@ -155,12 +155,12 @@ class Pending extends APP_GameClass
 
         if(count($ret["selectable"]) == 0)
         {
-            $ret['titleyou'] = clienttranslate('First Roll: ${you} must block or unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('First Roll: ${you} must block/unblock dice and re-roll');
         }
 
         else
         {
-            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a coktail token onto a coaster or block or unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a coktail token onto a coaster or block/unblock dice and re-roll');
         }
 
         $ret['buttons'][]='block';
@@ -272,6 +272,7 @@ class Pending extends APP_GameClass
             game::$instance->positionPlace($this->player_id);
             game::$instance->adjScore($this->player_id, $explode[1]);
             game::$instance->majScore();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
@@ -364,12 +365,12 @@ class Pending extends APP_GameClass
 
         if(count($ret["selectable"]) == 0)
         {
-            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must block or unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must block/unblock dice and re-roll');
         }
 
         else
         {
-            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a coktail token onto a coaster or block or unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a coktail token onto a coaster or block/unblock dice and re-roll');
         }
 
 
@@ -486,6 +487,7 @@ class Pending extends APP_GameClass
             game::$instance->positionPlace($this->player_id);
             game::$instance->adjScore($this->player_id, $explode[1]);
             game::$instance->majScore();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
@@ -589,6 +591,7 @@ class Pending extends APP_GameClass
     {   
         if($varg1 == "continue")
         {
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
@@ -650,6 +653,7 @@ class Pending extends APP_GameClass
             game::$instance->positionPlace($this->player_id);
             game::$instance->adjScore($this->player_id, $explode[1]);
             game::$instance->majScore();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");

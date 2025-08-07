@@ -191,7 +191,7 @@ protected function getAllDatas()
     // Get information about players.
     // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
     $result["players"] = $this->getCollectionFromDb(
-        "SELECT `player_id` `id`, `player_score` `score`, `player_color` `color`, `player_token` `token` FROM `player`"
+        "SELECT `player_id` `id`, `player_no` `no`, `player_score` `score`, `player_color` `color`, `player_token` `token` FROM `player`"
     );
 
     $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
@@ -202,10 +202,7 @@ protected function getAllDatas()
     $result['blockdice'] = self::getObjectListFromDB("SELECT blockrolldice1, blockrolldice2, blockrolldice3, blockrolldice4, blockrolldice5 FROM dice");
     $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
 
-    // $result['BOCK_A'] = $this->_BOCK_A;
-   
-
-
+    
     // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
     return $result;
@@ -538,6 +535,104 @@ function positionPlace($id) {
     {
         $newposition = count(self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_positionplace != 0", true )) + 1;
         self::DbQuery("UPDATE player SET player_positionplace = $newposition WHERE player_id={$id}");
+    }
+
+
+}
+
+function checkEndGame($id) {
+
+    //test Pina
+    $locations = self::getObjectListFromDB( "SELECT card_location_arg FROM bocks WHERE score1 = {$id} OR score2 = {$id}", true );
+    
+    $pinas = [
+    'pina_1' => [11,12,13,14],
+    'pina_2' => [21,22,23,24],
+    'pina_3' => [31,32,33,34],
+    'pina_4' => [41,42,43,44],
+    'pina_5' => [11,21,31,41],
+    'pina_6' => [12,22,32,42],
+    'pina_7' => [13,23,33,43],
+    'pina_8' => [14,24,34,44],
+    'pina_9' => [11,22,33,44],
+    'pina_10' => [14,23,32,41],
+    ];
+
+    $pinas_presentes = [];
+
+    foreach ($pinas as $nom => $pina) {
+        $diff = array_diff($pina, $locations);
+        if (empty($diff)) {
+            $pinas_presentes[] = $nom;
+    }
+    }
+
+    if(count($pinas_presentes) != 0)
+    {
+        ///y a un PINA !!
+
+        self::notifyAllPlayers( 'message', clienttranslate('PINAAAAAAAAAA'),
+        array(
+                
+        ));
+
+        self::notifyAllPlayers( 'message', clienttranslate('end game'),
+        array(
+                
+        ));
+
+    }
+
+    else
+    {
+        /// sinon on continue les tests (si score >=20  ou nombre de tokens en reserve = 0)
+
+        $score = self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id={$id}");
+        $reservetoken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$id}");
+        $end_other_player = self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_end = 1", true );
+
+        if($end_other_player == NULL)  // on teste si un joueur n'a pas declenché la fin de game
+        {
+            if($score >= 20)
+            {
+                self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
+
+                self::notifyAllPlayers( 'message', clienttranslate('20+'),
+                array(
+                        
+                ));
+
+            }
+
+            elseif ($reservetoken == 0)
+            {
+                self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
+
+                self::notifyAllPlayers( 'message', clienttranslate('no token'),
+                array(
+                        
+                ));
+
+            }
+        }
+
+        else
+        {
+            //il faut verifier si le joueur suivant a declenché la fin de partie... si c'est le cas c'est un end game 
+            $after_id = game::$instance->getPlayerAfter($id);
+            $end = self::getUniqueValueFromDB("SELECT player_end FROM player WHERE player_id={$after_id}");
+
+            if($end == 1)
+            {
+                self::notifyAllPlayers( 'message', clienttranslate('end game'),
+                array(
+                        
+                ));
+            }   
+
+
+        }
+
     }
 
 

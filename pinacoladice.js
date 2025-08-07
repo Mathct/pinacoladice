@@ -16,11 +16,13 @@
  */
 
 define([
-    "dojo","dojo/_base/declare",
+    "dojo",
+    "dojo/_base/declare",
     "ebg/core/gamegui",
-    "ebg/counter"
+    "ebg/counter",
+    getLibUrl('bga-animations', '1.x'),
 ],
-function (dojo, declare) {
+function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on utilise bga-animations il faut respecer cette lui...bga-animations doit etre en 5eme position si il est declaré en 5eme position
     return declare("bgagame.pinacoladice", ebg.core.gamegui, {
         constructor: function(){
             console.log('pinacoladice constructor');
@@ -29,6 +31,7 @@ function (dojo, declare) {
             // Example:
             // this.myGlobalValue = 0;
 
+            
         },
         
         /*
@@ -57,6 +60,11 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
+
+            // create the animation manager, and bind it to the `game.bgaAnimationsActive()` function
+            this.animationManager = new BgaAnimations.Manager({
+                animationsActive: () => this.bgaAnimationsActive(),
+            });
 
                                    
             // TODO: Set up your game interface here, according to "gamedatas"
@@ -418,8 +426,9 @@ setupBoard: function () {
     {
                                          
             var player_board_div = $('player_board_'+player_id);
+            dojo.place( this.format_block('jstpl_firstplayercontainer', {id: player_id} ), player_board_div );
             dojo.place( this.format_block('jstpl_reservetokencontainer', {id: player_id} ), player_board_div );
-
+            
             for(let i = this.gamedatas.players[player_id].token; i>0; i--){
 
                 if(this.gamedatas.players[player_id].color == 'f18400')
@@ -464,6 +473,13 @@ setupBoard: function () {
 
             }
 
+        if(this.gamedatas.players[player_id].no == 1)
+        {
+            dojo.place( this.format_block( 'jstpl_firstplayer', {
+                mode: "B",                                    
+            } ) , 'firstplayercontainer_'+player_id );
+        }
+
 
     }
     
@@ -483,6 +499,8 @@ setupBoard: function () {
             this.addToken(bock.type, bock.score1, bock.score2);
         }
     }
+
+    
 
 },
 
@@ -1048,17 +1066,30 @@ rollDice: function () {
         },
 
 
-        notif_moveToken: function( notif )
+        // notif_moveToken: function( notif )
+        // {
+        //     const element = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
+        //     element.id = "token_"+notif.args.bock+"_"+notif.args.player_id;
+
+        //     const enfant = element.id;
+        //     const parent = "score"+notif.args.score_position+"_"+notif.args.bock;
+
+        //     this.attachToNewParentNoDestroy( enfant, parent );
+        //     this.slideToObject(enfant, parent ).play();
+        // },
+
+        notif_moveToken: async function(notif)
         {
-            const element = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
-            element.id = "token_"+notif.args.bock+"_"+notif.args.player_id;
+            const mobile = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
+            mobile.id = "token_"+notif.args.bock+"_"+notif.args.player_id; // je change d'id
 
-            const enfant = element.id;
-            const parent = "score"+notif.args.score_position+"_"+notif.args.bock;
+            const enfant = document.getElementById(mobile.id);
+            const parent = document.getElementById("score"+notif.args.score_position+"_"+notif.args.bock);
 
-            this.attachToNewParentNoDestroy( enfant, parent );
-            this.slideToObject(enfant, parent ).play();
+            await this.animationManager.slideAndAttach(enfant, parent);
         },
+
+
 
         notif_score: function( notif )
         {
