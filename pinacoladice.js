@@ -472,12 +472,14 @@ setupBoard: function () {
                 }
 
             }
+        this.addTooltip('reservetokencontainer_'+player_id, _('Cocktail tokens available'),'' );
 
         if(this.gamedatas.players[player_id].no == 1)
         {
             dojo.place( this.format_block( 'jstpl_firstplayer', {
-                mode: "B",                                    
+                mode: "A",                                    
             } ) , 'firstplayercontainer_'+player_id );
+            this.addTooltip( 'firstplayer', _('First player'),'' );
         }
 
 
