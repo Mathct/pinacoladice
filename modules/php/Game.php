@@ -114,6 +114,14 @@ class Game extends \Table
         $this->reattributeColorsBasedOnPreferences($players, $gameinfos["player_colors"]);
         $this->reloadPlayersBasicInfos();
 
+
+        self::initStat( 'table', 'turns_number', 0 );
+
+        self::initStat( 'player', 'turns_number', 0 );
+        self::initStat( 'player', 'score', 0 );
+        self::initStat( 'player', 'pina', 0 );
+        self::initStat( 'player', 'place', 0 );
+
         
         self::DbQuery("INSERT INTO dice () VALUES ()");
 
@@ -526,6 +534,8 @@ function adjScore($id, $type) {
 
     self::DbQuery("UPDATE player SET player_score = player_score + $adj WHERE player_id={$id}");
 
+    return $adj;
+
 }
 
 function positionPlace($id) {
@@ -535,12 +545,15 @@ function positionPlace($id) {
     {
         $newposition = count(self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_positionplace != 0", true )) + 1;
         self::DbQuery("UPDATE player SET player_positionplace = $newposition WHERE player_id={$id}");
+        $this->setStat($newposition, 'place', $id);
     }
 
 
 }
 
 function checkEndGame($id) {
+
+    $player_name = self::getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id={$id}");
 
     //test Pina
     $locations = self::getObjectListFromDB( "SELECT card_location_arg FROM bocks WHERE score1 = {$id} OR score2 = {$id}", true );
@@ -571,16 +584,16 @@ function checkEndGame($id) {
     {
         ///y a un PINA !!
 
-        self::notifyAllPlayers( 'message', clienttranslate('PINAAAAAAAAAA'),
+        self::DbQuery("UPDATE player SET player_pina = 1 WHERE player_id={$id}");
+
+        self::notifyAllPlayers( 'message', clienttranslate('${player_name} makes a Piña Coladice and wins the game'),
         array(
+            'player_name' => $player_name,
                 
         ));
 
-        self::notifyAllPlayers( 'message', clienttranslate('end game'),
-        array(
-                
-        ));
-
+        // END GAME
+        game::$instance->End();
     }
 
     else
@@ -597,8 +610,9 @@ function checkEndGame($id) {
             {
                 self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
 
-                self::notifyAllPlayers( 'message', clienttranslate('20+'),
+                self::notifyAllPlayers( 'message', clienttranslate('${player_name} reaches 20 points and triggers the end of the game. The next players will play one last time'),
                 array(
+                    'player_name' => $player_name,
                         
                 ));
 
@@ -608,8 +622,9 @@ function checkEndGame($id) {
             {
                 self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
 
-                self::notifyAllPlayers( 'message', clienttranslate('no token'),
+                self::notifyAllPlayers( 'message', clienttranslate('${player_name} places the last cocktail token and triggers the end of the game. The next players will play one last time'),
                 array(
+                    'player_name' => $player_name,
                         
                 ));
 
@@ -624,10 +639,8 @@ function checkEndGame($id) {
 
             if($end == 1)
             {
-                self::notifyAllPlayers( 'message', clienttranslate('end game'),
-                array(
-                        
-                ));
+                // END GAME
+                game::$instance->End();
             }   
 
 
@@ -637,6 +650,69 @@ function checkEndGame($id) {
 
 
 }
+
+// Stats turns
+
+    function updateNbTurns()
+    {
+        $player_id = self::getActivePlayerId();
+        $this->incStat(1, 'turns_number', $player_id);
+        if (self::getPlayerNoById($player_id) == 1) {
+            $this->incStat(1, 'turns_number');
+        }
+    }
+
+//END
+
+    function End()
+    {
+        $players = self::getObjectListFromDB( "SELECT player_id FROM player", true );
+        $player_pina = self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_pina=1");
+
+        foreach($players as $player)
+        {
+            $score = self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id={$player}");
+            $pina = self::getUniqueValueFromDB("SELECT player_pina FROM player WHERE player_id={$player}");
+            $this->setStat($score, 'score', $player);
+            $this->setStat($pina, 'pina', $player);
+
+        }
+
+        if($player_pina != null)
+        {
+            self::DbQuery("UPDATE player SET player_score = 0");
+            self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$player_pina}");
+
+        }
+
+        else
+        {
+
+            $wins = self::getObjectListFromDB( "SELECT player_id id, player_score score, player_positionplace place FROM player WHERE player_score = (SELECT MAX(player_score) FROM player)" );
+            self::DbQuery("UPDATE player SET player_score = 0");
+            
+            if(count($wins) >= 2)
+            {
+                foreach($wins as $win)
+                {
+                    self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$win['id']}");
+                }
+                // Trouver la ligne avec le place max et place le plus haut
+                $idWin= $wins[array_search(max(array_column($wins, 'place')), array_column($wins, 'place'))]['id'];
+                self::DbQuery("UPDATE player set player_score_aux = 1 WHERE player_id={$idWin}");
+                
+            }
+
+            else{
+                self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$wins[0]['id']}");
+            }
+        }
+               
+        game::$instance->majScore();
+        $this->gamestate->nextState('end');
+
+
+    }
 
 
 

@@ -1,1 +1,43 @@
-{}
+{
+    "table": {
+
+        "turns_number": {
+          "id": 10,
+          "name": "Number of turns",
+          "type": "int"
+        }
+        
+    },
+
+
+
+    "player": {
+
+        "turns_number": {
+          "id": 10,
+          "name": "Number of turns",
+          "type": "int"
+        },
+
+      "score": {
+        "id": 11,
+        "name": "Score",
+        "type": "int"
+      },
+
+      "place": {
+        "id": 12,
+        "name": "Order of the first cocktail token placed",
+        "type": "int"
+      },
+
+
+      "pina": {
+        "id": 13,
+        "name": "Piña Coladice",
+        "type": "int"
+      }
+  
+
+    }
+}

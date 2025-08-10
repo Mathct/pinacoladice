@@ -81,3 +81,4 @@ CREATE TABLE IF NOT EXISTS `bocks` (
 ALTER TABLE `player` ADD `player_token` int(5) NOT NULL DEFAULT 6;
 ALTER TABLE `player` ADD `player_positionplace` int(5) NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_end` int(5) NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `player_pina` int(5) NOT NULL DEFAULT 0;

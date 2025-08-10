@@ -55,7 +55,7 @@ class Pending extends APP_GameClass
         
         game::$instance->notifyAllPlayers(
                 'rolldice',
-                '',
+                clienttranslate('${player_name} rolls the dice'),
                 array(
                     'player_name' => $this->player_name,
                     'player_id' => $this->player_id,
@@ -79,7 +79,7 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must place a coktail token onto a coaster or roll the dice');
+        $ret['title'] = clienttranslate('${actplayer} must place a coktail token on a coaster or roll the dice');
         
 
         //// dice result
@@ -160,7 +160,7 @@ class Pending extends APP_GameClass
 
         else
         {
-            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a coktail token onto a coaster or block/unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a coktail token on a coaster or block/unblock dice and re-roll');
         }
 
         $ret['buttons'][]='block';
@@ -204,7 +204,7 @@ class Pending extends APP_GameClass
             
             game::$instance->notifyAllPlayers(
                     'rolldice',
-                    '',
+                    clienttranslate('${player_name} rolls the dice'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
@@ -258,8 +258,9 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    '',
+                    clienttranslate('${player_name} places a cocktail token on a coaster'),
                     array(
+                        'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
@@ -270,8 +271,21 @@ class Pending extends APP_GameClass
             game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
 
             game::$instance->positionPlace($this->player_id);
-            game::$instance->adjScore($this->player_id, $explode[1]);
+            $adj = game::$instance->adjScore($this->player_id, $explode[1]);
+            $finalscore = $score + $adj;
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} scores ${pv} points'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'pv' => $finalscore,
+                        
+                    )
+            );
+
             game::$instance->majScore();
+            game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
@@ -290,7 +304,7 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must place a coktail token onto a coaster or roll the dice');
+        $ret['title'] = clienttranslate('${actplayer} must place a coktail token on a coaster or roll the dice');
         
 
         //// dice result
@@ -370,7 +384,7 @@ class Pending extends APP_GameClass
 
         else
         {
-            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a coktail token onto a coaster or block/unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a coktail token on a coaster or block/unblock dice and re-roll');
         }
 
 
@@ -416,7 +430,7 @@ class Pending extends APP_GameClass
             
             game::$instance->notifyAllPlayers(
                     'rolldice',
-                    '',
+                    clienttranslate('${player_name} rolls the dice'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
@@ -473,8 +487,9 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    '',
+                    clienttranslate('${player_name} places a cocktail token on a coaster'),
                     array(
+                        'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
@@ -485,8 +500,21 @@ class Pending extends APP_GameClass
             game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
 
             game::$instance->positionPlace($this->player_id);
-            game::$instance->adjScore($this->player_id, $explode[1]);
+            $adj = game::$instance->adjScore($this->player_id, $explode[1]);
+            $finalscore = $score + $adj;
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} scores ${pv} points'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'pv' => $finalscore,
+                        
+                    )
+            );
+
             game::$instance->majScore();
+            game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
@@ -576,7 +604,7 @@ class Pending extends APP_GameClass
 
         else
         {
-            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must place a coktail token onto a coaster');
+            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must place a coktail token on a coaster');
         }
 
 
@@ -591,6 +619,7 @@ class Pending extends APP_GameClass
     {   
         if($varg1 == "continue")
         {
+            game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
@@ -639,8 +668,9 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    '',
+                    clienttranslate('${player_name} places a cocktail token on a coaster'),
                     array(
+                        'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
@@ -651,8 +681,21 @@ class Pending extends APP_GameClass
             game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
 
             game::$instance->positionPlace($this->player_id);
-            game::$instance->adjScore($this->player_id, $explode[1]);
+            $adj = game::$instance->adjScore($this->player_id, $explode[1]);
+            $finalscore = $score + $adj;
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} scores ${pv} points'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'pv' => $finalscore,
+                        
+                    )
+            );
+
             game::$instance->majScore();
+            game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
             game::$instance->giveExtraTime($this->player_id);
