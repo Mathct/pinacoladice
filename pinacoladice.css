@@ -339,7 +339,41 @@ button {
   width: 100%;
   display: flex;
   justify-content: center;
-}  
+} 
+
+.animScore{
+  color: white;
+  text-shadow: 
+        2px 2px 0px black, /* Ombre vers le bas à droite */
+        -2px -2px 0px black, /* Ombre vers le haut à gauche */
+        -2px 2px 0px black, /* Ombre vers le bas à gauche */
+        2px -2px 0px black; /* Ombre vers le haut à droite */
+  font-size: 50px;
+  font-weight: bold;
+  z-index: 20;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: animscore 1.5s forwards;
+  transform-origin: center center;
+}
+
+@keyframes animscore {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: opacity(1);
+  }
+  90% {
+    transform: translate(-50%, -50%) scale(2);
+    filter: opacity(1);
+  }
+
+  100% {
+    
+    filter: opacity(0);
+  }
+}
   
   
 

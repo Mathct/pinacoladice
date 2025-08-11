@@ -108,6 +108,8 @@ var jstpl_reservetokencontainer='<div id="reservetokencontainer_${id}" class="re
 var jstpl_firstplayercontainer='<div id="firstplayercontainer_${id}" class="firstplayercontainer"></div>';
 var jstpl_firstplayer='<div id="firstplayer" class="first_${mode}"></div>';
 
+var jstpl_animScore='<div class="animScore">${score}</div>';
+
 </script>  
 
 {OVERALL_GAME_FOOTER}

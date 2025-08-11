@@ -1014,6 +1014,7 @@ rollDice: function () {
             dojo.subscribe( 'masklock', this, "notif_masklock" );
             dojo.subscribe( 'moveToken', this, "notif_moveToken" );
             dojo.subscribe( 'score', this, "notif_score" );
+            dojo.subscribe( 'animScore', this, "notif_animScore" );
         },  
         
         notif_rolldice: function( notif )
@@ -1068,18 +1069,6 @@ rollDice: function () {
         },
 
 
-        // notif_moveToken: function( notif )
-        // {
-        //     const element = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
-        //     element.id = "token_"+notif.args.bock+"_"+notif.args.player_id;
-
-        //     const enfant = element.id;
-        //     const parent = "score"+notif.args.score_position+"_"+notif.args.bock;
-
-        //     this.attachToNewParentNoDestroy( enfant, parent );
-        //     this.slideToObject(enfant, parent ).play();
-        // },
-
         notif_moveToken: async function(notif)
         {
             const mobile = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
@@ -1096,6 +1085,25 @@ rollDice: function () {
         notif_score: function( notif )
         {
             this.scoreCtrl[ notif.args.player_id].toValue( notif.args.score);
+            
+        },
+
+        notif_animScore: function( notif )
+        {
+            dojo.place( this.format_block( 'jstpl_animScore', {
+                        score: "+"+notif.args.score,
+                                                                    
+                    } ) , 'bock_'+notif.args.bock );
+
+
+            setTimeout(() => 
+            {
+                            
+                document.querySelectorAll('.animScore').forEach(el => el.remove());
+
+
+            }, "1600");
+            
             
         },
 

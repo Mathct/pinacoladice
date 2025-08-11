@@ -528,6 +528,16 @@ function adjScore($id, $type) {
         if(($emplacement1 == $id)||($emplacement2 == $id))
         {
             $adj++;
+            $type = self::getUniqueValueFromDB("SELECT card_type FROM bocks WHERE card_location_arg={$test}");
+            game::$instance->notifyAllPlayers(
+                    'animScore',
+                    '',
+                    array(
+                       'bock' => $type,
+                       'score' => 1
+
+                    )
+            );
         }
 
     }
@@ -697,6 +707,7 @@ function checkEndGame($id) {
                 {
                     self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$win['id']}");
                 }
+
                 // Trouver la ligne avec le place max et place le plus haut
                 $idWin= $wins[array_search(max(array_column($wins, 'place')), array_column($wins, 'place'))]['id'];
                 self::DbQuery("UPDATE player set player_score_aux = 1 WHERE player_id={$idWin}");

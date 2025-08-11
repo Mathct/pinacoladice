@@ -284,6 +284,16 @@ class Pending extends APP_GameClass
                     )
             );
 
+            game::$instance->notifyAllPlayers(
+                    'animScore',
+                    '',
+                    array(
+                       'bock' => $explode[1],
+                       'score' => $score
+
+                    )
+            );
+
             game::$instance->majScore();
             game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
