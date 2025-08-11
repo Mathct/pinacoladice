@@ -1015,6 +1015,7 @@ rollDice: function () {
             dojo.subscribe( 'moveToken', this, "notif_moveToken" );
             dojo.subscribe( 'score', this, "notif_score" );
             dojo.subscribe( 'animScore', this, "notif_animScore" );
+            dojo.subscribe( 'pina', this, "notif_pina" );
         },  
         
         notif_rolldice: function( notif )
@@ -1103,6 +1104,25 @@ rollDice: function () {
 
 
             }, "1600");
+            
+            
+        },
+
+        notif_pina: function( notif )
+        {
+            dojo.place( this.format_block( 'jstpl_animPina', {
+                       
+                                                                    
+                    } ) , 'board_id' );
+
+
+            setTimeout(() => 
+            {
+                            
+                document.getElementById('pina').remove();
+
+
+            }, "4500");
             
             
         },

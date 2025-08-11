@@ -523,6 +523,16 @@ class Pending extends APP_GameClass
                     )
             );
 
+            game::$instance->notifyAllPlayers(
+                    'animScore',
+                    '',
+                    array(
+                       'bock' => $explode[1],
+                       'score' => $score
+
+                    )
+            );
+
             game::$instance->majScore();
             game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
@@ -701,6 +711,16 @@ class Pending extends APP_GameClass
                         'player_name' => $this->player_name,
                         'pv' => $finalscore,
                         
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'animScore',
+                    '',
+                    array(
+                       'bock' => $explode[1],
+                       'score' => $score
+
                     )
             );
 

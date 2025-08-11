@@ -82,6 +82,7 @@
     <div id="carre43" class="carre"></div>
     <div id="carre44" class="carre"></div>
   
+  
   </div>
 
   
@@ -109,6 +110,8 @@ var jstpl_firstplayercontainer='<div id="firstplayercontainer_${id}" class="firs
 var jstpl_firstplayer='<div id="firstplayer" class="first_${mode}"></div>';
 
 var jstpl_animScore='<div class="animScore">${score}</div>';
+
+var jstpl_animPina='<div id="pina"></div>';
 
 </script>  
 

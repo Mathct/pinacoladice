@@ -374,6 +374,43 @@ button {
     filter: opacity(0);
   }
 }
+
+#pina{
+
+  height: 415px;
+  width: 700px;
+  background-image: url("img/pina.png");
+  background-size: 100% 100%;
+  z-index: 50;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: animpina 4s forwards;
+  transform-origin: center center;
+  
+}
+
+@keyframes animpina {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    filter: opacity(0);
+  }
+
+  20% {
+    filter: opacity(1);
+  }
+
+  80% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: opacity(1);
+  }
+
+  100% {
+    
+    filter: opacity(0);
+  }
+}
   
   
 

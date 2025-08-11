@@ -602,6 +602,17 @@ function checkEndGame($id) {
                 
         ));
 
+        game::$instance->notifyAllPlayers(
+                    'pina',
+                    '',
+                    array(
+                      
+
+                    )
+        );
+
+        game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+
         // END GAME
         game::$instance->End();
     }
@@ -649,6 +660,7 @@ function checkEndGame($id) {
 
             if($end == 1)
             {
+                game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
                 // END GAME
                 game::$instance->End();
             }   
