@@ -620,6 +620,7 @@ class Pending extends APP_GameClass
         if(count($ret["selectable"]) == 0)
         {
             $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must pass');
+            $ret['buttons'][]='pass';
         }
 
         else
@@ -628,7 +629,7 @@ class Pending extends APP_GameClass
         }
 
 
-        $ret['buttons'][]='continue';
+        
         
         
         
@@ -637,7 +638,7 @@ class Pending extends APP_GameClass
 
     function Last($parg1, $parg2, $varg1, $varg2)
     {   
-        if($varg1 == "continue")
+        if($varg1 == "pass")
         {
             game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);

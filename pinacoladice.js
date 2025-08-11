@@ -240,10 +240,6 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                                 {
                                 this.addActionButton( 'cancel', _("Cancel") ,'onOpButton', null, null, 'red' );
                                 }
-                                if(args.buttons[nb] == "pass")
-                                {
-                                this.addActionButton( 'pass', _("Pass") ,'onOpButton', null, null, 'red' );
-                                }
                                 if(args.buttons[nb] == "yes") 
                                 {
                                 this.addActionButton('btn_yes', _("Yes"), 'onOpButton', null, null, 'blue');
@@ -257,13 +253,14 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                                 {
                                 this.addActionButton( 'dice', _("Dice") ,'onOpButton', null, null, 'blue' );
                                 }
-                                if(args.buttons[nb] == "continue") 
+                                if(args.buttons[nb] == "pass") 
                                 {
-                                this.addActionButton( 'continue', _("Continue") ,'onOpButton', null, null, 'blue' );
-                                    dojo.addClass( 'continue', 'disabled');
+                                this.addActionButton( 'pass', _("Pass") ,'onOpButton', null, null, 'red' );
+                                    dojo.addClass( 'pass', 'disabled');
                                     setTimeout(() => 
                                     {
-                                        dojo.removeClass( 'continue', 'disabled');
+                                        dojo.removeClass( 'pass', 'disabled');
+                                        this.startActionTimer('pass', 5, 1);
                                     }, "2000");
                                 }
                                 if(args.buttons[nb] == "roll") 
@@ -357,12 +354,13 @@ attachToNewParentNoDestroy: function (mobile_in, new_parent_in, relation, place_
         return box;
     },
 
-// TIMER sur bouton
+// TIMER sur bouton confirm
 
 startActionTimer: function(buttonId, time, pref, autoclick = false) {
     var button = $(buttonId);
     var isReadOnly = this.isReadOnly();
     if (button == null || isReadOnly || pref == 2) {
+        //debug('Ignoring startActionTimer(' + buttonId + ')', 'readOnly=' + isReadOnly, 'prefValue=' + pref);
         return;
     }
 
