@@ -4,19 +4,19 @@
 
 
 <div id="dice_content">
-<div class="scene">
-    <div id="blockdice1" class="blockdice"></div>
-    <div class="dice" id="dice1">
-      <div class="face face1"></div>
-      <div class="face face2"></div>
-      <div class="face face3"></div>
-      <div class="face face4"></div>
-      <div class="face face5"></div>
-      <div class="face face6"></div>
+    <div id="scene_1" class="scene">
+        <div id="blockdice1" class="blockdice"></div>
+        <div class="dice" id="dice1">
+          <div class="face face1"></div>
+          <div class="face face2"></div>
+          <div class="face face3"></div>
+          <div class="face face4"></div>
+          <div class="face face5"></div>
+          <div class="face face6"></div>
+        </div>
     </div>
-</div>
 
-    <div class="scene">
+    <div id="scene_2" class="scene">
     <div id="blockdice2" class="blockdice"></div>
       <div class="dice" id="dice2">
         <div class="face face1"></div>
@@ -27,7 +27,8 @@
         <div class="face face6"></div>
       </div>
     </div>
-    <div class="scene">
+
+    <div id="scene_3" class="scene">
     <div id="blockdice3" class="blockdice"></div>
       <div class="dice" id="dice3">
         <div class="face face1"></div>
@@ -38,7 +39,8 @@
         <div class="face face6"></div>
       </div>
     </div>
-    <div class="scene">
+
+    <div id="scene_4" class="scene">
     <div id="blockdice4" class="blockdice"></div>
       <div class="dice" id="dice4">
         <div class="face face1"></div>
@@ -49,7 +51,8 @@
         <div class="face face6"></div>
       </div>
     </div>
-    <div class="scene">
+    
+    <div id="scene_5" class="scene">
     <div id="blockdice5" class="blockdice"></div>
       <div class="dice" id="dice5">
         <div class="face face1"></div>

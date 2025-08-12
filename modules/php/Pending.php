@@ -67,6 +67,7 @@ class Pending extends APP_GameClass
                     'player_id' => $this->player_id,
                     'roll' => $result,
                     'block' => $block,
+                    'happy' => 0
                 )
             );
         
@@ -216,6 +217,7 @@ class Pending extends APP_GameClass
                         'player_id' => $this->player_id,
                         'roll' => $result,
                         'block' => $block,
+                        'happy' => 0
                     )
                 );
             
@@ -302,8 +304,8 @@ class Pending extends APP_GameClass
 
             game::$instance->majScore();
             game::$instance->updateNbTurns();
-            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
 
@@ -452,6 +454,7 @@ class Pending extends APP_GameClass
                         'player_id' => $this->player_id,
                         'roll' => $result,
                         'block' => $block,
+                        'happy' => 0
                     )
                 );
             
@@ -541,8 +544,8 @@ class Pending extends APP_GameClass
 
             game::$instance->majScore();
             game::$instance->updateNbTurns();
-            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
            
@@ -651,7 +654,7 @@ class Pending extends APP_GameClass
 
     function Last($parg1, $parg2, $varg1, $varg2)
     {   
-        if($varg1 == "pass" || $varg1 == "happy")
+        if($varg1 == "pass")
         {
             game::$instance->notifyAllPlayers(
                     'message',
@@ -664,12 +667,72 @@ class Pending extends APP_GameClass
             );
 
             game::$instance->updateNbTurns();
-            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
 
         }  
+
+        elseif($varg1 == "happy")
+        {
+            self::DbQuery("UPDATE dice set showdice = 2");
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} cannot place a cocktail token and triggers Happy Hour'),
+                    array(
+                        'player_name' => $this->player_name,
+                        
+                        
+                    )
+            );
+
+            $result = [];
+            $index = 0;
+            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
+            
+
+            foreach ($block as $etat)
+            {
+                $dice = 'dice'.($index+1);
+
+                if($etat == 0)
+                {
+                    $rand = bga_rand(1, 6);
+                    $result[] = $rand;
+                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                }
+
+                if($etat == 1)
+                {
+                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                }
+
+                $index++;
+                
+            }
+          
+            
+            
+            game::$instance->notifyAllPlayers(
+                    'rolldice',
+                    clienttranslate('${player_name} rolls the dice for Happy Hour'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'player_id' => $this->player_id,
+                        'roll' => $result,
+                        'block' => $block,
+                        'happy' => 1
+                    )
+                );
+
+            game::$instance->initDiceHappy();
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPending($this->player_id, "HappyHour");
+
+        }
         
         else
         {
@@ -750,17 +813,84 @@ class Pending extends APP_GameClass
 
             game::$instance->majScore();
             game::$instance->updateNbTurns();
-            game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
 
 
         }
 
-          
+    }
+
+    function argHappyHour($parg1, $parg2) 
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} rolls the Happy Hour dice');
         
 
+        $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+
+        if($result_dice == 1)
+        {
+            $ret['titleyou'] = clienttranslate('Perdez immédiatement 3 points');
+        }
+
+        if($result_dice == 2)
+        {
+            $ret['titleyou'] = clienttranslate('Retirez un de vos pions Cocktail d’un sous-verre Combinaison');
+        }
+
+        if($result_dice == 3)
+        {
+            $ret['titleyou'] = clienttranslate('Tous les autres joueurs gagnent immédiatement 1 point');
+        }
+
+        if($result_dice == 4)
+        {
+            $ret['titleyou'] = clienttranslate('Déplacez un pion Cocktail d’un autre joueur vers un autre emplacement libre');
+        }
+
+        if($result_dice == 5)
+        {
+            $ret['titleyou'] = clienttranslate('Retournez un sous-verre Combinaison de votre choix sur son autre face');
+        }
+
+        if($result_dice == 6)
+        {
+            $ret['titleyou'] = clienttranslate('Marquez immédiatement 4 points');
+        }
+        
+        $ret['buttons'][]='continue';
+
+                
+        return $ret;
+    }
+
+    function HappyHour($parg1, $parg2, $varg1, $varg2)
+    {
+        $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+
+        game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+        game::$instance->majScore();
+        game::$instance->updateNbTurns();
+        game::$instance->initDice();
+        game::$instance->checkEndGame($this->player_id);
+        game::$instance->giveExtraTime($this->player_id);
+        game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+        
+        
     }
         
        

@@ -271,6 +271,16 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                                         this.startActionTimer('pass', 5, 1);
                                     }, "2000");
                                 }
+                                if(args.buttons[nb] == "continue") 
+                                {
+                                this.addActionButton( 'continue', _("Continue") ,'onOpButton', null, null, 'red' );
+                                    dojo.addClass( 'continue', 'disabled');
+                                    setTimeout(() => 
+                                    {
+                                        dojo.removeClass( 'continue', 'disabled');
+                                        this.startActionTimer('continue', 5, 1);
+                                    }, "2000");
+                                }
                                 if(args.buttons[nb] == "happy") 
                                 {
                                 this.addActionButton( 'happy', _("Happy Hour") ,'onOpButton', null, null, 'red' );
@@ -507,6 +517,22 @@ setupBoard: function () {
         dice.style.display = "flex";
     }
 
+    if(this.gamedatas.showdice == 2)
+    { 
+        var dice = document.getElementById('dice_content')
+        dice.style.display = "flex";
+        var dice2 = document.getElementById('scene_2');
+        dice2.style.display = "none";
+        var dice3 = document.getElementById('scene_3');
+        dice3.style.display = "none";
+        var dice4 = document.getElementById('scene_4');
+        dice4.style.display = "none";
+        var dice5 = document.getElementById('scene_5');
+        dice5.style.display = "none";
+}
+
+    
+
     
     for( var bock in this.gamedatas.bocks)   
     {
@@ -519,7 +545,7 @@ setupBoard: function () {
     }
 
     
-
+console.warn(this.gamedatas.showdice)
 },
 
 
@@ -1032,11 +1058,24 @@ rollDice: function () {
             dojo.subscribe( 'score', this, "notif_score" );
             dojo.subscribe( 'animScore', this, "notif_animScore" );
             dojo.subscribe( 'pina', this, "notif_pina" );
+            dojo.subscribe( 'endhappy', this, "notif_endhappy" );
         },  
         
         notif_rolldice: function( notif )
         {
-            var dice = document.getElementById('dice_content')
+            if(notif.args.happy == 1)
+            {
+               var dice2 = document.getElementById('scene_2');
+               dice2.style.display = "none";
+               var dice3 = document.getElementById('scene_3');
+               dice3.style.display = "none";
+               var dice4 = document.getElementById('scene_4');
+               dice4.style.display = "none";
+               var dice5 = document.getElementById('scene_5');
+               dice5.style.display = "none";
+            }
+
+            var dice = document.getElementById('dice_content');
             dice.style.display = "flex";
 
             this.forcedFaces = notif.args.roll;
@@ -1142,6 +1181,21 @@ rollDice: function () {
             }, "4500");
             
             
+        },
+
+        notif_endhappy: function( notif )
+        {
+            
+            var dice2 = document.getElementById('scene_2');
+            dice2.style.display = "block";
+            var dice3 = document.getElementById('scene_3');
+            dice3.style.display = "block";
+            var dice4 = document.getElementById('scene_4');
+            dice4.style.display = "block";
+            var dice5 = document.getElementById('scene_5');
+            dice5.style.display = "block";
+            
+               
         },
 
 

@@ -166,6 +166,28 @@ class Game extends \Table
             self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location = 'board'");
         }
 
+        $players_for_no = self::getObjectListFromDB( "SELECT player_id id, player_no no FROM player" );
+        foreach($players_for_no as $player_for_no)
+        {
+            if($player_for_no['no']==1)
+            {
+                self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id = {$player_for_no['id']}");
+            }
+            if($player_for_no['no']==2)
+            {
+                self::DbQuery("UPDATE player SET player_score = 2 WHERE player_id = {$player_for_no['id']}");
+            }
+            if($player_for_no['no']==3)
+            {
+                self::DbQuery("UPDATE player SET player_score = 3 WHERE player_id = {$player_for_no['id']}");
+            }
+            if($player_for_no['no']==4)
+            {
+                self::DbQuery("UPDATE player SET player_score = 4 WHERE player_id = {$player_for_no['id']}");
+            }
+
+        }
+
 
 
                 
@@ -199,7 +221,7 @@ protected function getAllDatas()
         "SELECT `player_id` `id`, `player_no` `no`, `player_score` `score`, `player_color` `color`, `player_token` `token` FROM `player`"
     );
 
-    $result["mode"] = $this->getGameStateValue('game_mode');;
+    $result["mode"] = $this->getGameStateValue('game_mode');
 
     $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
 
@@ -482,6 +504,25 @@ function initDice(){
         );
 
     self::DbQuery("UPDATE dice set showdice = 0");
+    self::DbQuery("UPDATE dice set blockrolldice1 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice2 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice3 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice4 = 0");
+    self::DbQuery("UPDATE dice set blockrolldice5 = 0");
+
+}
+
+function initDiceHappy(){
+
+    game::$instance->notifyAllPlayers(
+            'masklock',
+            '',
+            array(
+                
+            )
+        );
+
+    self::DbQuery("UPDATE dice set showdice = 2");
     self::DbQuery("UPDATE dice set blockrolldice1 = 0");
     self::DbQuery("UPDATE dice set blockrolldice2 = 0");
     self::DbQuery("UPDATE dice set blockrolldice3 = 0");
