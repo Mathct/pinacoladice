@@ -319,6 +319,38 @@ button {
   margin-bottom: 5px;
 }
 
+#player_board_title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 115px;
+  background-color: #ebd5bd;
+  border-radius: 8px 0 0 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.3);
+  padding: 5px 3px;
+   
+}
+
+#titre_1 {
+   width: 200px;
+   height: 119px;
+   background-image: url('img/titre_pannel.png');
+   background-size: 100% 100%;
+   margin-left: auto;
+   margin-right: auto;
+   
+}
+
+#titre_2 {
+   width: 200px;
+   height: 119px;
+   background-image: url('img/titre_pannel_happy.png');
+   background-size: 100% 100%;
+   margin-left: auto;
+   margin-right: auto;
+   
+}
+
 /* FIRST PLAYER */
 
 .first_A{
@@ -424,9 +456,17 @@ button {
   
 
 
+/*MEDIA*/
+
+@media screen and (max-width: 1154px) {
+  
+  #player_board_title{
+    display: none;
+}
 
 
 
+}
 
 
 

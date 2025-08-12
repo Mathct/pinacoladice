@@ -113,6 +113,8 @@ var jstpl_animScore='<div class="animScore">${score}</div>';
 
 var jstpl_animPina='<div id="pina"></div>';
 
+var jstpl_player_board_title='<div id="player_board_title"><div id="titre_${mode}"></div></div>';
+
 </script>  
 
 {OVERALL_GAME_FOOTER}

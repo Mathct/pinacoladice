@@ -18,6 +18,11 @@ class Pending extends APP_GameClass
         $this->player_name = $p['player_name'];
         $this->player_score = $p['player_score'];
         $this->player_color = $p['player_color'];
+
+        
+        /// PREFERENCE DE CONFIRMATION
+
+        //$this->player_pref_confirm = game::$instance->getUniqueValueFromDB("SELECT pgp_value FROM bga_user_preferences WHERE pgp_player='{$this->player_id}' AND pgp_preference_id = 100");
     }
     
     function argNormalTurn($parg1, $parg2) // DICE 1
