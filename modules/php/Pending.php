@@ -619,7 +619,7 @@ class Pending extends APP_GameClass
 
         if(count($ret["selectable"]) == 0)
         {
-            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must pass');
+            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} cannot place a cocktail token');
             $ret['buttons'][]='pass';
         }
 

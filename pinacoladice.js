@@ -1072,6 +1072,7 @@ rollDice: function () {
         {
             const mobile = document.getElementById("reservetoken_"+notif.args.reserve_token+"_"+notif.args.player_id);
             mobile.id = "token_"+notif.args.bock+"_"+notif.args.player_id; // je change d'id
+            mobile.classList.add('tokenhover');
 
             const enfant = document.getElementById(mobile.id);
             const parent = document.getElementById("score"+notif.args.score_position+"_"+notif.args.bock);
