@@ -202,6 +202,8 @@ protected function getAllDatas()
         "SELECT `player_id` `id`, `player_no` `no`, `player_score` `score`, `player_color` `color`, `player_token` `token` FROM `player`"
     );
 
+    $result["mode"] = 1;
+
     $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
 
     $result['bocks'] = self::getObjectListFromDB( "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
@@ -711,14 +713,14 @@ function checkEndGame($id) {
         {
 
             $wins = self::getObjectListFromDB( "SELECT player_id id, player_score score, player_positionplace place FROM player WHERE player_score = (SELECT MAX(player_score) FROM player)" );
-            self::DbQuery("UPDATE player SET player_score = 0");
+            //self::DbQuery("UPDATE player SET player_score = 0");
             
             if(count($wins) >= 2)
             {
-                foreach($wins as $win)
-                {
-                    self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$win['id']}");
-                }
+                // foreach($wins as $win)
+                // {
+                //     self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$win['id']}");
+                // }
 
                 // Trouver la ligne avec le place max et place le plus haut
                 $idWin= $wins[array_search(max(array_column($wins, 'place')), array_column($wins, 'place'))]['id'];
@@ -726,9 +728,9 @@ function checkEndGame($id) {
                 
             }
 
-            else{
-                self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$wins[0]['id']}");
-            }
+            // else{
+            //     self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$wins[0]['id']}");
+            // }
         }
                
         game::$instance->majScore();

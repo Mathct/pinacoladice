@@ -640,6 +640,16 @@ class Pending extends APP_GameClass
     {   
         if($varg1 == "pass")
         {
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} passes'),
+                    array(
+                        'player_name' => $this->player_name,
+                        
+                        
+                    )
+            );
+
             game::$instance->updateNbTurns();
             game::$instance->checkEndGame($this->player_id);
             game::$instance->initDice();
