@@ -19,9 +19,10 @@ class Pending extends APP_GameClass
         $this->player_score = $p['player_score'];
         $this->player_color = $p['player_color'];
 
-        
-        /// PREFERENCE DE CONFIRMATION
+        // GAME MODE
+        $this->game_mode = game::$instance->getGameStateValue('game_mode');
 
+        /// PREFERENCE DE CONFIRMATION
         //$this->player_pref_confirm = game::$instance->getUniqueValueFromDB("SELECT pgp_value FROM bga_user_preferences WHERE pgp_player='{$this->player_id}' AND pgp_preference_id = 100");
     }
     
@@ -625,7 +626,14 @@ class Pending extends APP_GameClass
         if(count($ret["selectable"]) == 0)
         {
             $ret['titleyou'] = clienttranslate('3rd Roll: ${you} cannot place a cocktail token');
-            $ret['buttons'][]='pass';
+            if($this->game_mode == 1)
+            {
+                $ret['buttons'][]='pass';
+            }
+            if($this->game_mode == 2)
+            {
+                $ret['buttons'][]='happy';
+            }
         }
 
         else
@@ -643,7 +651,7 @@ class Pending extends APP_GameClass
 
     function Last($parg1, $parg2, $varg1, $varg2)
     {   
-        if($varg1 == "pass")
+        if($varg1 == "pass" || $varg1 == "happy")
         {
             game::$instance->notifyAllPlayers(
                     'message',

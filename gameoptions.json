@@ -1,1 +1,23 @@
-{}
+{
+    "100": {
+        "name": "Game mode",
+        "values": {
+            "1": {
+                "name": "Normal", 
+                "tmdisplay": "Normal", 
+                "description": ""
+            },
+
+            "2": {
+                "name": "Happy Hour", 
+                "tmdisplay": "Happy Hour", 
+                "description": ""
+            }
+              
+    
+        },
+        
+        "default": 1
+              
+    }
+}

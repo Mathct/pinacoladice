@@ -271,6 +271,16 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                                         this.startActionTimer('pass', 5, 1);
                                     }, "2000");
                                 }
+                                if(args.buttons[nb] == "happy") 
+                                {
+                                this.addActionButton( 'happy', _("Happy Hour") ,'onOpButton', null, null, 'red' );
+                                    dojo.addClass( 'happy', 'disabled');
+                                    setTimeout(() => 
+                                    {
+                                        dojo.removeClass( 'happy', 'disabled');
+                                        this.startActionTimer('happy', 5, 1);
+                                    }, "2000");
+                                }
                                 if(args.buttons[nb] == "roll") 
                                 {
                                 this.addActionButton( 'roll', _("Roll the dice") ,'onOpButton', null, null, 'blue' );
@@ -483,7 +493,7 @@ setupBoard: function () {
         if(this.gamedatas.players[player_id].no == 1)
         {
             dojo.place( this.format_block( 'jstpl_firstplayer', {
-                mode: "A",                                    
+                mode: this.gamedatas.mode,                                    
             } ) , 'firstplayercontainer_'+player_id );
             this.addTooltip( 'firstplayer', _('First player'),'' );
         }

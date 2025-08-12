@@ -45,10 +45,7 @@ class Game extends \Table
         require 'material.inc.php';
 
         $this->initGameStateLabels([
-            /*"my_first_global_variable" => 10,
-            "my_second_global_variable" => 11,
-            "my_first_game_variant" => 100,
-            "my_second_game_variant" => 101,*/
+            "game_mode" => 100,
         ]);  
         
         
@@ -202,7 +199,7 @@ protected function getAllDatas()
         "SELECT `player_id` `id`, `player_no` `no`, `player_score` `score`, `player_color` `color`, `player_token` `token` FROM `player`"
     );
 
-    $result["mode"] = 1;
+    $result["mode"] = $this->getGameStateValue('game_mode');;
 
     $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
 

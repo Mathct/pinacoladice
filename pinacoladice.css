@@ -353,7 +353,7 @@ button {
 
 /* FIRST PLAYER */
 
-.first_A{
+.first_1{
   height: 50px;
   width: 50px;
   background-image: url("img/first.jpg");
@@ -364,7 +364,7 @@ button {
   border-radius: 5px;
 }
 
-.first_B{
+.first_2{
   height: 50px;
   width: 50px;
   background-image: url("img/first.jpg");
