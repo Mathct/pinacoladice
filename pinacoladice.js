@@ -545,7 +545,7 @@ setupBoard: function () {
     }
 
     
-console.warn(this.gamedatas.showdice)
+
 },
 
 

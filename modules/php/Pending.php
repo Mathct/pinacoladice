@@ -36,7 +36,12 @@ class Pending extends APP_GameClass
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
         $ret['titleyou'] = clienttranslate('${you} must roll the dice');
 
-        
+        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        foreach($bockoccupedbyplayer as $bockoccuped)
+        {
+            $ret["selected"][] = 'bock_'.$bockoccuped;
+        }
+
         $ret['buttons'][]='roll';
 
                 
@@ -88,6 +93,11 @@ class Pending extends APP_GameClass
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must place a coktail token on a coaster or roll the dice');
         
+        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        foreach($bockoccupedbyplayer as $bockoccuped)
+        {
+            $ret["selected"][] = 'bock_'.$bockoccuped;
+        }
 
         //// dice result
 
@@ -324,6 +334,12 @@ class Pending extends APP_GameClass
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must place a coktail token on a coaster or roll the dice');
         
+
+        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        foreach($bockoccupedbyplayer as $bockoccuped)
+        {
+            $ret["selected"][] = 'bock_'.$bockoccuped;
+        }
 
         //// dice result
 
@@ -563,6 +579,11 @@ class Pending extends APP_GameClass
         $ret['title'] = clienttranslate('${actplayer} must place a coktail token or pass');
         
 
+        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        foreach($bockoccupedbyplayer as $bockoccuped)
+        {
+            $ret["selected"][] = 'bock_'.$bockoccuped;
+        }
 
         $resultdice = [];
         for($i = 1; $i <= 5; $i++)
