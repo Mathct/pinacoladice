@@ -858,32 +858,32 @@ class Pending extends APP_GameClass
 
         if($result_dice == 1)
         {
-            $ret['titleyou'] = clienttranslate('Perdez immédiatement 3 points');
+            $ret['titleyou'] = clienttranslate('${you} immediately lose 3 points');
         }
 
         if($result_dice == 2)
         {
-            $ret['titleyou'] = clienttranslate('Retirez un de vos pions Cocktail d’un sous-verre Combinaison');
+            $ret['titleyou'] = clienttranslate('${you} must remove one of your Cocktail tokens from a combination coaster');
         }
 
         if($result_dice == 3)
         {
-            $ret['titleyou'] = clienttranslate('Tous les autres joueurs gagnent immédiatement 1 point');
+            $ret['titleyou'] = clienttranslate('All other players immediately gain 1 point');
         }
 
         if($result_dice == 4)
         {
-            $ret['titleyou'] = clienttranslate('Déplacez un pion Cocktail d’un autre joueur vers un autre emplacement libre');
+            $ret['titleyou'] = clienttranslate('${you} must move another player\'s Cocktail token to a different, available space');
         }
 
         if($result_dice == 5)
         {
-            $ret['titleyou'] = clienttranslate('Retournez un sous-verre Combinaison de votre choix sur son autre face');
+            $ret['titleyou'] = clienttranslate('${you} flip any Combination coaster to its other side');
         }
 
         if($result_dice == 6)
         {
-            $ret['titleyou'] = clienttranslate('Marquez immédiatement 4 points');
+            $ret['titleyou'] = clienttranslate('${you} immediately score 4 points.');
         }
         
         $ret['buttons'][]='continue';
@@ -895,6 +895,8 @@ class Pending extends APP_GameClass
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
         $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+
+        
 
         game::$instance->notifyAllPlayers(
                     'endhappy',
