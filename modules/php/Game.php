@@ -672,7 +672,7 @@ function checkEndGame($id) {
             {
                 self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
 
-                self::notifyAllPlayers( 'message', clienttranslate('${player_name} reaches 20 points and triggers the end of the game. The next players will play one last time'),
+                self::notifyAllPlayers( 'message', clienttranslate('${player_name} reaches 20 points and triggers the end of the game (at the end of the turn)'),
                 array(
                     'player_name' => $player_name,
                         
@@ -684,7 +684,7 @@ function checkEndGame($id) {
             {
                 self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
 
-                self::notifyAllPlayers( 'message', clienttranslate('${player_name} places the last cocktail token and triggers the end of the game. The next players will play one last time'),
+                self::notifyAllPlayers( 'message', clienttranslate('${player_name} places the last cocktail token and triggers the end of the game (at the end of the turn)'),
                 array(
                     'player_name' => $player_name,
                         
@@ -695,11 +695,11 @@ function checkEndGame($id) {
 
         else
         {
-            //il faut verifier si le joueur suivant a declenché la fin de partie... si c'est le cas c'est un end game 
-            $after_id = game::$instance->getPlayerAfter($id);
-            $end = self::getUniqueValueFromDB("SELECT player_end FROM player WHERE player_id={$after_id}");
+            //il faut verifier si le joueur est et le dernier à jouer.. si c'est le cas c'est un end game
+            $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
+            $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
 
-            if($end == 1)
+            if($no == $count_players)
             {
                 game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
                 // END GAME
