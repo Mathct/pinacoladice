@@ -895,7 +895,7 @@ class Pending extends APP_GameClass
 
         if($result_dice == 6)
         {
-            $ret['titleyou'] = clienttranslate('${you} immediately score 4 points.');
+            $ret['titleyou'] = clienttranslate('${you} immediately score 4 points');
         }
         
         $ret['buttons'][]='continue';
@@ -907,9 +907,202 @@ class Pending extends APP_GameClass
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
         $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+        // $result_dice = 2;
+
+        if($result_dice == 1)
+        {
+            self::DbQuery("UPDATE player SET player_score = player_score -3 WHERE player_id={$this->player_id}");
+            game::$instance->notifyAllPlayers(
+                    'animScoreHappyLose3',
+                    '',
+                    array(
+                
+
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} immediately lose 3 points'),
+                    array(
+                        'player_name' => $this->player_name,
+                                                
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            
+        }
+
+        elseif($result_dice == 2)
+        {
+            
+            game::$instance->addPending($this->player_id, "Happy2");
+            
+        }
+
+        elseif($result_dice == 3)
+        {
+            $players = self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_id != '{$this->player_id}'", true );
+
+            foreach ($players as $player) {
+
+                self::DbQuery("UPDATE player SET player_score = player_score +1 WHERE player_id={$player}");
+            }
+
+            game::$instance->notifyAllPlayers(
+                    'animScoreHappyOtherWin1',
+                    '',
+                    array(
+                        'players_id' => $players,                
+
+                    )
+            );
+
+             game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('All other players immediately gain 1 point'),
+                    array(
+                        'player_name' => $this->player_name,
+                                                
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            
+        }
+
+        elseif($result_dice == 4)
+        {
+            game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            
+        }
+
+        elseif($result_dice == 5)
+        {
+            game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            
+        }
+
+        elseif($result_dice == 6)
+        {
+            self::DbQuery("UPDATE player SET player_score = player_score +4 WHERE player_id={$this->player_id}");
+
+            game::$instance->notifyAllPlayers(
+                    'animScoreHappyWin4',
+                    '',
+                    array(
+                        'player_id' => $this->player_id,
+
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} immediately score 4 points'),
+                    array(
+                        'player_name' => $this->player_name,
+                                                
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            
+        }
+
+                
+        
+    }
+
+
+function argHappy2($parg1, $parg2) // RECUP TOKEN
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} blabla');
+        $ret['titleyou'] = clienttranslate('${you} blabla');
 
         
 
+        $ret['buttons'][]='cancel';
+
+                
+        return $ret;
+    }
+
+    function Happy2($parg1, $parg2, $varg1, $varg2)
+    {
+        
+        
+        
         game::$instance->notifyAllPlayers(
                     'endhappy',
                     '',

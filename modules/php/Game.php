@@ -678,6 +678,16 @@ function checkEndGame($id) {
                         
                 ));
 
+                $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
+                $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
+
+                if($no == $count_players)
+                {
+                    game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+                    // END GAME
+                    game::$instance->End();
+                }
+
             }
 
             elseif ($reservetoken == 0)
@@ -689,6 +699,15 @@ function checkEndGame($id) {
                     'player_name' => $player_name,
                         
                 ));
+
+                $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
+
+                if($no == $count_players)
+                {
+                    game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+                    // END GAME
+                    game::$instance->End();
+                }
 
             }
         }

@@ -1059,6 +1059,9 @@ rollDice: function () {
             dojo.subscribe( 'animScore', this, "notif_animScore" );
             dojo.subscribe( 'pina', this, "notif_pina" );
             dojo.subscribe( 'endhappy', this, "notif_endhappy" );
+            dojo.subscribe( 'animScoreHappyLose3', this, "notif_animScoreHappyLose3" );
+            dojo.subscribe( 'animScoreHappyWin4', this, "notif_animScoreHappyWin4" );
+            dojo.subscribe( 'animScoreHappyOtherWin1', this, "notif_animScoreHappyOtherWin1" );
         },  
         
         notif_rolldice: function( notif )
@@ -1164,6 +1167,67 @@ rollDice: function () {
             
         },
 
+        notif_animScoreHappyLose3: function( notif )
+        {
+            dojo.place( this.format_block( 'jstpl_animScore', {
+                        score: "-3",
+                                                                    
+                    } ) , 'overall_player_board_'+ notif.args.player_id );
+
+
+            setTimeout(() => 
+            {
+                            
+                document.querySelectorAll('.animScore').forEach(el => el.remove());
+
+
+            }, "1600");
+            
+            
+        },
+
+        notif_animScoreHappyWin4: function( notif )
+        {
+            dojo.place( this.format_block( 'jstpl_animScore', {
+                        score: "+4",
+                                                                    
+                    } ) , 'overall_player_board_'+ notif.args.player_id);
+
+
+            setTimeout(() => 
+            {
+                            
+                document.querySelectorAll('.animScore').forEach(el => el.remove());
+
+
+            }, "1600");
+            
+            
+        },
+
+        notif_animScoreHappyOtherWin1: function( notif )
+        {
+            notif.args.players_id.forEach(playerId => {
+            dojo.place(
+                this.format_block('jstpl_animScore', { score: "+1" }),
+                'overall_player_board_' + playerId
+            );
+            });
+
+            setTimeout(() => 
+            {
+                            
+                document.querySelectorAll('.animScore').forEach(el => el.remove());
+
+
+            }, "1600");
+            
+            
+        },
+
+
+        
+        
         notif_pina: function( notif )
         {
             dojo.place( this.format_block( 'jstpl_animPina', {
