@@ -276,13 +276,17 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    clienttranslate('${player_name} places a cocktail token on a coaster'),
+                    clienttranslate('${player_name} places a cocktail token on a coaster (${combi})'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
-                        'score_position' => $positionscore
+                        'score_position' => $positionscore,
+                        'combi' =>    [
+                        'log' => '${name}',
+                        'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
+                        ],
                     )
             );
 
@@ -522,13 +526,17 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    clienttranslate('${player_name} places a cocktail token on a coaster'),
+                    clienttranslate('${player_name} places a cocktail token on a coaster (${combi})'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
-                        'score_position' => $positionscore
+                        'score_position' => $positionscore,
+                        'combi' =>    [
+                        'log' => '${name}',
+                        'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
+                        ],
                     )
             );
 
@@ -796,13 +804,17 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    clienttranslate('${player_name} places a cocktail token on a coaster'),
+                    clienttranslate('${player_name} places a cocktail token on a coaster (${combi})'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
-                        'score_position' => $positionscore
+                        'score_position' => $positionscore,
+                        'combi' =>    [
+                        'log' => '${name}',
+                        'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
+                        ],
                     )
             );
 
