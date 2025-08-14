@@ -91,7 +91,7 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must place a coktail token on a coaster or roll the dice');
+        $ret['title'] = clienttranslate('${actplayer} must place a cocktail token on a coaster or roll the dice');
         
         $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
         foreach($bockoccupedbyplayer as $bockoccuped)
@@ -177,7 +177,7 @@ class Pending extends APP_GameClass
 
         else
         {
-            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a coktail token on a coaster or block/unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('First Roll: ${you} must place a cocktail token on a coaster or block/unblock dice and re-roll');
         }
 
         $ret['buttons'][]='block';
@@ -336,7 +336,7 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must place a coktail token on a coaster or roll the dice');
+        $ret['title'] = clienttranslate('${actplayer} must place a cocktail token on a coaster or roll the dice');
         
 
         $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
@@ -422,7 +422,7 @@ class Pending extends APP_GameClass
 
         else
         {
-            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a coktail token on a coaster or block/unblock dice and re-roll');
+            $ret['titleyou'] = clienttranslate('2nd Roll: ${you} must place a cocktail token on a coaster or block/unblock dice and re-roll');
         }
 
 
@@ -584,7 +584,7 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must place a coktail token or pass');
+        $ret['title'] = clienttranslate('${actplayer} must place a cocktail token or pass');
         
 
         $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
@@ -670,7 +670,7 @@ class Pending extends APP_GameClass
 
         else
         {
-            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must place a coktail token on a coaster');
+            $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must place a cocktail token on a coaster');
         }
 
 
@@ -1087,8 +1087,8 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} blabla');
-        $ret['titleyou'] = clienttranslate('${you} blabla');
+        $ret['title'] = clienttranslate('${actplayer} must remove one of their cocktail tokens');
+        $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens');
 
         
 
