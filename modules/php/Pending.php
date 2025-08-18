@@ -907,7 +907,7 @@ class Pending extends APP_GameClass
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
         $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
-        // $result_dice = 2;
+        //$result_dice = 2;  // FORCER LE RESULTAT
 
         if($result_dice == 1)
         {
@@ -1084,15 +1084,27 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
     {
         $ret = array();
         $ret["selectable"] = array();
+        $ret["noselectable"] = array();
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must remove one of their cocktail tokens');
         $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens');
 
-        
+        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        $bockinoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 != '{$this->player_id}' AND score2 != '{$this->player_id}'", true );
 
-        $ret['buttons'][]='cancel';
+        foreach ($bockoccupedbyplayer as $occuped)
+        {
+            $ret["selectable"][] = 'bock_'.$occuped;
+        }
+
+        foreach ($bockinoccupedbyplayer as $inoccuped)
+        {
+            $ret["noselectable"][] = 'bock_'.$inoccuped;
+        }
+
+        
 
                 
         return $ret;
@@ -1100,6 +1112,36 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
     function Happy2($parg1, $parg2, $varg1, $varg2)
     {
+
+        if($varg1 == null)
+        {
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} has no cocktail token to remove'),
+                    array(
+                        'player_name' => $this->player_name,
+                                                
+                    )
+            );
+
+        }
+
+        else
+        {
+
+
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} remove one of their cocktail tokens'),
+                    array(
+                        'player_name' => $this->player_name,
+                                                
+                    )
+            );
+
+        }
         
         
         

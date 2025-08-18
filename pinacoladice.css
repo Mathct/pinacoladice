@@ -13,6 +13,13 @@
  *
  */
 
+ body {
+    background-image: url('img/back.jpg');
+    background-repeat: repeat;
+    background-size: 2772px 3200px;
+    
+  }
+
 
 #board_id {
   
