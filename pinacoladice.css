@@ -251,6 +251,8 @@ button {
   pointer-events: auto;
 }
 
+/* BOCKS*/
+
 .bockA {
   height: 100%;
   width: 100%;
@@ -260,7 +262,7 @@ button {
   border-radius: 8px;
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
   -webkit-filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
-  z-index: 1;
+  z-index: 2;
   box-sizing: border-box;
   
 }
@@ -274,10 +276,36 @@ button {
   border-radius: 8px;
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
   -webkit-filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.9));
-  z-index: 1;
+  z-index: 2;
   box-sizing: border-box;
   
 }
+
+/* FLIP*/
+
+.rotate {
+  transform: rotateY(180deg);
+  z-index: 1 !important;
+  transition: transform 1s ease-in-out;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.flipable{
+  transition: transform 1s ease-in-out;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.flipable.flip {
+    transform: rotateY(180deg);
+}
+
+.rotate.flip {
+    transform: rotateY(0deg);
+}
+
+/* SCORE CONTAINER*/
 
 .score1{
   height: 35px;
@@ -297,6 +325,8 @@ button {
   
 
 }
+
+/* TOKEN */
 
 .token{
 
@@ -319,6 +349,7 @@ button {
 .tokenhover:hover {
   opacity: 0;
 }
+
 
 /*PLAYER BOARD */
 

@@ -100,6 +100,7 @@
 
 var jstpl_bockA='<div id="bock_${id}" class="bockA" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
 var jstpl_bockB='<div id="bock_${id}" class="bockB" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
+var jstpl_flipbock='<div id="flipbock_${id}" class="${class} rotate" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
 
 var jstpl_score1='<div id="score1_${id}" class="score1" style="top: ${x}%; left: ${y}%;"></div>';
 var jstpl_score2='<div id="score2_${id}" class="score2" style="top: ${x}%; left: ${y}%;"></div>';

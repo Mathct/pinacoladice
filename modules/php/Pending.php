@@ -687,7 +687,7 @@ class Pending extends APP_GameClass
         {
             game::$instance->notifyAllPlayers(
                     'message',
-                    clienttranslate('${player_name} passes'),
+                    clienttranslate('${player_name} cannot place a cocktail token and passes'),
                     array(
                         'player_name' => $this->player_name,
                         
@@ -705,62 +705,8 @@ class Pending extends APP_GameClass
 
         elseif($varg1 == "happy")
         {
-            self::DbQuery("UPDATE dice set showdice = 2");
-
-            game::$instance->notifyAllPlayers(
-                    'message',
-                    clienttranslate('${player_name} cannot place a cocktail token and triggers Happy Hour'),
-                    array(
-                        'player_name' => $this->player_name,
-                        
-                        
-                    )
-            );
-
-            $result = [];
-            $index = 0;
-            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
-            $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
             
-
-            foreach ($block as $etat)
-            {
-                $dice = 'dice'.($index+1);
-
-                if($etat == 0)
-                {
-                    $rand = bga_rand(1, 6);
-                    $result[] = $rand;
-                    self::DbQuery("UPDATE dice set {$dice} = $rand");
-                }
-
-                if($etat == 1)
-                {
-                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
-                }
-
-                $index++;
-                
-            }
-          
-            
-            
-            game::$instance->notifyAllPlayers(
-                    'rolldice',
-                    clienttranslate('${player_name} rolls the dice for Happy Hour'),
-                    array(
-                        'player_name' => $this->player_name,
-                        'player_id' => $this->player_id,
-                        'roll' => $result,
-                        'block' => $block,
-                        'happy' => 1
-                    )
-                );
-
-            game::$instance->initDiceHappy();
-            game::$instance->giveExtraTime($this->player_id);
-            game::$instance->addPending($this->player_id, "HappyHour");
-
+            game::$instance->addPending($this->player_id, "RollHappy");
         }
         
         else
@@ -856,6 +802,83 @@ class Pending extends APP_GameClass
 
     }
 
+    function argRollHappy($parg1, $parg2) // ROLL Happy DICE
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} rolls the Happy Hour dice');
+        $ret['titleyou'] = clienttranslate('${you} roll the Happy Hour dice');
+
+                        
+        return $ret;
+    }
+
+    function RollHappy($parg1, $parg2, $varg1, $varg2)
+    {
+        
+        game::$instance->initDiceHappy();
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} cannot place a cocktail token and triggers Happy Hour'),
+                    array(
+                        'player_name' => $this->player_name,
+                        
+                        
+                    )
+            );
+
+            $result = [];
+            $index = 0;
+            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
+            
+
+            foreach ($block as $etat)
+            {
+                $dice = 'dice'.($index+1);
+
+                if($etat == 0)
+                {
+                    $rand = bga_rand(1, 6);
+                    $result[] = $rand;
+                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                }
+
+                if($etat == 1)
+                {
+                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                }
+
+                $index++;
+                
+            }
+          
+            
+            
+            game::$instance->notifyAllPlayers(
+                    'rolldice',
+                    clienttranslate('${player_name} rolls the dice for Happy Hour'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'player_id' => $this->player_id,
+                        'roll' => $result,
+                        'block' => $block,
+                        'happy' => 1
+                    )
+                );
+
+            // game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 2000] ); 
+
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPending($this->player_id, "HappyHour");
+    
+        
+    }
+
     function argHappyHour($parg1, $parg2) 
     {
         $ret = array();
@@ -867,38 +890,42 @@ class Pending extends APP_GameClass
         
 
         $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+        //$result_dice = 2;   // FORCER LE RESULTAT
 
         if($result_dice == 1)
         {
             $ret['titleyou'] = clienttranslate('${you} immediately lose 3 points');
+            $ret['buttons'][]='continue';
         }
 
         if($result_dice == 2)
         {
-            $ret['titleyou'] = clienttranslate('${you} must remove one of your Cocktail tokens from a combination coaster');
+            $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens from a coaster');
         }
 
         if($result_dice == 3)
         {
             $ret['titleyou'] = clienttranslate('All other players immediately gain 1 point');
+            $ret['buttons'][]='continue';
         }
 
         if($result_dice == 4)
         {
-            $ret['titleyou'] = clienttranslate('${you} must move another player\'s Cocktail token to a different, available space');
+            $ret['titleyou'] = clienttranslate('${you} must move another player\'s cocktail token to a different, available space');
         }
 
         if($result_dice == 5)
         {
-            $ret['titleyou'] = clienttranslate('${you} flip any Combination coaster to its other side');
+            $ret['titleyou'] = clienttranslate('${you} must flip any coaster to its other side');
         }
 
         if($result_dice == 6)
         {
             $ret['titleyou'] = clienttranslate('${you} immediately score 4 points');
+            $ret['buttons'][]='continue';
         }
         
-        $ret['buttons'][]='continue';
+        
 
                 
         return $ret;
@@ -916,7 +943,7 @@ class Pending extends APP_GameClass
                     'animScoreHappyLose3',
                     '',
                     array(
-                
+                        'player_id' => $this->player_id,
 
                     )
             );
@@ -1019,20 +1046,7 @@ class Pending extends APP_GameClass
 
         elseif($result_dice == 5)
         {
-            game::$instance->notifyAllPlayers(
-                    'endhappy',
-                    '',
-                    array(
-                        
-                    )
-                );
-        
-            game::$instance->majScore();
-            game::$instance->updateNbTurns();
-            game::$instance->initDice();
-            game::$instance->checkEndGame($this->player_id);
-            game::$instance->giveExtraTime($this->player_id);
-            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            game::$instance->addPending($this->player_id, "Happy5");
             
         }
 
@@ -1088,8 +1102,10 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must remove one of their cocktail tokens');
-        $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens');
+        $ret['title'] = clienttranslate('${actplayer} must remove one of their cocktail tokens from a coaster');
+        $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens from a coaster');
+
+        $ret["nosettimeout"] = [1];
 
         $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
         $bockinoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 != '{$this->player_id}' AND score2 != '{$this->player_id}'", true );
@@ -1125,27 +1141,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                     )
             );
 
-        }
-
-        else
-        {
-
-
-
             game::$instance->notifyAllPlayers(
-                    'message',
-                    clienttranslate('${player_name} remove one of their cocktail tokens'),
-                    array(
-                        'player_name' => $this->player_name,
-                                                
-                    )
-            );
-
-        }
-        
-        
-        
-        game::$instance->notifyAllPlayers(
                     'endhappy',
                     '',
                     array(
@@ -1153,15 +1149,221 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                     )
                 );
         
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+
+        }
+
+        else
+        {
+            $explode = explode('_', $varg1);
+
+            self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$this->player_id}'");
+
+            $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
+            $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
+            $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$this->player_id}'");
+
+            if($idscore1  == $this->player_id)
+            {
+                self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
+            }
+
+            if($idscore2  == $this->player_id)
+            {
+                self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
+            }
+
+            $mobile = 'token_'.$explode[1].'_'.$this->player_id;
+
+            game::$instance->notifyAllPlayers(
+                    'recupToken',
+                    '',
+                    array(
+
+                        'player_id' => $this->player_id,
+                        'mobile' => $mobile,
+                        'nb' => $new_nb_token,
+                        
+                    )
+                );
+
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} remove one of their cocktail tokens (${combi})'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'combi' =>    [
+                        'log' => '${name}',
+                        'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
+                        ],
+                                                
+                    )
+            );
+
+             game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+
+        }
+        
+        
+        
+    }
+
+    function argHappy5($parg1, $parg2) // FLIP 
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["noselectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} must flip any coaster to its other side');
+        $ret['titleyou'] = clienttranslate('${you} must flip any coaster to its other side');
+
+        $ret["nosettimeout"] = [1];
+
+        $bocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location = 'board'", true );
+        foreach($bocks as $bock)
+        {
+            $ret["selectable"][] = 'bock_'.$bock;
+        }
+
+               
+                
+        return $ret;
+    }
+
+    function Happy5($parg1, $parg2, $varg1, $varg2)
+    {
+        $explode = explode('_', $varg1);
+
+        $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type = '{$explode[1]}'");
+        $location_arg = self::getUniqueValueFromDB("SELECT card_location_arg FROM bocks WHERE card_type = '{$explode[1]}'");
+        $new_type_arg = 0;
+
+        if($type_arg == 1)
+        {
+            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_type = '{$explode[1]}'");
+            $new_type_arg = 2;
+        }
+
+        elseif($type_arg == 2)
+        {
+            self::DbQuery("UPDATE bocks SET card_type_arg = 1 WHERE card_type = '{$explode[1]}'");
+            $new_type_arg = 1;
+        }
+
+        $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
+        $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
+
+        if($idscore1 != 0)
+        {
+            self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
+            self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore1}'");
+            $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore1}'");
+
+            $mobile = 'token_'.$explode[1].'_'.$idscore1;
+
+            game::$instance->notifyAllPlayers(
+                    'recupToken',
+                    '',
+                    array(
+
+                        'player_id' => $idscore1,
+                        'mobile' => $mobile,
+                        'nb' => $new_nb_token,
+                        
+                    )
+                );
+
+
+        }
+
+        if($idscore2 != 0)
+        {
+            self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
+            self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore2}'");
+            $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore2}'");
+
+            $mobile = 'token_'.$explode[1].'_'.$idscore2;
+
+            game::$instance->notifyAllPlayers(
+                    'recupToken',
+                    '',
+                    array(
+
+                        'player_id' => $idscore2,
+                        'mobile' => $mobile,
+                        'nb' => $new_nb_token,
+                        
+                    )
+                );
+            
+        }
+
+        game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} flips a coaster (${combi})'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'combi' =>    [
+                        'log' => '${name}',
+                        'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
+                        ],
+                                                
+                    )
+        );
+
+        // RAjouter un log pour les tokens retirés
+
+
+        game::$instance->notifyAllPlayers(
+                    'flip',
+                    '',
+                    array(
+                        'type' => $explode[1],
+                        'position' => $location_arg,
+                        'new_type_arg' => $new_type_arg,
+                                               
+                    )
+        );
+
+        game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+
+ 
         game::$instance->majScore();
         game::$instance->updateNbTurns();
         game::$instance->initDice();
         game::$instance->checkEndGame($this->player_id);
         game::$instance->giveExtraTime($this->player_id);
         game::$instance->addPendingFirst($this->player_id, "NormalTurn");
-        
-        
+  
     }
+        
         
        
         

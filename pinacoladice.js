@@ -121,12 +121,21 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
             case 'playerTurn':
                 this.args = args.args;
 
+
                 for (let sid in this.args.selectable) {
                     if (this.isCurrentPlayerActive()) {
-                        setTimeout(() => {
+                        if(this.args.nosettimeout)
+                        {
                             dojo.query("#" + this.args.selectable[sid]).addClass("selectable");
-                        }, 1500);
+                        }
+                        else
+                        {
+                            setTimeout(() => {
+                            dojo.query("#" + this.args.selectable[sid]).addClass("selectable");
+                            }, 1500);
+                        }
                     }
+                        
                 }
 
                 for( var sid in this.args.selected)
@@ -154,9 +163,22 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                     {
                         if(this.isCurrentPlayerActive())
                         {
+
+                            // if(this.args.nosettimeout)
+                            // {
+                            //     dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
+                            // }
+                            // else
+                            // {
+                            //     setTimeout(() => {
+                            //     dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
+                            //     }, 1500);
+                            // }
+
                             setTimeout(() => {
-                            dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
-                            }, 1500);
+                                dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
+                                }, 1500);
+
                         }
                     }
 
@@ -851,6 +873,179 @@ addToken: function (type, score1, score2) {
 },
 
 
+// FLIP BOCK
+
+addFlipBock: function (type, type_arg, location_arg) {
+
+    var bock ='';
+
+    if(type_arg == 1)
+    {
+        bock ='bockA';
+    }
+
+    if(type_arg == 2)
+    {
+        bock ='bockB';
+    }
+
+    
+    if(type>= 1 && type <=5)
+    dojo.place( this.format_block( 'jstpl_flipbock', {
+        id: type,
+        x: (type-1)*(-100),
+        y: 0,
+        class: bock,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 6 && type <=10)
+    dojo.place( this.format_block( 'jstpl_flipbock', {
+        id: type,
+        x: (type-6)*(-100),
+        y: -100,
+        class: bock,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 11 && type <=15)
+    dojo.place( this.format_block( 'jstpl_flipbock', {
+        id: type,
+        x: (type-11)*(-100),
+        y: -200,
+        class: bock,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 16 && type <=20)
+    dojo.place( this.format_block( 'jstpl_flipbock', {
+        id: type,
+        x: (type-16)*(-100),
+        y: -300,
+        class: bock,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+    if(type>= 21 && type <=25)
+    dojo.place( this.format_block( 'jstpl_flipbock', {
+        id: type,
+        x: (type-21)*(-100),
+        y: -400,
+        class: bock,
+        
+                            
+    } ) , 'carre'+location_arg );
+
+
+    dojo.query("#flipbock_"+type).connect('onclick', this, 'onSelect' );
+
+    
+    if(type_arg == 1)
+    {
+        if(type <=7)
+        {
+            dojo.place( this.format_block( 'jstpl_score1', {
+                id: type,
+                x: 66.1,
+                y: 67.8,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+        }
+
+        if(type >= 8 && type <=13)
+        {
+            dojo.place( this.format_block( 'jstpl_score1', {
+                id: type,
+                x: 69.4,
+                y: 68.3,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+        }
+
+        if(type >= 14)
+        {
+            dojo.place( this.format_block( 'jstpl_score1', {
+                id: type,
+                x: 61.7,
+                y: 69.4,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+        }
+    }
+
+    if(type_arg == 2)
+    {
+        if(type <=7)
+        {
+            dojo.place( this.format_block( 'jstpl_score1', {
+                id: type,
+                x: 66.1,
+                y: 67.8,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+
+            dojo.place( this.format_block( 'jstpl_score2', {
+                id: type,
+                x: 46.7,
+                y: 67.8,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+        }
+
+        if(type >= 8 && type <=13)
+        {
+            dojo.place( this.format_block( 'jstpl_score1', {
+                id: type,
+                x: 69.4,
+                y: 68.3,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+
+            dojo.place( this.format_block( 'jstpl_score2', {
+                id: type,
+                x: 50,
+                y: 68.3,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+
+            
+        }
+
+        if(type >= 14)
+        {
+            dojo.place( this.format_block( 'jstpl_score1', {
+                id: type,
+                x: 61.7,
+                y: 69.4,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+
+            dojo.place( this.format_block( 'jstpl_score2', {
+                id: type,
+                x: 42.2,
+                y: 69.4,
+                    
+                                    
+            } ) , 'flipbock_'+type );
+        }
+    }
+   
+
+},
+
+
 
 
 /// INIT AND ROLL DICE
@@ -1062,6 +1257,10 @@ rollDice: function () {
             dojo.subscribe( 'animScoreHappyLose3', this, "notif_animScoreHappyLose3" );
             dojo.subscribe( 'animScoreHappyWin4', this, "notif_animScoreHappyWin4" );
             dojo.subscribe( 'animScoreHappyOtherWin1', this, "notif_animScoreHappyOtherWin1" );
+            dojo.subscribe( 'recupToken', this, "notif_recupToken" );
+            dojo.subscribe( 'flip', this, "notif_flip" );
+
+            // this.notifqueue.setSynchronous( 'rolldice', 2000 );
         },  
         
         notif_rolldice: function( notif )
@@ -1260,6 +1459,56 @@ rollDice: function () {
             dice5.style.display = "block";
             
                
+        },
+
+        notif_recupToken: async function( notif )
+        {
+            var dice = document.getElementById('dice_content')  // pour contrer un bug a cause du decallage de la barre des dés (à voir avec Thoun)
+            dice.style.display = "none";
+
+            const token = document.getElementById(notif.args.mobile);
+            token.classList.remove("tokenhover");
+            token.id = "reservetoken_"+notif.args.nb+"_"+notif.args.player_id;
+
+            const enfant = document.getElementById("reservetoken_"+notif.args.nb+"_"+notif.args.player_id);
+            const parent = document.getElementById("reservetokencontainer_"+notif.args.player_id);
+
+            await this.animationManager.slideAndAttach(enfant, parent);
+
+            const token2 = document.getElementById("reservetoken_"+(notif.args.nb-1)+"_"+notif.args.player_id); /// remettre dans l'ordre: le token qui vient d'arriver revient en premiere position
+            parent.insertBefore(enfant, token2);
+            
+               
+        },
+
+        notif_flip: function( notif )
+        {
+            this.addFlipBock(notif.args.type, notif.args.new_type_arg, notif.args.position);
+            dojo.query("#bock_"+notif.args.type).addClass("flipable");
+            
+
+            setTimeout(function() {             // 100ms pour attendre que le DOM soit effectif
+            dojo.query("#bock_"+notif.args.type).addClass("flip");
+            dojo.query("#flipbock_"+notif.args.type).addClass("flip");
+            
+            }, 100);
+
+            setTimeout(function() {             // 1500ms pour laisser le temps que le flip soit fini
+            const card = document.getElementById("bock_"+notif.args.type);
+            card.remove();
+
+            const Newcard = document.getElementById("flipbock_"+notif.args.type);
+            Newcard.classList.remove("rotate");
+            Newcard.classList.remove("flip");
+            Newcard.id = "bock_"+notif.args.type;
+
+            
+
+            
+    
+            }, 1500);
+
+            
         },
 
 
