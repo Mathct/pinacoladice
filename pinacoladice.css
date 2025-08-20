@@ -350,6 +350,38 @@ button {
   opacity: 0;
 }
 
+/* TOKEN LOG */
+
+.token_log{
+
+  height: 35px;
+  width: 35px;
+  background-image: url("img/token.jpg");
+  background-size: 400% 100%;
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid white;
+ 
+}
+
+.token_log_1{
+  background-position-x: 0%;
+}
+
+.token_log_2{
+  background-position-x: -100%;
+}
+
+.token_log_3{
+  background-position-x: -200%;
+}
+
+.token_log_4{
+  background-position-x: -300%;
+}
+
 
 /*PLAYER BOARD */
 

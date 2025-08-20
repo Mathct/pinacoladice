@@ -66,7 +66,7 @@ class Pending extends APP_GameClass
         
         game::$instance->notifyAllPlayers(
                 'rolldice',
-                clienttranslate('${player_name} rolls the dice'),
+                clienttranslate('${player_name} rolls the dice (First Roll)'),
                 array(
                     'player_name' => $this->player_name,
                     'player_id' => $this->player_id,
@@ -221,7 +221,7 @@ class Pending extends APP_GameClass
             
             game::$instance->notifyAllPlayers(
                     'rolldice',
-                    clienttranslate('${player_name} rolls the dice'),
+                    clienttranslate('${player_name} rolls the dice (2nd Roll)'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
@@ -276,13 +276,14 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    clienttranslate('${player_name} places a cocktail token on a coaster (${combi})'),
+                    clienttranslate('${player_name} places ${log} on a coaster (${combi})'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
                         'score_position' => $positionscore,
+                        'log' => game::$instance->getLogsType($this->player_color),
                         'combi' =>    [
                         'log' => '${name}',
                         'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
@@ -468,7 +469,7 @@ class Pending extends APP_GameClass
             
             game::$instance->notifyAllPlayers(
                     'rolldice',
-                    clienttranslate('${player_name} rolls the dice'),
+                    clienttranslate('${player_name} rolls the dice (3rd Roll)'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
@@ -526,13 +527,14 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    clienttranslate('${player_name} places a cocktail token on a coaster (${combi})'),
+                    clienttranslate('${player_name} places ${log} on a coaster (${combi})'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
                         'score_position' => $positionscore,
+                        'log' => game::$instance->getLogsType($this->player_color),
                         'combi' =>    [
                         'log' => '${name}',
                         'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
@@ -750,13 +752,14 @@ class Pending extends APP_GameClass
 
             game::$instance->notifyAllPlayers(
                     'moveToken',
-                    clienttranslate('${player_name} places a cocktail token on a coaster (${combi})'),
+                    clienttranslate('${player_name} places ${log} on a coaster (${combi})'),
                     array(
                         'player_name' => $this->player_name,
                         'player_id' => $this->player_id,
                         'reserve_token' => $reserveToken,
                         'bock' => $explode[1],
                         'score_position' => $positionscore,
+                        'log' => game::$instance->getLogsType($this->player_color),
                         'combi' =>    [
                         'log' => '${name}',
                         'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
@@ -933,7 +936,7 @@ class Pending extends APP_GameClass
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
         $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
-        //$result_dice = 2;  // FORCER LE RESULTAT
+        //$result_dice = 5;  // FORCER LE RESULTAT
 
         if($result_dice == 1)
         {
@@ -1101,8 +1104,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must remove one of their cocktail tokens from a coaster');
-        $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens from a coaster');
+        
 
         $ret["nosettimeout"] = [1];
 
@@ -1119,6 +1121,20 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             $ret["noselectable"][] = 'bock_'.$inoccuped;
         }
 
+        if(count($ret["selectable"]) != 0)
+        {
+            $ret['title'] = clienttranslate('${actplayer} must remove one of their cocktail tokens from a coaster');
+            $ret['titleyou'] = clienttranslate('${you} must remove one of your cocktail tokens from a coaster');
+
+        }
+
+        else
+        {
+            $ret['title'] = clienttranslate('${actplayer} has no cocktail token to remove');
+            $ret['titleyou'] = clienttranslate('${you} have no cocktail token to remove');
+            $ret['buttons'][]='continue';
+        }
+
         
 
                 
@@ -1128,7 +1144,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
     function Happy2($parg1, $parg2, $varg1, $varg2)
     {
 
-        if($varg1 == null)
+        if($varg1 == 'continue')
         {
 
             game::$instance->notifyAllPlayers(
@@ -1194,9 +1210,10 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
             game::$instance->notifyAllPlayers(
                     'message',
-                    clienttranslate('${player_name} remove one of their cocktail tokens (${combi})'),
+                    clienttranslate('${player_name} remove ${log} (${combi})'),
                     array(
                         'player_name' => $this->player_name,
+                        'log' => game::$instance->getLogsType($this->player_color),
                         'combi' =>    [
                         'log' => '${name}',
                         'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
@@ -1272,9 +1289,12 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
         $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
+        $color1 = '0';
+        $color2 = '0';
 
         if($idscore1 != 0)
         {
+            $color1 = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$idscore1}'");
             self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
             self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore1}'");
             $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore1}'");
@@ -1298,6 +1318,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         if($idscore2 != 0)
         {
+            $color2 = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$idscore2}'");
             self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
             self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore2}'");
             $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore2}'");
@@ -1320,9 +1341,11 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         game::$instance->notifyAllPlayers(
                     'message',
-                    clienttranslate('${player_name} flips a coaster (${combi})'),
+                    clienttranslate('${player_name} flips a coaster (${combi}) and remove ${log1}${log2}'),
                     array(
                         'player_name' => $this->player_name,
+                        'log1' => game::$instance->getLogsType($color1),
+                        'log2' => game::$instance->getLogsType($color2),
                         'combi' =>    [
                         'log' => '${name}',
                         'args' => ['name' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]

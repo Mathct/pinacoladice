@@ -795,8 +795,28 @@ function checkEndGame($id) {
         $this->gamestate->nextState('end');
 
 
-    }
+}
 
+/// TOKEN POUR LOG
+
+function getLogsType($color) {
+    
+        if ($color == 'f18400') {
+            return "<div class='token_log token_log_1' title=''></div>";
+        }
+        if ($color == '542583') {
+            return "<div class='token_log token_log_2' title=''></div>";
+        }
+        if ($color == 'bbbd02') {
+            return "<div class='token_log token_log_3' title=''></div>";
+        }
+        if ($color == 'e84041') {
+            return "<div class='token_log token_log_4' title=''></div>";
+        }
+        if ($color == '0') {
+            return "";
+        }
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////// 
