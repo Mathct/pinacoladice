@@ -700,6 +700,7 @@ function checkEndGame($id) {
                         
                 ));
 
+                $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
                 $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
 
                 if($no == $count_players)
