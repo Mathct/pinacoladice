@@ -871,8 +871,7 @@ class Pending extends APP_GameClass
                     )
                 );
 
-            // game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 2000] ); 
-
+           
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPending($this->player_id, "HappyHour");
     
