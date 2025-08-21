@@ -253,7 +253,34 @@ public function getGameProgression()
 {
     // TODO: compute and return the game progression
 
-    return 0;
+    $reserve_tokens = self::getObjectListFromDB( "SELECT player_token FROM player", true );
+    $reserve_token_min = min($reserve_tokens);
+    $prog_reserve =floor(100- $reserve_token_min/6*100);
+
+
+    $scores = self::getObjectListFromDB( "SELECT player_score FROM player", true );
+    $score_max = max($scores);
+    if($score_max >= 20)
+    {
+        $score_max = 20;
+    }
+    $prog_score =floor($score_max/20*100);
+
+    $tableau = [$prog_reserve, $prog_score];
+
+    $pinas = self::getObjectListFromDB( "SELECT player_pina FROM player", true );
+    $pina_max = max($pinas);
+
+    if($pina_max == 1)
+    {
+        return 100;
+    }
+
+    else {
+        return max($tableau);
+    }
+
+ 
 }
 
 
