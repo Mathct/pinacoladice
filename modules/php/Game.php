@@ -232,7 +232,18 @@ protected function getAllDatas()
     $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
 
     
-    // TODO: Gather all information about current game situation (visible by player $current_player_id).
+    
+
+    // DEBUG
+
+    // $name1 = self::getUniqueValuefromDB("SELECT player_name FROM player WHERE player_no = 1");
+    // $name2 = self::getUniqueValuefromDB("SELECT player_name FROM player WHERE player_no = 2");
+
+    // if(($name1 == 'thoun' || $name2 == 'thoun'))
+    // {
+    //     $this->gamestate->nextState( 'end' );
+
+    // }
 
     return $result;
 }
