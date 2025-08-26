@@ -183,12 +183,54 @@ button {
 .selectable {
   cursor: pointer;
   border: 3px dashed white;
- 
+   
 }
+
+.selectable * {
+  pointer-events: none;
+   
+}
+
+.selectable.token {
+  animation: blink 1s infinite alternate;
+    
+}
+
+@keyframes blink {
+  0% {
+    filter: brightness(100%);
+  }
+  100% {
+    filter: brightness(50%);
+  }
+}
+
+
+/* .selectable.score {
+  border: 3px solid white;
+  box-sizing: border-box;
+  animation: blink2 1s infinite alternate;
+   
+}
+
+@keyframes blink2 {
+  0% {
+    filter: brightness(100%);
+  }
+  100% {
+    filter: brightness(50%);
+  }
+} */
+
 
 .selected{
   border: 3px solid white;
 }
+
+.selected2{
+  border: 3px dashed white;
+}
+
 
 .noselectable {
   animation: scaleAndFilterIn 1s forwards;
@@ -308,8 +350,8 @@ button {
 /* SCORE CONTAINER*/
 
 .score1{
-  height: 35px;
-  width: 35px;
+  height: 33px;
+  width: 33px;
   border-radius: 50%;
   position: absolute;
   z-index: 10;
@@ -317,8 +359,8 @@ button {
 }
 
 .score2{
-  height: 35px;
-  width: 35px;
+  height: 33px;
+  width: 33px;
   border-radius: 50%;
   position: absolute;
   z-index: 10;

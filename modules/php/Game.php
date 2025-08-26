@@ -836,6 +836,64 @@ function checkEndGame($id) {
 
 }
 
+
+function checkPinaHappy($id) {
+
+    $player_name = self::getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id={$id}");
+
+    //test Pina
+    $locations = self::getObjectListFromDB( "SELECT card_location_arg FROM bocks WHERE score1 = {$id} OR score2 = {$id}", true );
+    
+    $pinas = [
+    'pina_1' => [11,12,13,14],
+    'pina_2' => [21,22,23,24],
+    'pina_3' => [31,32,33,34],
+    'pina_4' => [41,42,43,44],
+    'pina_5' => [11,21,31,41],
+    'pina_6' => [12,22,32,42],
+    'pina_7' => [13,23,33,43],
+    'pina_8' => [14,24,34,44],
+    'pina_9' => [11,22,33,44],
+    'pina_10' => [14,23,32,41],
+    ];
+
+    $pinas_presentes = [];
+
+    foreach ($pinas as $nom => $pina) {
+        $diff = array_diff($pina, $locations);
+        if (empty($diff)) {
+            $pinas_presentes[] = $nom;
+    }
+    }
+
+    if(count($pinas_presentes) != 0)
+    {
+        ///y a un PINA !!
+
+        self::DbQuery("UPDATE player SET player_pina = 1 WHERE player_id={$id}");
+
+        self::notifyAllPlayers( 'message', clienttranslate('${player_name} makes a Piña Coladice and wins the game'),
+        array(
+            'player_name' => $player_name,
+                
+        ));
+
+        game::$instance->notifyAllPlayers(
+                    'pina',
+                    '',
+                    array(
+                      
+
+                    )
+        );
+
+        game::$instance->notifyAllPlayers( 'simplePause', '', [ 'time' => 1000] ); 
+
+        // END GAME
+        game::$instance->End();
+    }
+}
+
 /// TOKEN POUR LOG
 
 function getLogsType($color) {

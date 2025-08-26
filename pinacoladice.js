@@ -164,17 +164,6 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                         if(this.isCurrentPlayerActive())
                         {
 
-                            // if(this.args.nosettimeout)
-                            // {
-                            //     dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
-                            // }
-                            // else
-                            // {
-                            //     setTimeout(() => {
-                            //     dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
-                            //     }, 1500);
-                            // }
-
                             setTimeout(() => {
                                 dojo.query("#"+this.args.noselectable[sid]).addClass("noselectable");
                                 }, 1500);
@@ -183,6 +172,20 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                     }
 
                 }
+
+                if(this.args.selected2)
+                {
+                    for( let sid in this.args.selected2)
+                    {
+                        if(this.isCurrentPlayerActive())
+                        {
+                            
+                            dojo.query("#"+this.args.selected2[sid]).addClass("selected2");
+                           
+                        }
+                    }
+                }
+
 
 
           
@@ -222,6 +225,7 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
             console.log( 'Leaving state: '+stateName );
            
             dojo.query(".selected").removeClass("selected");
+            dojo.query(".selected2").removeClass("selected2");
             dojo.query(".selectable_dice").removeClass("selectable_dice");
 
             dojo.query(".selectable").removeClass("selectable");
@@ -519,7 +523,10 @@ setupBoard: function () {
                     } ) , 'reservetokencontainer_'+player_id );
                 }
 
+                dojo.query("#reservetoken_"+i+"_"+player_id).connect('onclick', this, 'onSelect' );
+
             }
+
         this.addTooltip('reservetokencontainer_'+player_id, _('Cocktail tokens available'),'' );
 
         if(this.gamedatas.players[player_id].no == 1)
@@ -658,7 +665,7 @@ if(type_arg == 1)
         } ) , 'bock_'+type );
     }
 
-
+    //dojo.query("#score1_"+type).connect('onclick', this, 'onSelect' );
 }
 
 if(type_arg == 2)
@@ -768,6 +775,9 @@ if(type_arg == 2)
                                 
         } ) , 'bock_'+type );
     }
+
+    //dojo.query("#score1_"+type).connect('onclick', this, 'onSelect' );
+    //dojo.query("#score2_"+type).connect('onclick', this, 'onSelect' );
     
 }
 
@@ -820,7 +830,7 @@ addToken: function (type, score1, score2) {
             } ) , 'score1_'+type );
         }
 
-
+        dojo.query("#token_"+type+"_"+score1).connect('onclick', this, 'onSelect' );
 
     }
 
@@ -866,6 +876,8 @@ addToken: function (type, score1, score2) {
                                     
             } ) , 'score2_'+type );
         }
+
+        dojo.query("#token_"+type+"_"+score2).connect('onclick', this, 'onSelect' );
         
     }
 
@@ -948,7 +960,7 @@ addFlipBock: function (type, type_arg, location_arg) {
     {
         if(type <=7)
         {
-            dojo.place( this.format_block( 'jstpl_score1', {
+            dojo.place( this.format_block( 'jstpl_flipscore1', {
                 id: type,
                 x: 66.1,
                 y: 67.8,
@@ -959,7 +971,7 @@ addFlipBock: function (type, type_arg, location_arg) {
 
         if(type >= 8 && type <=13)
         {
-            dojo.place( this.format_block( 'jstpl_score1', {
+            dojo.place( this.format_block( 'jstpl_flipscore1', {
                 id: type,
                 x: 69.4,
                 y: 68.3,
@@ -970,7 +982,7 @@ addFlipBock: function (type, type_arg, location_arg) {
 
         if(type >= 14)
         {
-            dojo.place( this.format_block( 'jstpl_score1', {
+            dojo.place( this.format_block( 'jstpl_flipscore1', {
                 id: type,
                 x: 61.7,
                 y: 69.4,
@@ -978,13 +990,15 @@ addFlipBock: function (type, type_arg, location_arg) {
                                     
             } ) , 'flipbock_'+type );
         }
+
+        //dojo.query("#flipscore1_"+type).connect('onclick', this, 'onSelect' );
     }
 
     if(type_arg == 2)
     {
         if(type <=7)
         {
-            dojo.place( this.format_block( 'jstpl_score1', {
+            dojo.place( this.format_block( 'jstpl_flipscore1', {
                 id: type,
                 x: 66.1,
                 y: 67.8,
@@ -992,7 +1006,7 @@ addFlipBock: function (type, type_arg, location_arg) {
                                     
             } ) , 'flipbock_'+type );
 
-            dojo.place( this.format_block( 'jstpl_score2', {
+            dojo.place( this.format_block( 'jstpl_flipscore2', {
                 id: type,
                 x: 46.7,
                 y: 67.8,
@@ -1003,7 +1017,7 @@ addFlipBock: function (type, type_arg, location_arg) {
 
         if(type >= 8 && type <=13)
         {
-            dojo.place( this.format_block( 'jstpl_score1', {
+            dojo.place( this.format_block( 'jstpl_flipscore1', {
                 id: type,
                 x: 69.4,
                 y: 68.3,
@@ -1011,7 +1025,7 @@ addFlipBock: function (type, type_arg, location_arg) {
                                     
             } ) , 'flipbock_'+type );
 
-            dojo.place( this.format_block( 'jstpl_score2', {
+            dojo.place( this.format_block( 'jstpl_flipscore2', {
                 id: type,
                 x: 50,
                 y: 68.3,
@@ -1024,7 +1038,7 @@ addFlipBock: function (type, type_arg, location_arg) {
 
         if(type >= 14)
         {
-            dojo.place( this.format_block( 'jstpl_score1', {
+            dojo.place( this.format_block( 'jstpl_flipscore1', {
                 id: type,
                 x: 61.7,
                 y: 69.4,
@@ -1032,7 +1046,7 @@ addFlipBock: function (type, type_arg, location_arg) {
                                     
             } ) , 'flipbock_'+type );
 
-            dojo.place( this.format_block( 'jstpl_score2', {
+            dojo.place( this.format_block( 'jstpl_flipscore2', {
                 id: type,
                 x: 42.2,
                 y: 69.4,
@@ -1040,6 +1054,9 @@ addFlipBock: function (type, type_arg, location_arg) {
                                     
             } ) , 'flipbock_'+type );
         }
+
+        //dojo.query("#flipscore1_"+type).connect('onclick', this, 'onSelect' );
+        //dojo.query("#flipscore2_"+type).connect('onclick', this, 'onSelect' );
     }
    
 
@@ -1259,6 +1276,8 @@ rollDice: function () {
             dojo.subscribe( 'animScoreHappyOtherWin1', this, "notif_animScoreHappyOtherWin1" );
             dojo.subscribe( 'recupToken', this, "notif_recupToken" );
             dojo.subscribe( 'flip', this, "notif_flip" );
+            dojo.subscribe( 'moveTokenHappy', this, "notif_moveTokenHappy" );
+            
 
             // this.notifqueue.setSynchronous( 'rolldice', 2000 );
         },  
@@ -1339,8 +1358,21 @@ rollDice: function () {
             await this.animationManager.slideAndAttach(enfant, parent);
         },
 
+        notif_moveTokenHappy: async function(notif)
+        {
+            var dice = document.getElementById('dice_content')  // pour contrer un bug a cause du decallage de la barre des dés (à voir avec Thoun)
+            dice.style.display = "none";
+            
+            const mobile = document.getElementById(notif.args.enfant);
+            mobile.id = "token_"+notif.args.bock+"_"+notif.args.player_id; // je change d'id
 
+            const enfant = document.getElementById(mobile.id);
+            const parent = document.getElementById(notif.args.parent);
 
+            await this.animationManager.slideAndAttach(enfant, parent);
+        },
+
+        
         notif_score: function( notif )
         {
             this.scoreCtrl[ notif.args.player_id].toValue( notif.args.score);
@@ -1501,6 +1533,17 @@ rollDice: function () {
             Newcard.classList.remove("rotate");
             Newcard.classList.remove("flip");
             Newcard.id = "bock_"+notif.args.type;
+
+
+            const Newflipscore1 = document.getElementById("flipscore1_"+notif.args.type);
+            Newflipscore1.id = "score1_"+notif.args.type;
+
+            if(notif.args.new_type_arg == 2)
+            {
+            const Newflipscore2 = document.getElementById("flipscore2_"+notif.args.type);
+            Newflipscore2.id = "score2_"+notif.args.type;
+            }
+
 
             
 

@@ -936,7 +936,7 @@ class Pending extends APP_GameClass
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
         $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
-        //$result_dice = 5;  // FORCER LE RESULTAT
+        //$result_dice = 4;  // FORCER LE RESULTAT
 
         if($result_dice == 1)
         {
@@ -1029,20 +1029,7 @@ class Pending extends APP_GameClass
 
         elseif($result_dice == 4)
         {
-            game::$instance->notifyAllPlayers(
-                    'endhappy',
-                    '',
-                    array(
-                        
-                    )
-                );
-        
-            game::$instance->majScore();
-            game::$instance->updateNbTurns();
-            game::$instance->initDice();
-            game::$instance->checkEndGame($this->player_id);
-            game::$instance->giveExtraTime($this->player_id);
-            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+            game::$instance->addPending($this->player_id, "Happy4");
             
         }
 
@@ -1354,9 +1341,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                     )
         );
 
-        // RAjouter un log pour les tokens retirés
-
-
+        
         game::$instance->notifyAllPlayers(
                     'flip',
                     '',
@@ -1385,13 +1370,272 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         game::$instance->addPendingFirst($this->player_id, "NormalTurn");
   
     }
+
+
+    function argHappy4($parg1, $parg2) // MOVE OPPONENT TOKEN
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["noselectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret["selected2"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} must move another player\'s cocktail token to a different coaster');
         
+
+        $ret["nosettimeout"] = [1];
+
+        $bockswithtokens = self::getObjectListFromDB( "SELECT card_type type, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board' AND (score1 != 0 OR score2 !=0)" );
+        $bocksnoselectable = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE (score1 = 0 OR score1 = '{$this->player_id}') AND (score2 = 0 OR score2 = '{$this->player_id}')", true );
         
+        foreach($bockswithtokens as $bock)
+        {
+            if(($bock['score1'] !=0)&&($bock['score1'] != $this->player_id))
+            {
+                $ret["selectable"][] = "token_".$bock['type']."_".$bock['score1'];
+                $ret["selected2"][] = "bock_".$bock['type'];
+
+            }
+            if(($bock['score2'] !=0)&&($bock['score2'] != $this->player_id))
+            {
+                $ret["selectable"][] = "token_".$bock['type']."_".$bock['score2'];
+                $ret["selected2"][] = "bock_".$bock['type'];
+            }
+        }
+
        
+        if(count($ret["selectable"]) == 0)
+        {
+            $ret['titleyou'] = clienttranslate('${you} cannot move an opponent\'s cocktail token');
+            $ret['buttons'][]='continue';
+        }
+
+
+        else{
+            $ret['titleyou'] = clienttranslate('${you} must select an opponent\'s cocktail token to move');
+        }
+
+
+
         
-    
+               
+                
+        return $ret;
+    }
+
+    function Happy4($parg1, $parg2, $varg1, $varg2)
+    {
+
+        if($varg1 == 'continue')
+        {
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} cannot move an opponent\'s cocktail token'),
+                    array(
+                        'player_name' => $this->player_name,
+                                                
+                    )
+            );
+
+            game::$instance->notifyAllPlayers(
+                    'endhappy',
+                    '',
+                    array(
+                        
+                    )
+                );
+        
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+
+        }
+       
+        else
+        {
+            $explode = explode('_', $varg1);
+            game::$instance->addPending($this->player_id, "Happy4Step2", $explode[1], $explode[2]);
+
+        }
+  
+    }
+
+    function argHappy4Step2($parg1, $parg2) // MOVE OPPONENT TOKEN
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["selected2"] = array();
+        $ret["noselectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} must move another player\'s cocktail token to a different coaster');
+        $ret['titleyou'] = clienttranslate('${you} must select a coaster for #icon#');
+        
+        $color = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id={$parg2}");
+        $ret['icon'] = game::$instance->getLogsType($color);
+
+        $ret["nosettimeout"] = [1];
+        $ret["selected"][] = "bock_".$parg1;
+
+        $bockswithavailablespace = self::getObjectListFromDB( "SELECT card_type type, score1 score1, score2 score2, card_type_arg type_arg FROM bocks WHERE card_location = 'board' AND (score1 = 0 OR score2 = 0) AND (score1 != '{$parg2}' AND score2 != '{$parg2}')" );
+        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location = 'board'", true);
+
+        $selectable = [];
+
+        foreach($bockswithavailablespace as $bock)
+        {
+            if ($bock['type_arg'] == 1)
+            {
+                if($bock['score1'] == 0)
+                {
+                    $ret["selectable"][] = 'bock_'.$bock['type'];
+                    $selectable[] = $bock['type'];
+                   
+                }
+
+            }
+
+            if (($bock['type_arg'] == 2)&&($bock['type'] != $parg1))
+            {
+                if(($bock['score1'] == 0)||($bock['score2'] == 0))
+                {
+                    $ret["selectable"][] = 'bock_'.$bock['type'];
+                    $selectable[] = $bock['type'];
+                   
+                }
+                
+            }
+        }
+
+        $diff = array_values(array_diff($allbocks, $selectable));
+
+        foreach($diff as $bockdiff)
+        {
+            $ret["noselectable"][] = 'bock_'.$bockdiff;
+        }
 
 
+        $ret['buttons'][]='cancel';
+        
+               
+                
+        return $ret;
+    }
+
+    function Happy4Step2($parg1, $parg2, $varg1, $varg2)
+    {
+        if($varg1 == 'cancel')
+        {
+            game::$instance->addPending($this->player_id, "Happy4");
+        }
+
+        else
+        {
+            $explode = explode('_', $varg1);
+
+            $score = 0;
+
+            $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$parg1}'");
+            $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$parg1}'");
+
+            if($score1 == $parg2)
+            {
+                self::DbQuery("UPDATE bocks set score1 = 0 WHERE card_type = '{$parg1}'");
+            }
+
+            if($score2 == $parg2)
+            {
+                self::DbQuery("UPDATE bocks set score2 = 0 WHERE card_type = '{$parg1}'");
+            }
+
+            $score1new = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
+            $score2new = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
+            $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type = '{$explode[1]}'");
+
+            if($type_arg == 1)
+            {
+                self::DbQuery("UPDATE bocks set score1 = {$parg2} WHERE card_type = '{$explode[1]}'");
+                $score = 1;
+            }
+
+            if($type_arg == 2)
+            {
+               
+                if ($score2new == 0)
+                {
+                    self::DbQuery("UPDATE bocks set score2 = {$parg2} WHERE card_type = '{$explode[1]}'");
+                    $score = 2;
+                }
+
+                else
+                {
+                    self::DbQuery("UPDATE bocks set score1 = {$parg2} WHERE card_type = '{$explode[1]}'");
+                    $score = 1;
+                }
+            }
+
+            game::$instance->notifyAllPlayers(
+                    'moveTokenHappy',
+                    '',
+                    array(
+                        'enfant' => 'token_'.$parg1.'_'.$parg2,
+                        'parent' => 'score'.$score.'_'.$explode[1],
+                        'player_id' => $parg2,
+                        'bock' => $explode[1],
+                                           
+                    )
+                );
+
+            $color = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$parg2}'");
+
+            game::$instance->notifyAllPlayers(
+                    'message',
+                    clienttranslate('${player_name} moves ${color} (from ${log1} to ${log2})'),
+                    array(
+                        'player_name' => $this->player_name,
+                        'color' => game::$instance->getLogsType($color),
+                        'log1' =>    [
+                        'log' => '${name1}',
+                        'args' => ['name1' => game::$instance->_BOCK_A[$parg1]['name'], 'i18n' => ['name']]
+                        ],
+                        'log2' =>    [
+                        'log' => '${name2}',
+                        'args' => ['name2' => game::$instance->_BOCK_A[$explode[1]]['name'], 'i18n' => ['name']]
+                        ],
+
+                                                
+                    )
+            );
+
+            
+            game::$instance->notifyAllPlayers(
+                        'endhappy',
+                        '',
+                        array(
+                            
+                        )
+                    );
+
+           
+            game::$instance->checkPinaHappy($parg2);
+
+            game::$instance->majScore();
+            game::$instance->updateNbTurns();
+            game::$instance->initDice();
+            game::$instance->checkEndGame($this->player_id);
+            game::$instance->giveExtraTime($this->player_id);
+            game::$instance->addPendingFirst($this->player_id, "NormalTurn");
+        }
+        
+  
+    }
+        
 
 
 
