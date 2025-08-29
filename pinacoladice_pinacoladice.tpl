@@ -90,6 +90,8 @@
     <div id="ModalHelpHappy" class="ModalHelpHappy">
 
         <div id="croix"></div>
+
+        <div id="image_modal"></div>
       
         <div class="help">
           <div class="dice_help_1"></div>
