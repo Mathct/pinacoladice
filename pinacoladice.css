@@ -206,23 +206,6 @@ button {
 }
 
 
-/* .selectable.score {
-  border: 3px solid white;
-  box-sizing: border-box;
-  animation: blink2 1s infinite alternate;
-   
-}
-
-@keyframes blink2 {
-  0% {
-    filter: brightness(100%);
-  }
-  100% {
-    filter: brightness(50%);
-  }
-} */
-
-
 .selected{
   border: 3px solid white;
 }
