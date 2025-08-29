@@ -333,3 +333,30 @@ $this->_BOCK_B = [
     
 ];
 
+$this->_HAPPYHELP = [
+    1 => [
+    "description" => clienttranslate('Immediately lose 3 points.'),
+    ],
+
+    2 => [
+    "description" => clienttranslate('Remove one of your Cocktail tokens from a Combination coaster. Return it to your reserve, you can use it on future turns.'),
+    ],
+
+    3 => [
+    "description" => clienttranslate('All other players immediately gain 1 point.'),
+    ],
+
+    4 => [
+    "description" => clienttranslate("Move another player's Cocktail token to a different coaster. This player cannot have 2 tokens on the same coaster. This player does not score points, but this may form a PIÑA COLADICE!"),
+    ],
+
+    5 => [
+    "description" => clienttranslate("Flip any Combination coaster to its other side. If there are Cocktail tokens on it, return them to the players' reserves. They do not lose any points. If one of the players had triggered the end of the game by placing the last token, this does not cancel the end of the game."),
+    ],
+
+    6 => [
+    "description" => clienttranslate('Immediately score 4 points.'),
+    ],
+
+];
+

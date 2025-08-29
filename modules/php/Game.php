@@ -231,7 +231,7 @@ protected function getAllDatas()
     $result['blockdice'] = self::getObjectListFromDB("SELECT blockrolldice1, blockrolldice2, blockrolldice3, blockrolldice4, blockrolldice5 FROM dice");
     $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
 
-    
+    $result['happyhelp'] = $this->_HAPPYHELP;
     
 
     // DEBUG
