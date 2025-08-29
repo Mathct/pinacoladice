@@ -558,11 +558,28 @@ setupBoard: function () {
     if(this.gamedatas.mode == 2)
         {
             const first = document.getElementById("firstplayer");
+            
             first.addEventListener('click', () => {
               const modal = document.getElementById("ModalHelpHappy");
-              modal.style.display = 'flex';
               const overlay = document.getElementById("overlay_modal");
-              overlay.style.display = 'block';
+              const style = window.getComputedStyle(modal);
+
+            if(style.display == "none")
+            {
+                modal.style.display = 'flex';
+                overlay.style.display = 'block';
+
+            }
+
+            else
+            {
+                modal.style.display = 'none';
+                overlay.style.display = 'none';
+
+            }
+              
+              
+              
                 
             })
 
@@ -576,11 +593,12 @@ setupBoard: function () {
             })
 
             const overlay_modal = document.getElementById("overlay_modal");
-             overlay_modal.addEventListener('click', () => {
-              const modal = document.getElementById("ModalHelpHappy");
-              modal.style.display = 'none';
-              const overlay = document.getElementById("overlay_modal");
-              overlay.style.display = 'none';
+
+            overlay_modal.addEventListener('click', () => {
+            const modal = document.getElementById("ModalHelpHappy");
+            modal.style.display = 'none';
+            const overlay = document.getElementById("overlay_modal");
+            overlay.style.display = 'none';
                 
             })
 
