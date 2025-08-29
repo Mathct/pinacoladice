@@ -606,6 +606,14 @@ button {
   align-items: center;
 }
 
+#overlay_modal {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 90;
+  display: none;
+}
+
 #croix{
 
   height: 35px;

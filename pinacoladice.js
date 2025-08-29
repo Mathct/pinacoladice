@@ -561,6 +561,8 @@ setupBoard: function () {
             first.addEventListener('click', () => {
               const modal = document.getElementById("ModalHelpHappy");
               modal.style.display = 'flex';
+              const overlay = document.getElementById("overlay_modal");
+              overlay.style.display = 'block';
                 
             })
 
@@ -568,8 +570,20 @@ setupBoard: function () {
             croix.addEventListener('click', () => {
               const modal = document.getElementById("ModalHelpHappy");
               modal.style.display = 'none';
+              const overlay = document.getElementById("overlay_modal");
+              overlay.style.display = 'none';
                 
             })
+
+            const overlay_modal = document.getElementById("overlay_modal");
+             overlay_modal.addEventListener('click', () => {
+              const modal = document.getElementById("ModalHelpHappy");
+              modal.style.display = 'none';
+              const overlay = document.getElementById("overlay_modal");
+              overlay.style.display = 'none';
+                
+            })
+
 
             var description1 = _(this.gamedatas.happyhelp[1].description);
             var description2 = _(this.gamedatas.happyhelp[2].description);

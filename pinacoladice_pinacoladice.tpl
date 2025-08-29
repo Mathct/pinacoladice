@@ -85,6 +85,8 @@
     <div id="carre43" class="carre"></div>
     <div id="carre44" class="carre"></div>
 
+    <div id="overlay_modal"></div>
+  
     <div id="ModalHelpHappy" class="ModalHelpHappy">
 
         <div id="croix"></div>
