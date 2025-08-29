@@ -556,84 +556,75 @@ setupBoard: function () {
     }
 
     if(this.gamedatas.mode == 2)
+    {
+        const first = document.getElementById("firstplayer");
+        
+        first.addEventListener('click', () => {
+            const modal = document.getElementById("ModalHelpHappy");
+            const overlay = document.getElementById("overlay_modal");
+            const style = window.getComputedStyle(modal);
+
+        if(style.display == "none")
         {
-            const first = document.getElementById("firstplayer");
+            modal.style.display = 'flex';
+            overlay.style.display = 'block';
+
+        }
+
+        else
+        {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+
+        }
             
-            first.addEventListener('click', () => {
-              const modal = document.getElementById("ModalHelpHappy");
-              const overlay = document.getElementById("overlay_modal");
-              const style = window.getComputedStyle(modal);
+            
+            
+            
+        })
 
-            if(style.display == "none")
-            {
-                modal.style.display = 'flex';
-                overlay.style.display = 'block';
-
-            }
-
-            else
-            {
-                modal.style.display = 'none';
-                overlay.style.display = 'none';
-
-            }
-              
-              
-              
-                
-            })
-
-            const croix = document.getElementById("croix");
-            croix.addEventListener('click', () => {
-              const modal = document.getElementById("ModalHelpHappy");
-              modal.style.display = 'none';
-              const overlay = document.getElementById("overlay_modal");
-              overlay.style.display = 'none';
-                
-            })
-
-            const overlay_modal = document.getElementById("overlay_modal");
-
-            overlay_modal.addEventListener('click', () => {
+        const croix = document.getElementById("croix");
+        croix.addEventListener('click', () => {
             const modal = document.getElementById("ModalHelpHappy");
             modal.style.display = 'none';
             const overlay = document.getElementById("overlay_modal");
             overlay.style.display = 'none';
-                
-            })
-
-
-            var description1 = _(this.gamedatas.happyhelp[1].description);
-            var description2 = _(this.gamedatas.happyhelp[2].description);
-            var description3 = _(this.gamedatas.happyhelp[3].description);
-            var description4 = _(this.gamedatas.happyhelp[4].description);
-            var description5 = _(this.gamedatas.happyhelp[5].description);
-            var description6 = _(this.gamedatas.happyhelp[6].description);
-
-
-            const help1 = document.getElementById("descritpion_help_1");
-            help1.textContent = description1;
-            const help2 = document.getElementById("descritpion_help_2");
-            help2.textContent = description2;
-            const help3 = document.getElementById("descritpion_help_3");
-            help3.textContent = description3;
-            const help4 = document.getElementById("descritpion_help_4");
-            help4.textContent = description4;
-            const help5 = document.getElementById("descritpion_help_5");
-            help5.textContent = description5;
-            const help6 = document.getElementById("descritpion_help_6");
-            help6.textContent = description6;
-
-
             
+        })
+
+        const overlay_modal = document.getElementById("overlay_modal");
+
+        overlay_modal.addEventListener('click', () => {
+        const modal = document.getElementById("ModalHelpHappy");
+        modal.style.display = 'none';
+        const overlay = document.getElementById("overlay_modal");
+        overlay.style.display = 'none';
+            
+        })
 
 
+        var description1 = _(this.gamedatas.happyhelp[1].description);
+        var description2 = _(this.gamedatas.happyhelp[2].description);
+        var description3 = _(this.gamedatas.happyhelp[3].description);
+        var description4 = _(this.gamedatas.happyhelp[4].description);
+        var description5 = _(this.gamedatas.happyhelp[5].description);
+        var description6 = _(this.gamedatas.happyhelp[6].description);
 
 
+        const help1 = document.getElementById("descritpion_help_1");
+        help1.textContent = description1;
+        const help2 = document.getElementById("descritpion_help_2");
+        help2.textContent = description2;
+        const help3 = document.getElementById("descritpion_help_3");
+        help3.textContent = description3;
+        const help4 = document.getElementById("descritpion_help_4");
+        help4.textContent = description4;
+        const help5 = document.getElementById("descritpion_help_5");
+        help5.textContent = description5;
+        const help6 = document.getElementById("descritpion_help_6");
+        help6.textContent = description6;
 
-
-
-        }
+    }
     
     if(this.gamedatas.showdice == 1)
     {
