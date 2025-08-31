@@ -586,7 +586,7 @@ class Pending extends APP_GameClass
         $ret["selectable_dice"] = array();
         $ret["selected"] = array();
         $ret['buttons'] = array();
-        $ret['title'] = clienttranslate('${actplayer} must place a cocktail token or pass');
+        
         
 
         $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
@@ -660,18 +660,22 @@ class Pending extends APP_GameClass
         if(count($ret["selectable"]) == 0)
         {
             $ret['titleyou'] = clienttranslate('3rd Roll: ${you} cannot place a cocktail token');
+            
             if($this->game_mode == 1)
             {
+                $ret['title'] = clienttranslate('${actplayer} must pass');
                 $ret['buttons'][]='pass';
             }
             if($this->game_mode == 2)
             {
+                $ret['title'] = clienttranslate('${actplayer} must roll the Happy Hour die');
                 $ret['buttons'][]='happy';
             }
         }
 
         else
         {
+            $ret['title'] = clienttranslate('${actplayer} must place a cocktail token on a coaster');
             $ret['titleyou'] = clienttranslate('3rd Roll: ${you} must place a cocktail token on a coaster');
         }
 
@@ -1632,6 +1636,36 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             game::$instance->giveExtraTime($this->player_id);
             game::$instance->addPendingFirst($this->player_id, "NormalTurn");
         }
+        
+  
+    }
+
+
+    function argConfirmPlace($parg1, $parg2) // CONFIRM PLACE AFTER ROLL
+    {
+        $ret = array();
+        $ret["selectable"] = array();
+        $ret["noselectable"] = array();
+        $ret["selectable_dice"] = array();
+        $ret["selected"] = array();
+        $ret["selected2"] = array();
+        $ret['buttons'] = array();
+        $ret['title'] = clienttranslate('${actplayer} wants to place a cocktail token on a coaster');
+        $ret['titleyou'] = clienttranslate('${you} must confirm');
+        
+
+        
+
+
+        
+               
+                
+        return $ret;
+    }
+
+    function ConfirmPlace($parg1, $parg2, $varg1, $varg2)
+    {
+
         
   
     }
