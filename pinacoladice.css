@@ -13,6 +13,16 @@
  *
  */
 
+ @font-face {
+  font-family: "HaginCapsMedium";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("img/HaginCapsMedium.woff2") format("woff2"),
+       url("img/HaginCapsMedium.woff") format("woff"),
+       url("img/HaginCapsMedium.otf") format("opentype");
+}
+
  body {
     background-image: url('img/background2.png');
     background-repeat: repeat;
@@ -500,6 +510,7 @@ button {
   transform: translate(-50%, -50%);
   animation: animscore 1.5s forwards;
   transform-origin: center center;
+  font-family: "HaginCapsMedium", Arial, sans-serif;
 }
 
 @keyframes animscore {
@@ -683,6 +694,7 @@ button {
 .description {
   width: 80%;
   text-align: justify;
+  font-family: "HaginCapsMedium", Arial, sans-serif;
 }
 
 #image_modal {
