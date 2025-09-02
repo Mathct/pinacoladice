@@ -206,6 +206,11 @@ button {
     
 }
 
+.selectedtoken {
+  animation: blink 1s infinite alternate;
+    
+}
+
 @keyframes blink {
   0% {
     filter: brightness(100%);
@@ -588,7 +593,7 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 85%;
+  height: auto;
   width: 70%;
   z-index: 100;
   border-radius: 5%;
@@ -598,6 +603,7 @@ button {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  padding: 20px 10px 20px 10px;
 }
 
 #overlay_modal {
@@ -702,7 +708,30 @@ button {
    height: 119px;
    background-image: url('img/titre_pannel_happy.png');
    background-size: 100% 100%;
+   margin-bottom: 10px;
 
+}
+
+.help_zone {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+}
+
+.help_zone1 {
+  border: 2px solid rgba(255, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 10px 0 10px 0;
+  margin-bottom: 5px;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.help_zone2 {
+  border: 2px solid rgb(44, 180, 2, 0.5);
+  border-radius: 8px;
+  padding: 10px 0 10px 0;
+  background-color: rgba(44, 180, 2, 0.1)
 }
 
 

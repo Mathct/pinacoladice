@@ -93,29 +93,34 @@
 
         <div id="image_modal"></div>
       
-        <div class="help">
-          <div class="dice_help_1"></div>
-          <div id="descritpion_help_1" class="description"></div>
-        </div>
-        <div class="help">
-          <div class="dice_help_2"></div>
-          <div id="descritpion_help_2" class="description"></div>
-        </div>
-        <div class="help">
-          <div class="dice_help_3"></div>
-          <div id="descritpion_help_3" class="description"></div>
-        </div>  
-        <div class="help">
-          <div class="dice_help_4"></div>
-          <div id="descritpion_help_4" class="description"></div>
-        </div>
-        <div class="help">
-          <div class="dice_help_5"></div>
-          <div id="descritpion_help_5" class="description"></div>
-        </div>
-        <div class="help">
-          <div class="dice_help_6"></div>
-          <div id="descritpion_help_6" class="description"></div>
+        <div class="help_zone1 help_zone">
+          <div class="help">
+            <div class="dice_help_1"></div>
+            <div id="descritpion_help_1" class="description"></div>
+          </div>
+          <div class="help">
+            <div class="dice_help_2"></div>
+            <div id="descritpion_help_2" class="description"></div>
+          </div>
+          <div class="help">
+            <div class="dice_help_3"></div>
+            <div id="descritpion_help_3" class="description"></div>
+          </div> 
+        </div> 
+
+        <div class="help_zone2 help_zone">
+          <div class="help">
+            <div class="dice_help_4"></div>
+            <div id="descritpion_help_4" class="description"></div>
+          </div>
+          <div class="help">
+            <div class="dice_help_5"></div>
+            <div id="descritpion_help_5" class="description"></div>
+          </div>
+          <div class="help">
+            <div class="dice_help_6"></div>
+            <div id="descritpion_help_6" class="description"></div>
+          </div>
         </div>
       
 

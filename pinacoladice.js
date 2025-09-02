@@ -186,6 +186,19 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
                     }
                 }
 
+                if(this.args.selectedtoken)
+                {
+                    for( let sid in this.args.selectedtoken)
+                    {
+                        if(this.isCurrentPlayerActive())
+                        {
+                            
+                            dojo.query("#"+this.args.selectedtoken[sid]).addClass("selectedtoken");
+                           
+                        }
+                    }
+                }
+
 
 
           
@@ -227,19 +240,16 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
             dojo.query(".selected").removeClass("selected");
             dojo.query(".selected2").removeClass("selected2");
             dojo.query(".selectable_dice").removeClass("selectable_dice");
-
             dojo.query(".selectable").removeClass("selectable");
+            dojo.query(".selectedtoken").removeClass("selectedtoken");
             
-            // dojo.query(".selectable").addClass("reverse-selectable");
+            
             dojo.query(".noselectable").addClass("reverse-noselectable");
 
             setTimeout(() => 
             {
-            // dojo.query(".selectable").removeClass("selectable");
-            dojo.query(".noselectable").removeClass("noselectable");
-            // dojo.query(".reverse-selectable").removeClass("reverse-selectable");
-            dojo.query(".reverse-noselectable").removeClass("reverse-noselectable");
-
+                dojo.query(".noselectable").removeClass("noselectable");
+                dojo.query(".reverse-noselectable").removeClass("reverse-noselectable");
             }, "1000");
 
 
