@@ -242,8 +242,6 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
             dojo.query(".selectable_dice").removeClass("selectable_dice");
             dojo.query(".selectable").removeClass("selectable");
             dojo.query(".selectedtoken").removeClass("selectedtoken");
-            
-            
             dojo.query(".noselectable").addClass("reverse-noselectable");
 
             setTimeout(() => 
@@ -253,7 +251,7 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
             }, "1000");
 
 
-            if(this.gamedatas.mode == 2)
+            if((this.gamedatas.mode == 2)&&(this.isCurrentPlayerActive()))
             {
                 const modal = document.getElementById("ModalHelpHappy");
                  modal.style.display = 'none';
