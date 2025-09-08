@@ -34,13 +34,13 @@ function (dojo, declare, gamegui, counter, BgaAnimations) {   //Attention si on 
             
         },
 
-        updatePlayerOrdering() {
+        // updatePlayerOrdering() {
             
-            this.inherited(arguments);
-            dojo.place(this.format_block('jstpl_player_board_title', {mode: this.gamedatas.mode}), 'player_boards', 'first');
+        //     this.inherited(arguments);
+        //     dojo.place(this.format_block('jstpl_player_board_title', {mode: this.gamedatas.mode}), 'player_boards', 'first');
 
             
-        }, 
+        // }, 
         
         /*
             setup:
