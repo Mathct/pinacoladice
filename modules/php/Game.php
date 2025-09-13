@@ -450,7 +450,7 @@ function Result($dice) {
 
         if (!in_array(7, $result)) $result[] = "7"; // petite suite
         if (!in_array(8, $result)) $result[] = "8"; // grande suite
-        if (!in_array(0, $result)) $result[] = "0"; // tous differents aussi
+        
     } else {
         // sinon, on cherche une suite de 4 consécutifs
         for ($i = 0; $i <= $count - 4; $i++) {
@@ -514,13 +514,17 @@ function Result($dice) {
         $result[] = "14";
     }
 
-    sort($result);
-    if(count($result) == 0)
-    {
-       $result[] = "0";
+    // tous differents
+    if (count($dice) == count(array_unique($dice))) {
+        
+        if(!in_array(0, $result)){
+            $result[] = "0";
+        }
     }
 
-    
+    sort($result);
+
+        
     return $result;
 }
 
