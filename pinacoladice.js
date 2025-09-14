@@ -872,8 +872,13 @@ if(type_arg == 2)
 
     //dojo.query("#score1_"+type).connect('onclick', this, 'onSelect' );
     //dojo.query("#score2_"+type).connect('onclick', this, 'onSelect' );
-    
+
+        
 }
+
+    var info = _(this.gamedatas.info[type].name);
+    var html = '<div>'+info+'</div>';
+    this.addTooltipHtml( 'bock_'+type, html,1000);
 
 },
 
@@ -1613,13 +1618,13 @@ rollDice: function () {
             dojo.query("#bock_"+notif.args.type).addClass("flipable");
             
 
-            setTimeout(function() {             // 100ms pour attendre que le DOM soit effectif
+            setTimeout(() => {             // 100ms pour attendre que le DOM soit effectif
             dojo.query("#bock_"+notif.args.type).addClass("flip");
             dojo.query("#flipbock_"+notif.args.type).addClass("flip");
             
             }, 100);
 
-            setTimeout(function() {             // 1500ms pour laisser le temps que le flip soit fini
+            setTimeout(() => {             // 1500ms pour laisser le temps que le flip soit fini
             const card = document.getElementById("bock_"+notif.args.type);
             card.remove();
 
@@ -1638,10 +1643,10 @@ rollDice: function () {
             Newflipscore2.id = "score2_"+notif.args.type;
             }
 
-
-            
-
-            
+            var info = _(this.gamedatas.info[notif.args.type].name);
+            var html = '<div>'+info+'</div>';
+            this.addTooltipHtml( 'bock_'+notif.args.type, html,1000);
+   
     
             }, 1500);
 

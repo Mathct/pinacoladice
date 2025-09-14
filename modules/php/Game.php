@@ -232,6 +232,8 @@ protected function getAllDatas()
     $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
 
     $result['happyhelp'] = $this->_HAPPYHELP;
+
+    $result['info'] = $this->_BOCK_A;
     
 
     // DEBUG
@@ -521,9 +523,6 @@ function Result($dice) {
             $result[] = "0";
         }
     }
-
-    sort($result);
-
         
     return $result;
 }
