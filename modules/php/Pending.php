@@ -966,8 +966,8 @@ class Pending extends APP_GameClass
 
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
-        //$result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
-        $result_dice = 5;  // FORCER LE RESULTAT
+        $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+        //$result_dice = 5;  // FORCER LE RESULTAT
 
         if($result_dice == 1)
         {
