@@ -378,7 +378,7 @@ button {
   background-size: 400% 100%;
   z-index: 10;
   box-sizing: border-box;
-  border-radius: 50%;
+  border-radius: 10px;
   border: 2px solid white;
  
 }
@@ -403,7 +403,7 @@ button {
   display: inline-block;
   vertical-align: middle;
   box-sizing: border-box;
-  border-radius: 50%;
+  border-radius: 10px;
   border: 2px solid white;
  
 }
