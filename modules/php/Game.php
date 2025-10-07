@@ -326,7 +326,7 @@ function checkArgs($arg1)
 
         if(!in_array($arg1,$ret['selectable']) && !in_array($arg1,$ret['selectable_dice']) && !in_array($arg1,$ret['buttons']))
         {
-            throw new feException( "Not a valid selection");
+            throw new \BgaSystemException("Not a valid selection");
         }
         
     }
