@@ -636,13 +636,37 @@ function adjScore($id, $type) {
 
 function positionPlace($id) {
 
-    $position = self::getUniqueValueFromDB("SELECT player_positionplace FROM player WHERE player_id={$id}");
-    if($position == 0)
+    $nb_players = count(self::getObjectListFromDB( "SELECT player_id name FROM player", true ));
+    $places = self::getObjectListFromDB( "SELECT player_id id, player_positionplace place FROM player" );
+
+    self::DbQuery("UPDATE player SET player_positionplace = $nb_players WHERE player_id={$id}");
+    $this->setStat($nb_players, 'place', $id);
+
+    foreach($places as $place)
     {
-        $newposition = count(self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_positionplace != 0", true )) + 1;
-        self::DbQuery("UPDATE player SET player_positionplace = $newposition WHERE player_id={$id}");
-        $this->setStat($newposition, 'place', $id);
+        if($place['id'] != $id)
+        {
+            
+                $newplace = $place['place'] - 1;
+                $player = $place['id'];
+                self::DbQuery("UPDATE player SET player_positionplace = $newplace WHERE player_id={$player}");
+                $this->setStat($newplace, 'place', $player);
+            
+
+
+            
+        }
+
+
     }
+
+    // $position = self::getUniqueValueFromDB("SELECT player_positionplace FROM player WHERE player_id={$id}");
+    // if($position == 0)
+    // {
+    //     $newposition = count(self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_positionplace != 0", true )) + 1;
+    //     self::DbQuery("UPDATE player SET player_positionplace = $newposition WHERE player_id={$id}");
+    //     $this->setStat($newposition, 'place', $id);
+    // }
 
 
 }
@@ -760,7 +784,7 @@ function checkEndGame($id) {
 
         else
         {
-            //il faut verifier si le joueur est et le dernier à jouer.. si c'est le cas c'est un end game
+            //il faut verifier si le joueur est le dernier à jouer.. si c'est le cas c'est un end game
             $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
             $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
 
@@ -794,6 +818,27 @@ function checkEndGame($id) {
 
     function End()
     {
+
+        // je remet d'abord les bonne place
+
+        $place = self::getObjectListFromDB( "SELECT player_id id, player_positionplace place FROM player" );
+        usort($place, function ($a, $b) {
+            return $b['place'] <=> $a['place'];
+        });
+        $nb_players = count(self::getObjectListFromDB( "SELECT player_id name FROM player", true ));
+
+        for ($i=0; $i<= $nb_players-1; $i++)
+        {
+            $newplace = $nb_players - $i;
+            $player = $place[$i]['id'];
+            self::DbQuery("UPDATE player SET player_positionplace = $newplace WHERE player_id={$player}");
+            $this->setStat($newplace, 'place', $player);
+
+        }
+
+
+
+        // puis test de win
         $players = self::getObjectListFromDB( "SELECT player_id FROM player", true );
         $player_pina = self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_pina=1");
 
@@ -817,24 +862,18 @@ function checkEndGame($id) {
         {
 
             $wins = self::getObjectListFromDB( "SELECT player_id id, player_score score, player_positionplace place FROM player WHERE player_score = (SELECT MAX(player_score) FROM player)" );
-            //self::DbQuery("UPDATE player SET player_score = 0");
+            
             
             if(count($wins) >= 2)
             {
-                // foreach($wins as $win)
-                // {
-                //     self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$win['id']}");
-                // }
-
+                
                 // Trouver la ligne avec le place max et place le plus haut
                 $idWin= $wins[array_search(max(array_column($wins, 'place')), array_column($wins, 'place'))]['id'];
                 self::DbQuery("UPDATE player set player_score_aux = 1 WHERE player_id={$idWin}");
                 
             }
 
-            // else{
-            //     self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$wins[0]['id']}");
-            // }
+            
         }
                
         game::$instance->majScore();

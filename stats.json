@@ -27,7 +27,7 @@
 
       "place": {
         "id": 12,
-        "name": "Order of the first cocktail token placed",
+        "name": "Order of the last cocktail token placed",
         "type": "int"
       },
 
