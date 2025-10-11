@@ -737,6 +737,32 @@ button {
   background-color: rgba(44, 180, 2, 0.1)
 }
 
+.marqueur_carre {
+
+  position: absolute;
+  height: 33px;
+  width: 33px;
+  background-image: url("img/marqueur.png");
+  background-size: 200% 100%;
+  border-radius: 10px;
+  background-position-x: 0%;
+
+}
+
+.marqueur_croix {
+  position: absolute;
+  height: 33px;
+  width: 33px;
+  background-image: url("img/marqueur.png");
+  background-size: 200% 100%;
+  background-position-x: -100%;
+  
+}
+
+
+
+
+
 
 
 
