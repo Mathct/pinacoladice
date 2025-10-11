@@ -676,52 +676,78 @@ setupBoard: function () {
 
 addBock: function (type, type_arg, location_arg) {
 
+var BockA = '';
+var BockB = '';
+
+if(this.prefs[101].value == 1)
+{
+    var BockA = 'jstpl_bockA';
+    var BockB = 'jstpl_bockB';
+}
+
+if(this.prefs[101].value == 2)
+{
+    var BockA = 'jstpl_bockA_2';
+    var BockB = 'jstpl_bockB_2';
+}
+
+
 if(type_arg == 1)
 {
     if(type>= 1 && type <=5)
-    dojo.place( this.format_block( 'jstpl_bockA', {
-        id: type,
-        x: (type-1)*(-100),
-        y: 0,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockA, {
+            id: type,
+            x: (type-1)*(-100),
+            y: 0,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 6 && type <=10)
-    dojo.place( this.format_block( 'jstpl_bockA', {
-        id: type,
-        x: (type-6)*(-100),
-        y: -100,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockA, {
+            id: type,
+            x: (type-6)*(-100),
+            y: -100,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 11 && type <=15)
-    dojo.place( this.format_block( 'jstpl_bockA', {
-        id: type,
-        x: (type-11)*(-100),
-        y: -200,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockA, {
+            id: type,
+            x: (type-11)*(-100),
+            y: -200,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 16 && type <=20)
-    dojo.place( this.format_block( 'jstpl_bockA', {
-        id: type,
-        x: (type-16)*(-100),
-        y: -300,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockA, {
+            id: type,
+            x: (type-16)*(-100),
+            y: -300,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 21 && type <=25)
-    dojo.place( this.format_block( 'jstpl_bockA', {
-        id: type,
-        x: (type-21)*(-100),
-        y: -400,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockA, {
+            id: type,
+            x: (type-21)*(-100),
+            y: -400,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     dojo.query("#bock_"+type).connect('onclick', this, 'onSelect' );
     
@@ -765,49 +791,59 @@ if(type_arg == 1)
 if(type_arg == 2)
 {
     if(type>= 1 && type <=5)
-    dojo.place( this.format_block( 'jstpl_bockB', {
-        id: type,
-        x: (type-1)*(-100),
-        y: 0,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockB, {
+            id: type,
+            x: (type-1)*(-100),
+            y: 0,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 6 && type <=10)
-    dojo.place( this.format_block( 'jstpl_bockB', {
-        id: type,
-        x: (type-6)*(-100),
-        y: -100,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockB, {
+            id: type,
+            x: (type-6)*(-100),
+            y: -100,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 11 && type <=15)
-    dojo.place( this.format_block( 'jstpl_bockB', {
-        id: type,
-        x: (type-11)*(-100),
-        y: -200,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockB, {
+            id: type,
+            x: (type-11)*(-100),
+            y: -200,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 16 && type <=20)
-    dojo.place( this.format_block( 'jstpl_bockB', {
-        id: type,
-        x: (type-16)*(-100),
-        y: -300,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockB, {
+            id: type,
+            x: (type-16)*(-100),
+            y: -300,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     if(type>= 21 && type <=25)
-    dojo.place( this.format_block( 'jstpl_bockB', {
-        id: type,
-        x: (type-21)*(-100),
-        y: -400,
-        
-                            
-    } ) , 'carre'+location_arg );
+    {
+        dojo.place( this.format_block( BockB, {
+            id: type,
+            x: (type-21)*(-100),
+            y: -400,
+            
+                                
+        } ) , 'carre'+location_arg );
+    }
 
     dojo.query("#bock_"+type).connect('onclick', this, 'onSelect' ); 
 
@@ -992,13 +1028,31 @@ addFlipBock: function (type, type_arg, location_arg) {
 
     if(type_arg == 1)
     {
-        bock ='bockA';
+        if(this.prefs[101].value == 1)
+        {
+            bock ='bockA';
+        }
+
+        if(this.prefs[101].value == 2)
+        {
+            bock ='bockA_2';
+        }
     }
 
     if(type_arg == 2)
     {
-        bock ='bockB';
+        if(this.prefs[101].value == 1)
+        {
+            bock ='bockB';
+        }
+
+        if(this.prefs[101].value == 2)
+        {
+            bock ='bockB_2';
+        }
     }
+
+
 
     
     if(type>= 1 && type <=5)

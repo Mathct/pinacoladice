@@ -142,6 +142,9 @@
 var jstpl_bockA='<div id="bock_${id}" class="bockA" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
 var jstpl_bockB='<div id="bock_${id}" class="bockB" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
 
+var jstpl_bockA_2='<div id="bock_${id}" class="bockA_2" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
+var jstpl_bockB_2='<div id="bock_${id}" class="bockB_2" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
+
 var jstpl_flipbock='<div id="flipbock_${id}" class="${class} rotate" style="background-position-x: ${x}%; background-position-y: ${y}%;"></div>';
 
 var jstpl_score1='<div id="score1_${id}" class="score1 score" style="top: ${x}%; left: ${y}%;"></div>';

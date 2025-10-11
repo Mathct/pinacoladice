@@ -14,5 +14,22 @@
         
       },
       "default": 1
+    },
+
+    "101": {
+      "name": "Coaster color attenuation",
+      "needReload": true,
+      "values": {
+        "1": {
+          "name": "Disabled"
+          
+        },
+        "2": {
+          "name": "Enabled"
+          
+        }
+        
+      },
+      "default": 1
     }
 }
