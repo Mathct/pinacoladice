@@ -18,15 +18,24 @@ declare(strict_types=1);
 
 namespace Bga\Games\pinacoladice;
 
-require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
+use Bga\GameFramework\Components\Deck;
+use Bga\GameFramework\SystemException;
+use Bga\GameFramework\Table;
+use Bga\GameFramework\VisibleSystemException;
 
 include('Pending.php'); // ATTENTION
 
 
-class Game extends \Table
+class Game extends Table
 {
     private static array $CARD_TYPES; // ATTENTION
     public static $instance = null; //ATTENTION
+
+    public Deck $bocks;
+
+    public array $_BOCK_A;
+    public array $_BOCK_B;
+    public array $_HAPPYHELP;
 
     /**
      * Your global variables labels:
@@ -55,21 +64,9 @@ class Game extends \Table
         
         self::$instance = $this; // ATTENTION
 
-        $this->bocks= self::getNew("module.common.deck");
-        $this->bocks->init("bocks");
+        $this->bocks= $this->bga->deckFactory->createDeck("bocks");
 
         
-    }
-
-
-    /**
-     * Returns the game name.
-     *
-     * IMPORTANT: Please do not modify.
-     */
-    protected function getGameName()
-    {
-        return "pinacoladice";
     }
 
 /////////////////////////////////////////////////////////////////////////////////  
@@ -107,7 +104,7 @@ class Game extends \Table
         // additional fields directly here.
         static::DbQuery(
             sprintf(
-                "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES %s",
+                "INSERT INTO `player` (`player_id`, `player_color`, `player_canal`, `player_name`, `player_avatar`) VALUES %s",
                 implode(",", $query_values)
             )
         );
@@ -124,7 +121,7 @@ class Game extends \Table
         self::initStat( 'player', 'place', 0 );
 
         
-        self::DbQuery("INSERT INTO dice () VALUES ()");
+        self::DbQuery("INSERT INTO `dice` () VALUES ()");
 
 
         /* init bocks */
@@ -139,7 +136,7 @@ class Game extends \Table
 
         /* place bock */
 
-        $nbreplayers = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
+        $nbreplayers = count(self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true ));
 
         for ($i = 11; $i <= 14; $i++) 
         {
@@ -161,33 +158,33 @@ class Game extends \Table
         if($nbreplayers == 3)
         {
 
-            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location_arg IN (11, 14, 22, 23, 32, 33, 41, 44)");
+            self::DbQuery("UPDATE `bocks` SET `card_type_arg` = 2 WHERE `card_location_arg` IN (11, 14, 22, 23, 32, 33, 41, 44)");
         }
 
         if($nbreplayers == 4)
         {
 
-            self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_location = 'board'");
+            self::DbQuery("UPDATE `bocks` SET `card_type_arg` = 2 WHERE `card_location` = 'board'");
         }
 
-        $players_for_no = self::getObjectListFromDB( "SELECT player_id id, player_no no FROM player" );
+        $players_for_no = self::getObjectListFromDB( "SELECT `player_id` `id`, `player_no` no FROM `player`" );
         foreach($players_for_no as $player_for_no)
         {
             if($player_for_no['no']==1)
             {
-                self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id = {$player_for_no['id']}");
+                self::DbQuery("UPDATE `player` SET `player_score` = 1 WHERE `player_id` = {$player_for_no['id']}");
             }
             if($player_for_no['no']==2)
             {
-                self::DbQuery("UPDATE player SET player_score = 2 WHERE player_id = {$player_for_no['id']}");
+                self::DbQuery("UPDATE `player` SET `player_score` = 2 WHERE `player_id` = {$player_for_no['id']}");
             }
             if($player_for_no['no']==3)
             {
-                self::DbQuery("UPDATE player SET player_score = 3 WHERE player_id = {$player_for_no['id']}");
+                self::DbQuery("UPDATE `player` SET `player_score` = 3 WHERE `player_id` = {$player_for_no['id']}");
             }
             if($player_for_no['no']==4)
             {
-                self::DbQuery("UPDATE player SET player_score = 4 WHERE player_id = {$player_for_no['id']}");
+                self::DbQuery("UPDATE `player` SET `player_score` = 4 WHERE `player_id` = {$player_for_no['id']}");
             }
 
         }
@@ -199,6 +196,8 @@ class Game extends \Table
         {
             $this->addPendingFirst($player_id, "NormalTurn");
         }
+
+        return 2;
     }
 
 /////////////////////////////////////////////////////////////////////////////////  
@@ -227,13 +226,13 @@ protected function getAllDatas()
 
     $result["mode"] = $this->getGameStateValue('game_mode');
 
-    $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT player_id FROM player", true ));
+    $result["nbre_payers"] = count(self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true ));
 
-    $result['bocks'] = self::getObjectListFromDB( "SELECT card_id id, card_type type, card_type_arg type_arg, card_location location, card_location_arg location_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
+    $result['bocks'] = self::getObjectListFromDB( "SELECT `card_id` `id`, `card_type` type, `card_type_arg` type_arg, `card_location` location, `card_location_arg` location_arg, `score1` `score1`, `score2` `score2` FROM `bocks` WHERE `card_location` = 'board'");
 
-    $result['forcedFaces'] = self::getObjectListFromDB("SELECT dice1, dice2, dice3, dice4, dice5 FROM dice");
-    $result['blockdice'] = self::getObjectListFromDB("SELECT blockrolldice1, blockrolldice2, blockrolldice3, blockrolldice4, blockrolldice5 FROM dice");
-    $result['showdice'] = self::getUniqueValueFromDB("SELECT showdice FROM dice WHERE id = 1 ");
+    $result['forcedFaces'] = self::getObjectListFromDB("SELECT `dice1`, `dice2`, `dice3`, `dice4`, `dice5` FROM `dice`");
+    $result['blockdice'] = self::getObjectListFromDB("SELECT `blockrolldice1`, `blockrolldice2`, `blockrolldice3`, `blockrolldice4`, `blockrolldice5` FROM `dice`");
+    $result['showdice'] = self::getUniqueValueFromDB("SELECT `showdice` FROM `dice` WHERE `id` = 1 ");
 
     $result['happyhelp'] = $this->_HAPPYHELP;
 
@@ -242,8 +241,8 @@ protected function getAllDatas()
 
     // DEBUG
 
-    // $name1 = self::getUniqueValuefromDB("SELECT player_name FROM player WHERE player_no = 1");
-    // $name2 = self::getUniqueValuefromDB("SELECT player_name FROM player WHERE player_no = 2");
+    // $name1 = self::getUniqueValuefromDB("SELECT `player_name` FROM `player` WHERE `player_no` = 1");
+    // $name2 = self::getUniqueValuefromDB("SELECT `player_name` FROM `player` WHERE `player_no` = 2");
 
     // if(($name1 == 'thoun' || $name2 == 'thoun'))
     // {
@@ -270,12 +269,12 @@ public function getGameProgression()
 {
     // TODO: compute and return the game progression
 
-    $reserve_tokens = self::getObjectListFromDB( "SELECT player_token FROM player", true );
+    $reserve_tokens = self::getObjectListFromDB( "SELECT `player_token` FROM `player`", true );
     $reserve_token_min = min($reserve_tokens);
     $prog_reserve =floor(100- $reserve_token_min/6*100);
 
 
-    $scores = self::getObjectListFromDB( "SELECT player_score FROM player", true );
+    $scores = self::getObjectListFromDB( "SELECT `player_score` FROM `player`", true );
     $score_max = max($scores);
     if($score_max >= 20)
     {
@@ -285,7 +284,7 @@ public function getGameProgression()
 
     $tableau = [$prog_reserve, $prog_score];
 
-    $pinas = self::getObjectListFromDB( "SELECT player_pina FROM player", true );
+    $pinas = self::getObjectListFromDB( "SELECT `player_pina` FROM `player`", true );
     $pina_max = max($pinas);
 
     if($pina_max == 1)
@@ -313,14 +312,14 @@ public function getGameProgression()
 /////////////////////////////////////////////////////////////////////////////////  
 
 function addPending($player_id, $function, $arg = NULL, $arg2 = NULL, $arg3 = NULL, $arg4 = NULL) {
-    $sql = "INSERT INTO pending (player_id, function, arg, arg2, arg3, arg4) VALUES (".$player_id.", '".$function."', '".$arg."', '".$arg2."', '".$arg3."', '".$arg4."')";
+    $sql = "INSERT INTO `pending` (`player_id`, `function`, `arg`, `arg2`, `arg3`, `arg4`) VALUES (".$player_id.", '".$function."', '".$arg."', '".$arg2."', '".$arg3."', '".$arg4."')";
     self::DbQuery( $sql );
 }
 
 
 function addPendingFirst($player_id, $function, $arg = NULL, $arg2 = NULL, $arg3 = NULL, $arg4 = NULL) {
-    $minid = self::getUniqueValueFromDB( "select min(id) from pending")-1;
-    $sql = "INSERT INTO pending (id, player_id, function, arg, arg2) VALUES (".$minid.",".$player_id.", '".$function."', '".$arg."', '".$arg2."')";
+    $minid = self::getUniqueValueFromDB( "select min(`id`) from `pending`")-1;
+    $sql = "INSERT INTO `pending` (`id`, `player_id`, `function`, `arg`, `arg2`) VALUES (".$minid.",".$player_id.", '".$function."', '".$arg."', '".$arg2."')";
     self::DbQuery( $sql );
 }
 
@@ -330,7 +329,7 @@ function checkArgs($arg1)
 
         if(!in_array($arg1,$ret['selectable']) && !in_array($arg1,$ret['selectable_dice']) && !in_array($arg1,$ret['buttons']))
         {
-            throw new \BgaSystemException("Not a valid selection");
+            throw new SystemException("Not a valid selection");
         }
         
     }
@@ -549,12 +548,12 @@ function initDice(){
             )
         );
 
-    self::DbQuery("UPDATE dice set showdice = 0");
-    self::DbQuery("UPDATE dice set blockrolldice1 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice2 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice3 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice4 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice5 = 0");
+    self::DbQuery("UPDATE `dice` set `showdice` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice1` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice2` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice3` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice4` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice5` = 0");
 
 }
 
@@ -568,22 +567,22 @@ function initDiceHappy(){
             )
         );
 
-    self::DbQuery("UPDATE dice set showdice = 2");
-    self::DbQuery("UPDATE dice set blockrolldice1 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice2 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice3 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice4 = 0");
-    self::DbQuery("UPDATE dice set blockrolldice5 = 0");
+    self::DbQuery("UPDATE `dice` set `showdice` = 2");
+    self::DbQuery("UPDATE `dice` set `blockrolldice1` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice2` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice3` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice4` = 0");
+    self::DbQuery("UPDATE `dice` set `blockrolldice5` = 0");
 
 }
 
 function majScore() {
 
-    $players = self::getObjectListFromDB( "SELECT player_id FROM player", true );
+    $players = self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true );
     foreach($players as $player)
     {
 
-        $score = self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id={$player}");
+        $score = self::getUniqueValueFromDB("SELECT `player_score` FROM `player` WHERE `player_id`={$player}");
         game::$instance->notifyAllPlayers(
             'score',
             '',
@@ -602,19 +601,19 @@ function majScore() {
 function adjScore($id, $type) {
 
     $adj = 0;
-    $location = self::getUniqueValueFromDB("SELECT card_location_arg FROM bocks WHERE card_type={$type}");
+    $location = self::getUniqueValueFromDB("SELECT `card_location_arg` FROM `bocks` WHERE `card_type`={$type}");
 
     $tests = [$location -1, $location+1, $location+10, $location -10, $location-11, $location-9, $location+9, $location+11];
 
     foreach ($tests as $test) {
         
-        $emplacement1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_location_arg={$test}");
-        $emplacement2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_location_arg={$test}");
+        $emplacement1 = self::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_location_arg`={$test}");
+        $emplacement2 = self::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_location_arg`={$test}");
 
         if(($emplacement1 == $id)||($emplacement2 == $id))
         {
             $adj++;
-            $type = self::getUniqueValueFromDB("SELECT card_type FROM bocks WHERE card_location_arg={$test}");
+            $type = self::getUniqueValueFromDB("SELECT `card_type` FROM `bocks` WHERE `card_location_arg`={$test}");
             game::$instance->notifyAllPlayers(
                     'animScore',
                     '',
@@ -628,7 +627,7 @@ function adjScore($id, $type) {
 
     }
 
-    self::DbQuery("UPDATE player SET player_score = player_score + $adj WHERE player_id={$id}");
+    self::DbQuery("UPDATE `player` SET `player_score` = `player_score` + $adj WHERE `player_id`={$id}");
 
     return $adj;
 
@@ -636,10 +635,10 @@ function adjScore($id, $type) {
 
 function positionPlace($id) {
 
-    $nb_players = count(self::getObjectListFromDB( "SELECT player_id name FROM player", true ));
-    $places = self::getObjectListFromDB( "SELECT player_id id, player_positionplace place FROM player" );
+    $nb_players = count(self::getObjectListFromDB( "SELECT `player_id` name FROM `player`", true ));
+    $places = self::getObjectListFromDB( "SELECT `player_id` `id`, `player_positionplace` place FROM `player`" );
 
-    self::DbQuery("UPDATE player SET player_positionplace = $nb_players WHERE player_id={$id}");
+    self::DbQuery("UPDATE `player` SET `player_positionplace` = $nb_players WHERE `player_id`={$id}");
     $this->setStat($nb_players, 'place', $id);
 
     foreach($places as $place)
@@ -649,7 +648,7 @@ function positionPlace($id) {
             
                 $newplace = $place['place'] - 1;
                 $player = $place['id'];
-                self::DbQuery("UPDATE player SET player_positionplace = $newplace WHERE player_id={$player}");
+                self::DbQuery("UPDATE `player` SET `player_positionplace` = $newplace WHERE `player_id`={$player}");
                 $this->setStat($newplace, 'place', $player);
             
 
@@ -660,11 +659,11 @@ function positionPlace($id) {
 
     }
 
-    // $position = self::getUniqueValueFromDB("SELECT player_positionplace FROM player WHERE player_id={$id}");
+    // $position = self::getUniqueValueFromDB("SELECT `player_positionplace` FROM `player` WHERE `player_id`={$id}");
     // if($position == 0)
     // {
-    //     $newposition = count(self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_positionplace != 0", true )) + 1;
-    //     self::DbQuery("UPDATE player SET player_positionplace = $newposition WHERE player_id={$id}");
+    //     $newposition = count(self::getObjectListFromDB( "SELECT `player_id` FROM `player` WHERE `player_positionplace` != 0", true )) + 1;
+    //     self::DbQuery("UPDATE `player` SET `player_positionplace` = $newposition WHERE `player_id`={$id}");
     //     $this->setStat($newposition, 'place', $id);
     // }
 
@@ -673,10 +672,10 @@ function positionPlace($id) {
 
 function checkEndGame($id) {
 
-    $player_name = self::getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id={$id}");
+    $player_name = self::getUniqueValueFromDB("SELECT `player_name` FROM `player` WHERE `player_id`={$id}");
 
     //test Pina
-    $locations = self::getObjectListFromDB( "SELECT card_location_arg FROM bocks WHERE score1 = {$id} OR score2 = {$id}", true );
+    $locations = self::getObjectListFromDB( "SELECT `card_location_arg` FROM `bocks` WHERE `score1` = {$id} OR `score2` = {$id}", true );
     
     $pinas = [
     'pina_1' => [11,12,13,14],
@@ -704,9 +703,9 @@ function checkEndGame($id) {
     {
         ///y a un PINA !!
 
-        self::DbQuery("UPDATE player SET player_pina = 1 WHERE player_id={$id}");
+        self::DbQuery("UPDATE `player` SET `player_pina` = 1 WHERE `player_id`={$id}");
 
-        self::notifyAllPlayers( 'message', clienttranslate('${player_name} makes a Piña Coladice and wins the game'),
+        $this->bga->notify->all( 'message', clienttranslate('${player_name} makes a Piña Coladice and wins the game'),
         array(
             'player_name' => $player_name,
                 
@@ -731,24 +730,24 @@ function checkEndGame($id) {
     {
         /// sinon on continue les tests (si score >=20  ou nombre de tokens en reserve = 0)
 
-        $score = self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id={$id}");
-        $reservetoken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$id}");
-        $end_other_player = self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_end = 1", true );
+        $score = self::getUniqueValueFromDB("SELECT `player_score` FROM `player` WHERE `player_id`={$id}");
+        $reservetoken = self::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`={$id}");
+        $end_other_player = self::getObjectListFromDB( "SELECT `player_id` FROM `player` WHERE `player_end` = 1", true );
 
         if($end_other_player == NULL)  // on teste si un joueur n'a pas declenché la fin de game
         {
             if($score >= 20)
             {
-                self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
+                self::DbQuery("UPDATE `player` set `player_end` = 1 WHERE `player_id`={$id}");
 
-                self::notifyAllPlayers( 'message', clienttranslate('${player_name} reaches 20 points and triggers the end of the game (at the end of the turn)'),
+                $this->bga->notify->all( 'message', clienttranslate('${player_name} reaches 20 points and triggers the end of the game (at the end of the turn)'),
                 array(
                     'player_name' => $player_name,
                         
                 ));
 
-                $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
-                $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
+                $count_players = count(self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true )); 
+                $no = self::getUniqueValueFromDB("SELECT `player_no` FROM `player` WHERE `player_id`={$id}");
 
                 if($no == $count_players)
                 {
@@ -761,16 +760,16 @@ function checkEndGame($id) {
 
             elseif ($reservetoken == 0)
             {
-                self::DbQuery("UPDATE player set player_end = 1 WHERE player_id={$id}");
+                self::DbQuery("UPDATE `player` set `player_end` = 1 WHERE `player_id`={$id}");
 
-                self::notifyAllPlayers( 'message', clienttranslate('${player_name} places the last cocktail token and triggers the end of the game (at the end of the turn)'),
+                $this->bga->notify->all( 'message', clienttranslate('${player_name} places the last cocktail token and triggers the end of the game (at the end of the turn)'),
                 array(
                     'player_name' => $player_name,
                         
                 ));
 
-                $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
-                $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
+                $count_players = count(self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true )); 
+                $no = self::getUniqueValueFromDB("SELECT `player_no` FROM `player` WHERE `player_id`={$id}");
 
                 if($no == $count_players)
                 {
@@ -785,8 +784,8 @@ function checkEndGame($id) {
         else
         {
             //il faut verifier si le joueur est le dernier à jouer.. si c'est le cas c'est un end game
-            $count_players = count(self::getObjectListFromDB( "SELECT player_id FROM player", true )); 
-            $no = self::getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id={$id}");
+            $count_players = count(self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true )); 
+            $no = self::getUniqueValueFromDB("SELECT `player_no` FROM `player` WHERE `player_id`={$id}");
 
             if($no == $count_players)
             {
@@ -807,7 +806,7 @@ function checkEndGame($id) {
 
     function updateNbTurns()
     {
-        $player_id = self::getActivePlayerId();
+        $player_id = (int)self::getActivePlayerId();
         $this->incStat(1, 'turns_number', $player_id);
         if (self::getPlayerNoById($player_id) == 1) {
             $this->incStat(1, 'turns_number');
@@ -821,17 +820,17 @@ function checkEndGame($id) {
 
         // je remet d'abord les bonne place
 
-        $place = self::getObjectListFromDB( "SELECT player_id id, player_positionplace place FROM player" );
+        $place = self::getObjectListFromDB( "SELECT `player_id` `id`, `player_positionplace` place FROM `player`" );
         usort($place, function ($a, $b) {
             return $b['place'] <=> $a['place'];
         });
-        $nb_players = count(self::getObjectListFromDB( "SELECT player_id name FROM player", true ));
+        $nb_players = count(self::getObjectListFromDB( "SELECT `player_id` name FROM `player`", true ));
 
         for ($i=0; $i<= $nb_players-1; $i++)
         {
             $newplace = $nb_players - $i;
             $player = $place[$i]['id'];
-            self::DbQuery("UPDATE player SET player_positionplace = $newplace WHERE player_id={$player}");
+            self::DbQuery("UPDATE `player` SET `player_positionplace` = $newplace WHERE `player_id`={$player}");
             $this->setStat($newplace, 'place', $player);
 
         }
@@ -839,13 +838,13 @@ function checkEndGame($id) {
 
 
         // puis test de win
-        $players = self::getObjectListFromDB( "SELECT player_id FROM player", true );
-        $player_pina = self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_pina=1");
+        $players = self::getObjectListFromDB( "SELECT `player_id` FROM `player`", true );
+        $player_pina = self::getUniqueValueFromDB("SELECT `player_id` FROM `player` WHERE `player_pina`=1");
 
         foreach($players as $player)
         {
-            $score = self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id={$player}");
-            $pina = self::getUniqueValueFromDB("SELECT player_pina FROM player WHERE player_id={$player}");
+            $score = self::getUniqueValueFromDB("SELECT `player_score` FROM `player` WHERE `player_id`={$player}");
+            $pina = self::getUniqueValueFromDB("SELECT `player_pina` FROM `player` WHERE `player_id`={$player}");
             $this->setStat($score, 'score', $player);
             $this->setStat($pina, 'pina', $player);
 
@@ -853,15 +852,15 @@ function checkEndGame($id) {
 
         if($player_pina != null)
         {
-            self::DbQuery("UPDATE player SET player_score = 0");
-            self::DbQuery("UPDATE player SET player_score = 1 WHERE player_id={$player_pina}");
+            self::DbQuery("UPDATE `player` SET `player_score` = 0");
+            self::DbQuery("UPDATE `player` SET `player_score` = 1 WHERE `player_id`={$player_pina}");
 
         }
 
         else
         {
 
-            $wins = self::getObjectListFromDB( "SELECT player_id id, player_score score, player_positionplace place FROM player WHERE player_score = (SELECT MAX(player_score) FROM player)" );
+            $wins = self::getObjectListFromDB( "SELECT `player_id` `id`, `player_score` score, `player_positionplace` place FROM `player` WHERE `player_score` = (SELECT MAX(`player_score`) FROM `player`)" );
             
             
             if(count($wins) >= 2)
@@ -869,7 +868,7 @@ function checkEndGame($id) {
                 
                 // Trouver la ligne avec le place max et place le plus haut
                 $idWin= $wins[array_search(max(array_column($wins, 'place')), array_column($wins, 'place'))]['id'];
-                self::DbQuery("UPDATE player set player_score_aux = 1 WHERE player_id={$idWin}");
+                self::DbQuery("UPDATE `player` set `player_score_aux` = 1 WHERE `player_id`={$idWin}");
                 
             }
 
@@ -885,10 +884,10 @@ function checkEndGame($id) {
 
 function checkPinaHappy($id) {
 
-    $player_name = self::getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id={$id}");
+    $player_name = self::getUniqueValueFromDB("SELECT `player_name` FROM `player` WHERE `player_id`={$id}");
 
     //test Pina
-    $locations = self::getObjectListFromDB( "SELECT card_location_arg FROM bocks WHERE score1 = {$id} OR score2 = {$id}", true );
+    $locations = self::getObjectListFromDB( "SELECT `card_location_arg` FROM `bocks` WHERE `score1` = {$id} OR `score2` = {$id}", true );
     
     $pinas = [
     'pina_1' => [11,12,13,14],
@@ -916,9 +915,9 @@ function checkPinaHappy($id) {
     {
         ///y a un PINA !!
 
-        self::DbQuery("UPDATE player SET player_pina = 1 WHERE player_id={$id}");
+        self::DbQuery("UPDATE `player` SET `player_pina` = 1 WHERE `player_id`={$id}");
 
-        self::notifyAllPlayers( 'message', clienttranslate('${player_name} makes a Piña Coladice and wins the game'),
+        $this->bga->notify->all( 'message', clienttranslate('${player_name} makes a Piña Coladice and wins the game'),
         array(
             'player_name' => $player_name,
                 
@@ -979,9 +978,9 @@ function getLogsType($color) {
     
         self::checkArgs($arg1);        
         
-        $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
+        $pending =  self::getObjectFromDB( "SELECT* FROM `pending` order by `id` desc limit 1");
         $this->callPending($pending, true, $arg1);
-        self::DbQuery("delete from pending where id=".$pending['id']);
+        self::DbQuery("delete from `pending` where `id`=".$pending['id']);
         $this->gamestate->nextState( 'next');
         
     }
@@ -991,9 +990,9 @@ function getLogsType($color) {
 
         self::checkArgs($arg1);       
         
-        $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
+        $pending =  self::getObjectFromDB( "SELECT* FROM `pending` order by `id` desc limit 1");
         $this->callPending($pending, true, $arg1);
-        self::DbQuery("delete from pending where id=".$pending['id']);
+        self::DbQuery("delete from `pending` where `id`=".$pending['id']);
         $this->gamestate->nextState( 'next');
         
     }
@@ -1012,11 +1011,11 @@ function getLogsType($color) {
 
                 if(in_array($i, $explode))
                 {
-                    self::DbQuery("UPDATE dice set {$diceblock} = 1");
+                    self::DbQuery("UPDATE `dice` set `{$diceblock}` = 1");
                 }
 
                 else {
-                    self::DbQuery("UPDATE dice set {$diceblock} = 0");
+                    self::DbQuery("UPDATE `dice` set `{$diceblock}` = 0");
                 }
             }
 
@@ -1028,12 +1027,12 @@ function getLogsType($color) {
             for ($i = 1; $i <=5; $i++)
             {
                 $diceblock = 'blockrolldice'.$i;
-                self::DbQuery("UPDATE dice set {$diceblock} = 0");
+                self::DbQuery("UPDATE `dice` set `{$diceblock}` = 0");
             }
             
         }
 
-        $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+        $blocked = self::getObjectListFromDB( "SELECT `blockrolldice1` block1, `blockrolldice2` block2, `blockrolldice3` block3, `blockrolldice4` block4, `blockrolldice5` block5 FROM `dice` WHERE `id` = 1" );
         $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
         for ($i = 1; $i <=5; $i++)
         {
@@ -1048,9 +1047,9 @@ function getLogsType($color) {
         }
         
                 
-        $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
+        $pending =  self::getObjectFromDB( "SELECT* FROM `pending` order by `id` desc limit 1");
         $this->callPending($pending, true, $arg1);
-        self::DbQuery("delete from pending where id=".$pending['id']);
+        self::DbQuery("delete from `pending` where `id`=".$pending['id']);
         $this->gamestate->nextState( 'next');
         
     }
@@ -1069,7 +1068,7 @@ function getLogsType($color) {
 
     public function argPlayerTurn()
     {
-        $pending =  self::getObjectFromDB( "SELECT* FROM pending order by id desc limit 1");
+        $pending =  self::getObjectFromDB( "SELECT* FROM `pending` order by `id` desc limit 1");
         $arg = $this->callPending($pending, false);
     
         return $arg;
@@ -1115,7 +1114,7 @@ public function callPending($pending, $execute, $arg1 = null, $arg2 = null)
 
 public function stPending() {
    
-   $pending =  self::getObjectFromDB( "SELECT * FROM pending order by id desc limit 1");
+   $pending =  self::getObjectFromDB( "SELECT * FROM `pending` order by `id` desc limit 1");
    if($pending == null)
    {
         //$this->endGame();
@@ -1139,7 +1138,7 @@ public function stPending() {
        {
            //no args required, execute
            $this->callPending($pending, true);
-           self::DbQuery("delete from pending where id=".$pending['id']);
+           self::DbQuery("delete from `pending` where `id`=".$pending['id']);
            $this->gamestate->nextState( 'same' );  
        }
        
@@ -1191,7 +1190,7 @@ public function stPending() {
                 default:
                 {
                     $player_id = $this->getActivePlayerId();
-    	            self::DbQuery("delete from pending where player_id = {$player_id}");
+    	            self::DbQuery("delete from `pending` where `player_id` = {$player_id}");
                     $this->gamestate->nextState("end");
                     break;
                 }
@@ -1207,6 +1206,6 @@ public function stPending() {
             return;
         }
 
-        throw new \feException("Zombie mode not supported at this game state: \"{$state_name}\".");
+        throw new VisibleSystemException("Zombie mode not supported at this game state: \"{$state_name}\".");
     }
 }

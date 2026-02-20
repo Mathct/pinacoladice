@@ -679,13 +679,13 @@ addBock: function (type, type_arg, location_arg) {
 var BockA = '';
 var BockB = '';
 
-if(this.prefs[101].value == 1)
+if(this.bga.userPreferences.get(101) == 1)
 {
     var BockA = 'jstpl_bockA';
     var BockB = 'jstpl_bockB';
 }
 
-if(this.prefs[101].value == 2)
+if(this.bga.userPreferences.get(101) == 2)
 {
     var BockA = 'jstpl_bockA_2';
     var BockB = 'jstpl_bockB_2';
@@ -1028,12 +1028,12 @@ addFlipBock: function (type, type_arg, location_arg) {
 
     if(type_arg == 1)
     {
-        if(this.prefs[101].value == 1)
+        if(this.bga.userPreferences.get(101) == 1)
         {
             bock ='bockA';
         }
 
-        if(this.prefs[101].value == 2)
+        if(this.bga.userPreferences.get(101) == 2)
         {
             bock ='bockA_2';
         }
@@ -1041,12 +1041,12 @@ addFlipBock: function (type, type_arg, location_arg) {
 
     if(type_arg == 2)
     {
-        if(this.prefs[101].value == 1)
+        if(this.bga.userPreferences.get(101) == 1)
         {
             bock ='bockB';
         }
 
-        if(this.prefs[101].value == 2)
+        if(this.bga.userPreferences.get(101) == 2)
         {
             bock ='bockB_2';
         }
@@ -1528,7 +1528,7 @@ rollDice: function () {
         
         notif_score: function( notif )
         {
-            this.scoreCtrl[ notif.args.player_id].toValue( notif.args.score);
+            this.bga.playerPanels.getScoreCounter(notif.args.player_id).toValue( notif.args.score);
             
         },
 

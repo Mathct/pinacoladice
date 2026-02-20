@@ -1,18 +1,27 @@
 <?php
 
 namespace Bga\Games\pinacoladice;   // ATTENTION NOM DU JEU
-use APP_GameClass;
+
+use Bga\GameFramework\Table;
 
 require_once 'actions/Actions.php'; // Inclure le fichier contenant les fonctions
 
-class Pending extends APP_GameClass
+class Pending
 {
     use ActionsTrait; // ATTENTION
+    
+    public mixed $player_no;
+    public mixed $player_id;
+    public mixed $player_name;
+    public mixed $player_score;
+    public mixed $player_color;
+    public mixed $game_mode;
+    public mixed $player_pref_confirm;
 
     public function __construct($player_id)
     {
         $this->player_id = $player_id;
-        $p = self::getObjectFromDB("SELECT * FROM player WHERE player_id = {$player_id}");        
+        $p = Table::getObjectFromDB("SELECT * FROM `player` WHERE `player_id` = {$player_id}");        
         $this->player_no = $p['player_no'];
         $this->player_id = $p['player_id'];
         $this->player_name = $p['player_name'];
@@ -23,7 +32,7 @@ class Pending extends APP_GameClass
         $this->game_mode = game::$instance->getGameStateValue('game_mode');
 
         /// PREFERENCE DE CONFIRMATION
-        $this->player_pref_confirm = game::$instance->getUniqueValueFromDB("SELECT pgp_value FROM bga_user_preferences WHERE pgp_player='{$this->player_id}' AND pgp_preference_id = 100");
+        $this->player_pref_confirm = game::$instance->getUniqueValueFromDB("SELECT `pgp_value` FROM `bga_user_preferences` WHERE `pgp_player`='{$this->player_id}' AND `pgp_preference_id` = 100");
     }
     
     function argNormalTurn($parg1, $parg2) // DICE 1
@@ -36,7 +45,7 @@ class Pending extends APP_GameClass
         $ret['title'] = clienttranslate('${actplayer} must roll the dice');
         $ret['titleyou'] = clienttranslate('${you} must roll the dice');
 
-        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        $bockoccupedbyplayer = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `score1` = '{$this->player_id}' OR `score2` = '{$this->player_id}'", true );
         foreach($bockoccupedbyplayer as $bockoccuped)
         {
             $ret["selected"][] = 'bock_'.$bockoccuped;
@@ -51,7 +60,7 @@ class Pending extends APP_GameClass
     function NormalTurn($parg1, $parg2, $varg1, $varg2)
     {
         
-        self::DbQuery("UPDATE dice set showdice = 1");
+        Table::DbQuery("UPDATE `dice` set `showdice` = 1");
         $result = [];
         $block = [0, 0, 0, 0, 0];
         for($i =1; $i<=5;  $i++)
@@ -59,7 +68,7 @@ class Pending extends APP_GameClass
             $rand = bga_rand(1, 6);
             $result[] = $rand;
             $dice = 'dice'.$i;
-            self::DbQuery("UPDATE dice set {$dice} = $rand");
+            Table::DbQuery("UPDATE `dice` set `{$dice}` = $rand");
 
         }
         
@@ -93,7 +102,7 @@ class Pending extends APP_GameClass
         $ret['buttons'] = array();
         $ret['title'] = clienttranslate('${actplayer} must place a cocktail token on a coaster or roll the dice');
         
-        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        $bockoccupedbyplayer = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `score1` = '{$this->player_id}' OR `score2` = '{$this->player_id}'", true );
         foreach($bockoccupedbyplayer as $bockoccuped)
         {
             $ret["selected"][] = 'bock_'.$bockoccuped;
@@ -106,7 +115,7 @@ class Pending extends APP_GameClass
         for($i = 1; $i <= 5; $i++)
         {
             $dice = 'dice'.$i;
-            $resultdice[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+            $resultdice[] = Table::getUniqueValueFromDB("SELECT `{$dice}` FROM `dice` WHERE `id` = 1");
 
         }
         
@@ -117,8 +126,8 @@ class Pending extends APP_GameClass
             $ret["selectable_dice"][] = 'dice'.$i;
         }
 
-        $allBocks = self::getObjectListFromDB( "SELECT card_type type, card_type_arg type_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
-        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $allBocks = Table::getObjectListFromDB( "SELECT `card_type` type, `card_type_arg` type_arg, `score1` `score1`, `score2` `score2` FROM `bocks` WHERE `card_location` = 'board'");
+        $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
 
         //// match combinaison
 
@@ -193,7 +202,7 @@ class Pending extends APP_GameClass
         {          
             $result = [];
             $index = 0;
-            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $blocked = Table::getObjectListFromDB( "SELECT `blockrolldice1` block1, `blockrolldice2` block2, `blockrolldice3` block3, `blockrolldice4` block4, `blockrolldice5` block5 FROM `dice` WHERE `id` = 1" );
             $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
             
 
@@ -205,12 +214,12 @@ class Pending extends APP_GameClass
                 {
                     $rand = bga_rand(1, 6);
                     $result[] = $rand;
-                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                    Table::DbQuery("UPDATE `dice` set `{$dice}` = $rand");
                 }
 
                 if($etat == 1)
                 {
-                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                    $result[] = Table::getUniqueValueFromDB("SELECT `{$dice}` FROM `dice` WHERE `id` = 1");
                 }
 
                 $index++;
@@ -240,16 +249,16 @@ class Pending extends APP_GameClass
             if($this->player_pref_confirm == 1)
             {
                 $explode = explode('_', $varg1);
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
-                $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
-                $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type`={$explode[1]}");
                 
                 $positionscore = 0;
                 $score = 0;
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                     $positionscore = 1;
                     $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
                 }
@@ -258,22 +267,22 @@ class Pending extends APP_GameClass
                 {
                     if($score2 == 0)
                     {
-                        self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score2` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 2;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
                     }
 
                     else
                     {
-                        self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 1;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
                     }
                 }
 
-                $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+                $reserveToken = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` - 1 WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` + $score WHERE `player_id`={$this->player_id}");
                 
 
                 game::$instance->notifyAllPlayers(
@@ -347,7 +356,7 @@ class Pending extends APP_GameClass
         $ret['title'] = clienttranslate('${actplayer} must place a cocktail token on a coaster or roll the dice');
         
 
-        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        $bockoccupedbyplayer = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `score1` = '{$this->player_id}' OR `score2` = '{$this->player_id}'", true );
         foreach($bockoccupedbyplayer as $bockoccuped)
         {
             $ret["selected"][] = 'bock_'.$bockoccuped;
@@ -360,7 +369,7 @@ class Pending extends APP_GameClass
         for($i = 1; $i <= 5; $i++)
         {
             $dice = 'dice'.$i;
-            $resultdice[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+            $resultdice[] = Table::getUniqueValueFromDB("SELECT `{$dice}` FROM `dice` WHERE `id` = 1");
 
         }
         
@@ -371,8 +380,8 @@ class Pending extends APP_GameClass
             $ret["selectable_dice"][] = 'dice'.$i;
         }
 
-        $allBocks = self::getObjectListFromDB( "SELECT card_type type, card_type_arg type_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
-        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $allBocks = Table::getObjectListFromDB( "SELECT `card_type` type, `card_type_arg` type_arg, `score1` `score1`, `score2` `score2` FROM `bocks` WHERE `card_location` = 'board'");
+        $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
 
         //// match combinaison
 
@@ -448,7 +457,7 @@ class Pending extends APP_GameClass
         {          
             $result = [];
             $index = 0;
-            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $blocked = Table::getObjectListFromDB( "SELECT `blockrolldice1` block1, `blockrolldice2` block2, `blockrolldice3` block3, `blockrolldice4` block4, `blockrolldice5` block5 FROM `dice` WHERE `id` = 1" );
             $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
             
 
@@ -460,12 +469,12 @@ class Pending extends APP_GameClass
                 {
                     $rand = bga_rand(1, 6);
                     $result[] = $rand;
-                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                    Table::DbQuery("UPDATE `dice` set `{$dice}` = $rand");
                 }
 
                 if($etat == 1)
                 {
-                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                    $result[] = Table::getUniqueValueFromDB("SELECT `{$dice}` FROM `dice` WHERE `id` = 1");
                 }
 
                 $index++;
@@ -498,16 +507,16 @@ class Pending extends APP_GameClass
             if($this->player_pref_confirm == 1)
             {
                 $explode = explode('_', $varg1);
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
-                $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
-                $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type`={$explode[1]}");
                 
                 $positionscore = 0;
                 $score = 0;
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                     $positionscore = 1;
                     $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
                 }
@@ -516,22 +525,22 @@ class Pending extends APP_GameClass
                 {
                     if($score2 == 0)
                     {
-                        self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score2` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 2;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
                     }
 
                     else
                     {
-                        self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 1;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
                     }
                 }
 
-                $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+                $reserveToken = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` - 1 WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` + $score WHERE `player_id`={$this->player_id}");
                 
 
                 game::$instance->notifyAllPlayers(
@@ -604,7 +613,7 @@ class Pending extends APP_GameClass
         
         
 
-        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
+        $bockoccupedbyplayer = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `score1` = '{$this->player_id}' OR `score2` = '{$this->player_id}'", true );
         foreach($bockoccupedbyplayer as $bockoccuped)
         {
             $ret["selected"][] = 'bock_'.$bockoccuped;
@@ -614,14 +623,14 @@ class Pending extends APP_GameClass
         for($i = 1; $i <= 5; $i++)
         {
             $dice = 'dice'.$i;
-            $resultdice[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+            $resultdice[] = Table::getUniqueValueFromDB("SELECT `{$dice}` FROM `dice` WHERE `id` = 1");
 
         }
         
         $combinaisons = game::$instance->Result($resultdice);
 
-        $allBocks = self::getObjectListFromDB( "SELECT card_type type, card_type_arg type_arg, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board'");
-        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $allBocks = Table::getObjectListFromDB( "SELECT `card_type` type, `card_type_arg` type_arg, `score1` `score1`, `score2` `score2` FROM `bocks` WHERE `card_location` = 'board'");
+        $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
 
         //// match combinaison
 
@@ -735,16 +744,16 @@ class Pending extends APP_GameClass
             if($this->player_pref_confirm == 1)
             {
                 $explode = explode('_', $varg1);
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
-                $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
-                $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type`={$explode[1]}");
                 
                 $positionscore = 0;
                 $score = 0;
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                     $positionscore = 1;
                     $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
                 }
@@ -753,22 +762,22 @@ class Pending extends APP_GameClass
                 {
                     if($score2 == 0)
                     {
-                        self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score2` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 2;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
                     }
 
                     else
                     {
-                        self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 1;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
                     }
                 }
 
-                $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+                $reserveToken = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` - 1 WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` + $score WHERE `player_id`={$this->player_id}");
                 
 
                 game::$instance->notifyAllPlayers(
@@ -865,7 +874,7 @@ class Pending extends APP_GameClass
 
             $result = [];
             $index = 0;
-            $blocked = self::getObjectListFromDB( "SELECT blockrolldice1 block1, blockrolldice2 block2, blockrolldice3 block3, blockrolldice4 block4, blockrolldice5 block5 FROM dice WHERE id = 1" );
+            $blocked = Table::getObjectListFromDB( "SELECT `blockrolldice1` block1, `blockrolldice2` block2, `blockrolldice3` block3, `blockrolldice4` block4, `blockrolldice5` block5 FROM `dice` WHERE `id` = 1" );
             $block = [intval($blocked[0]['block1']), intval($blocked[0]['block2']), intval($blocked[0]['block3']), intval($blocked[0]['block4']) ,intval($blocked[0]['block5'])];
             
 
@@ -877,12 +886,12 @@ class Pending extends APP_GameClass
                 {
                     $rand = bga_rand(1, 6);
                     $result[] = $rand;
-                    self::DbQuery("UPDATE dice set {$dice} = $rand");
+                    Table::DbQuery("UPDATE `dice` set `{$dice}` = $rand");
                 }
 
                 if($etat == 1)
                 {
-                    $result[] = self::getUniqueValueFromDB("SELECT {$dice} FROM dice WHERE id = 1");
+                    $result[] = Table::getUniqueValueFromDB("SELECT `{$dice}` FROM `dice` WHERE `id` = 1");
                 }
 
                 $index++;
@@ -922,7 +931,7 @@ class Pending extends APP_GameClass
         $ret['title'] = clienttranslate('${actplayer} rolls the Happy Hour dice');
         
 
-        $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+        $result_dice = Table::getUniqueValueFromDB("SELECT `dice1` FROM `dice` WHERE `id` = 1");
         //$result_dice = 2;   // FORCER LE RESULTAT
 
         if($result_dice == 1)
@@ -966,12 +975,12 @@ class Pending extends APP_GameClass
 
     function HappyHour($parg1, $parg2, $varg1, $varg2)
     {
-        $result_dice = self::getUniqueValueFromDB("SELECT dice1 FROM dice WHERE id = 1");
+        $result_dice = Table::getUniqueValueFromDB("SELECT `dice1` FROM `dice` WHERE `id` = 1");
         //$result_dice = 5;  // FORCER LE RESULTAT
 
         if($result_dice == 1)
         {
-            self::DbQuery("UPDATE player SET player_score = player_score -3 WHERE player_id={$this->player_id}");
+            Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` -3 WHERE `player_id`={$this->player_id}");
             game::$instance->notifyAllPlayers(
                     'animScoreHappyLose3',
                     '',
@@ -1016,11 +1025,11 @@ class Pending extends APP_GameClass
 
         elseif($result_dice == 3)
         {
-            $players = self::getObjectListFromDB( "SELECT player_id FROM player WHERE player_id != '{$this->player_id}'", true );
+            $players = Table::getObjectListFromDB( "SELECT `player_id` FROM `player` WHERE `player_id` != '{$this->player_id}'", true );
 
             foreach ($players as $player) {
 
-                self::DbQuery("UPDATE player SET player_score = player_score +1 WHERE player_id={$player}");
+                Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` +1 WHERE `player_id`={$player}");
             }
 
             game::$instance->notifyAllPlayers(
@@ -1072,7 +1081,7 @@ class Pending extends APP_GameClass
 
         elseif($result_dice == 6)
         {
-            self::DbQuery("UPDATE player SET player_score = player_score +4 WHERE player_id={$this->player_id}");
+            Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` +4 WHERE `player_id`={$this->player_id}");
 
             game::$instance->notifyAllPlayers(
                     'animScoreHappyWin4',
@@ -1129,8 +1138,8 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         $ret["nosettimeout"] = [1];
 
-        $bockoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 = '{$this->player_id}' OR score2 = '{$this->player_id}'", true );
-        $bockinoccupedbyplayer = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE score1 != '{$this->player_id}' AND score2 != '{$this->player_id}'", true );
+        $bockoccupedbyplayer = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `score1` = '{$this->player_id}' OR `score2` = '{$this->player_id}'", true );
+        $bockinoccupedbyplayer = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `score1` != '{$this->player_id}' AND `score2` != '{$this->player_id}'", true );
 
         foreach ($bockoccupedbyplayer as $occuped)
         {
@@ -1200,20 +1209,20 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             {
                 $explode = explode('_', $varg1);
 
-                self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$this->player_id}'");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` +1 WHERE `player_id`='{$this->player_id}'");
 
-                $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$this->player_id}'");
+                $idscore1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $idscore2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $new_nb_token = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`='{$this->player_id}'");
 
                 if($idscore1  == $this->player_id)
                 {
-                    self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = 0 WHERE `card_type` = '{$explode[1]}'");
                 }
 
                 if($idscore2  == $this->player_id)
                 {
-                    self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` SET `score2` = 0 WHERE `card_type` = '{$explode[1]}'");
                 }
 
                 $mobile = 'token_'.$explode[1].'_'.$this->player_id;
@@ -1233,7 +1242,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${player_name} remove ${log} (from ${combi})'),
+                        clienttranslate('${`player_name`} remove ${log} (from ${combi})'),
                         array(
                             'player_name' => $this->player_name,
                             'log' => game::$instance->getLogsType($this->player_color),
@@ -1285,7 +1294,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         $ret["nosettimeout"] = [1];
 
-        $bocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location = 'board'", true );
+        $bocks = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` = 'board'", true );
         foreach($bocks as $bock)
         {
             $ret["selectable"][] = 'bock_'.$bock;
@@ -1302,33 +1311,33 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         {
             $explode = explode('_', $varg1);
 
-            $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type = '{$explode[1]}'");
-            $location_arg = self::getUniqueValueFromDB("SELECT card_location_arg FROM bocks WHERE card_type = '{$explode[1]}'");
+            $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+            $location_arg = Table::getUniqueValueFromDB("SELECT `card_location_arg` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
             $new_type_arg = 0;
 
             if($type_arg == 1)
             {
-                self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_type = '{$explode[1]}'");
+                Table::DbQuery("UPDATE `bocks` SET `card_type_arg` = 2 WHERE `card_type` = '{$explode[1]}'");
                 $new_type_arg = 2;
             }
 
             elseif($type_arg == 2)
             {
-                self::DbQuery("UPDATE bocks SET card_type_arg = 1 WHERE card_type = '{$explode[1]}'");
+                Table::DbQuery("UPDATE `bocks` SET `card_type_arg` = 1 WHERE `card_type` = '{$explode[1]}'");
                 $new_type_arg = 1;
             }
 
-            $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
-            $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
+            $idscore1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+            $idscore2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
             $color1 = '0';
             $color2 = '0';
 
             if($idscore1 != 0)
             {
-                $color1 = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$idscore1}'");
-                self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
-                self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore1}'");
-                $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore1}'");
+                $color1 = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`='{$idscore1}'");
+                Table::DbQuery("UPDATE `bocks` SET `score1` = 0 WHERE `card_type` = '{$explode[1]}'");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` +1 WHERE `player_id`='{$idscore1}'");
+                $new_nb_token = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`='{$idscore1}'");
 
                 $mobile = 'token_'.$explode[1].'_'.$idscore1;
 
@@ -1349,10 +1358,10 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
             if($idscore2 != 0)
             {
-                $color2 = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$idscore2}'");
-                self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
-                self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore2}'");
-                $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore2}'");
+                $color2 = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`='{$idscore2}'");
+                Table::DbQuery("UPDATE `bocks` SET `score2` = 0 WHERE `card_type` = '{$explode[1]}'");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` +1 WHERE `player_id`='{$idscore2}'");
+                $new_nb_token = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`='{$idscore2}'");
 
                 $mobile = 'token_'.$explode[1].'_'.$idscore2;
 
@@ -1435,8 +1444,8 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         $ret["nosettimeout"] = [1];
 
-        $bockswithtokens = self::getObjectListFromDB( "SELECT card_type type, score1 score1, score2 score2 FROM bocks WHERE card_location = 'board' AND (score1 != 0 OR score2 !=0)" );
-        $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+        $bockswithtokens = Table::getObjectListFromDB( "SELECT `card_type` type, `score1` `score1`, `score2` `score2` FROM `bocks` WHERE `card_location` = 'board' AND (`score1` != 0 OR `score2` !=0)" );
+        $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
         $tab = [];
 
         foreach($bockswithtokens as $bock)
@@ -1541,14 +1550,14 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         
         $ret["selectedtoken"][] = 'token_'.$parg1.'_'.$parg2;
 
-        $color = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id={$parg2}");
+        $color = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`={$parg2}");
         $ret['icon'] = game::$instance->getLogsType($color);
 
         $ret["nosettimeout"] = [1];
         $ret["selected"][] = "bock_".$parg1;
 
-        $bockswithavailablespace = self::getObjectListFromDB( "SELECT card_type type, score1 score1, score2 score2, card_type_arg type_arg FROM bocks WHERE card_location = 'board' AND (score1 = 0 OR score2 = 0) AND (score1 != '{$parg2}' AND score2 != '{$parg2}')" );
-        $allbocks = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location = 'board'", true);
+        $bockswithavailablespace = Table::getObjectListFromDB( "SELECT `card_type` type, `score1` `score1`, `score2` `score2`, `card_type_arg` type_arg FROM `bocks` WHERE `card_location` = 'board' AND (`score1` = 0 OR `score2` = 0) AND (`score1` != '{$parg2}' AND `score2` != '{$parg2}')" );
+        $allbocks = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` = 'board'", true);
 
         $selectable = [];
 
@@ -1607,26 +1616,26 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 $score = 0;
 
-                $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$parg1}'");
-                $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$parg1}'");
+                $score1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$parg1}'");
+                $score2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$parg1}'");
 
                 if($score1 == $parg2)
                 {
-                    self::DbQuery("UPDATE bocks set score1 = 0 WHERE card_type = '{$parg1}'");
+                    Table::DbQuery("UPDATE `bocks` set `score1` = 0 WHERE `card_type` = '{$parg1}'");
                 }
 
                 if($score2 == $parg2)
                 {
-                    self::DbQuery("UPDATE bocks set score2 = 0 WHERE card_type = '{$parg1}'");
+                    Table::DbQuery("UPDATE `bocks` set `score2` = 0 WHERE `card_type` = '{$parg1}'");
                 }
 
-                $score1new = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $score2new = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type = '{$explode[1]}'");
+                $score1new = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $score2new = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks set score1 = {$parg2} WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` set `score1` = {$parg2} WHERE `card_type` = '{$explode[1]}'");
                     $score = 1;
                 }
 
@@ -1635,13 +1644,13 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                 
                     if ($score2new == 0)
                     {
-                        self::DbQuery("UPDATE bocks set score2 = {$parg2} WHERE card_type = '{$explode[1]}'");
+                        Table::DbQuery("UPDATE `bocks` set `score2` = {$parg2} WHERE `card_type` = '{$explode[1]}'");
                         $score = 2;
                     }
 
                     else
                     {
-                        self::DbQuery("UPDATE bocks set score1 = {$parg2} WHERE card_type = '{$explode[1]}'");
+                        Table::DbQuery("UPDATE `bocks` set `score1` = {$parg2} WHERE `card_type` = '{$explode[1]}'");
                         $score = 1;
                     }
                 }
@@ -1658,11 +1667,11 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                         )
                     );
 
-                $color = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$parg2}'");
+                $color = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`='{$parg2}'");
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${player_name} moves ${color} (from ${log1} to ${log2})'),
+                        clienttranslate('${`player_name`} moves ${color} (from ${log1} to ${log2})'),
                         array(
                             'player_name' => $this->player_name,
                             'color' => game::$instance->getLogsType($color),
@@ -1730,7 +1739,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
         $explode = explode('_', $parg1);
 
-        $bocksnoselectable = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board' AND card_type != '{$explode[1]}'", true );
+        $bocksnoselectable = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board' AND `card_type` != '{$explode[1]}'", true );
         foreach ($bocksnoselectable as $bocknoselectable)
         {
            $ret["noselectable"][] = 'bock_'.$bocknoselectable;
@@ -1766,16 +1775,16 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
         {
 
             $explode = explode('_', $parg1);
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type={$explode[1]}");
-                $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type={$explode[1]}");
-                $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type={$explode[1]}");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type`={$explode[1]}");
+                $score2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type`={$explode[1]}");
                 
                 $positionscore = 0;
                 $score = 0;
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                     $positionscore = 1;
                     $score = game::$instance->_BOCK_A[$explode[1]]['score1'];
                 }
@@ -1784,22 +1793,22 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                 {
                     if($score2 == 0)
                     {
-                        self::DbQuery("UPDATE bocks SET score2 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score2` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 2;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score2'];
                     }
 
                     else
                     {
-                        self::DbQuery("UPDATE bocks SET score1 = {$this->player_id} WHERE card_type={$explode[1]}");
+                        Table::DbQuery("UPDATE `bocks` SET `score1` = {$this->player_id} WHERE `card_type`={$explode[1]}");
                         $positionscore = 1;
                         $score = game::$instance->_BOCK_B[$explode[1]]['score1'];
                     }
                 }
 
-                $reserveToken = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_token = player_token - 1 WHERE player_id={$this->player_id}");
-                self::DbQuery("UPDATE player SET player_score = player_score + $score WHERE player_id={$this->player_id}");
+                $reserveToken = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` - 1 WHERE `player_id`={$this->player_id}");
+                Table::DbQuery("UPDATE `player` SET `player_score` = `player_score` + $score WHERE `player_id`={$this->player_id}");
                 
 
                 game::$instance->notifyAllPlayers(
@@ -1878,7 +1887,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             $ret["selected"][] = $parg2;
 
             $explode = explode('_', $parg2);
-            $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+            $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
             foreach($allBocksOnBoard as $bock)
             {
                 if ($bock != $explode[1])
@@ -1898,7 +1907,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             $ret["selectedtoken"][] = 'token_'.$explode[0].'_'.$explode[1];
             $ret["selected"][] = 'bock_'.$explode[2];
 
-            $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+            $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
             foreach($allBocksOnBoard as $bock)
             {
                 if ($bock != $explode[0] && $bock != $explode[2])
@@ -1916,7 +1925,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             $ret["selected"][] = $parg2;
 
             $explode = explode('_', $parg2);
-            $allBocksOnBoard = self::getObjectListFromDB( "SELECT card_type FROM bocks WHERE card_location ='board'", true );
+            $allBocksOnBoard = Table::getObjectListFromDB( "SELECT `card_type` FROM `bocks` WHERE `card_location` ='board'", true );
             foreach($allBocksOnBoard as $bock)
             {
                 if ($bock != $explode[1])
@@ -1954,20 +1963,20 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
             {
                 $explode = explode('_', $parg2);
 
-                self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$this->player_id}'");
+                Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` +1 WHERE `player_id`='{$this->player_id}'");
 
-                $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$this->player_id}'");
+                $idscore1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $idscore2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $new_nb_token = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`='{$this->player_id}'");
 
                 if($idscore1  == $this->player_id)
                 {
-                    self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = 0 WHERE `card_type` = '{$explode[1]}'");
                 }
 
                 if($idscore2  == $this->player_id)
                 {
-                    self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` SET `score2` = 0 WHERE `card_type` = '{$explode[1]}'");
                 }
 
                 $mobile = 'token_'.$explode[1].'_'.$this->player_id;
@@ -1987,7 +1996,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${player_name} remove ${log} (from ${combi})'),
+                        clienttranslate('${`player_name`} remove ${log} (from ${combi})'),
                         array(
                             'player_name' => $this->player_name,
                             'log' => game::$instance->getLogsType($this->player_color),
@@ -2022,26 +2031,26 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 $score = 0;
 
-                $score1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[0]}'");
-                $score2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[0]}'");
+                $score1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[0]}'");
+                $score2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[0]}'");
 
                 if($score1 == $explode[1])
                 {
-                    self::DbQuery("UPDATE bocks set score1 = 0 WHERE card_type = '{$explode[0]}'");
+                    Table::DbQuery("UPDATE `bocks` set `score1` = 0 WHERE `card_type` = '{$explode[0]}'");
                 }
 
                 if($score2 == $explode[1])
                 {
-                    self::DbQuery("UPDATE bocks set score2 = 0 WHERE card_type = '{$explode[0]}'");
+                    Table::DbQuery("UPDATE `bocks` set `score2` = 0 WHERE `card_type` = '{$explode[0]}'");
                 }
 
-                $score1new = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[2]}'");
-                $score2new = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[2]}'");
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type = '{$explode[2]}'");
+                $score1new = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[2]}'");
+                $score2new = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[2]}'");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type` = '{$explode[2]}'");
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks set score1 = {$explode[1]} WHERE card_type = '{$explode[2]}'");
+                    Table::DbQuery("UPDATE `bocks` set `score1` = {$explode[1]} WHERE `card_type` = '{$explode[2]}'");
                     $score = 1;
                 }
 
@@ -2050,13 +2059,13 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                 
                     if ($score2new == 0)
                     {
-                        self::DbQuery("UPDATE bocks set score2 = {$explode[1]} WHERE card_type = '{$explode[2]}'");
+                        Table::DbQuery("UPDATE `bocks` set `score2` = {$explode[1]} WHERE `card_type` = '{$explode[2]}'");
                         $score = 2;
                     }
 
                     else
                     {
-                        self::DbQuery("UPDATE bocks set score1 = {$explode[1]} WHERE card_type = '{$explode[2]}'");
+                        Table::DbQuery("UPDATE `bocks` set `score1` = {$explode[1]} WHERE `card_type` = '{$explode[2]}'");
                         $score = 1;
                     }
                 }
@@ -2073,11 +2082,11 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
                         )
                     );
 
-                $color = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$explode[1]}'");
+                $color = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`='{$explode[1]}'");
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${player_name} moves ${color} (from ${log1} to ${log2})'),
+                        clienttranslate('${`player_name`} moves ${color} (from ${log1} to ${log2})'),
                         array(
                             'player_name' => $this->player_name,
                             'color' => game::$instance->getLogsType($color),
@@ -2119,33 +2128,33 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 $explode = explode('_', $parg2);
 
-                $type_arg = self::getUniqueValueFromDB("SELECT card_type_arg FROM bocks WHERE card_type = '{$explode[1]}'");
-                $location_arg = self::getUniqueValueFromDB("SELECT card_location_arg FROM bocks WHERE card_type = '{$explode[1]}'");
+                $type_arg = Table::getUniqueValueFromDB("SELECT `card_type_arg` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $location_arg = Table::getUniqueValueFromDB("SELECT `card_location_arg` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
                 $new_type_arg = 0;
 
                 if($type_arg == 1)
                 {
-                    self::DbQuery("UPDATE bocks SET card_type_arg = 2 WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` SET `card_type_arg` = 2 WHERE `card_type` = '{$explode[1]}'");
                     $new_type_arg = 2;
                 }
 
                 elseif($type_arg == 2)
                 {
-                    self::DbQuery("UPDATE bocks SET card_type_arg = 1 WHERE card_type = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `bocks` SET `card_type_arg` = 1 WHERE `card_type` = '{$explode[1]}'");
                     $new_type_arg = 1;
                 }
 
-                $idscore1 = self::getUniqueValueFromDB("SELECT score1 FROM bocks WHERE card_type = '{$explode[1]}'");
-                $idscore2 = self::getUniqueValueFromDB("SELECT score2 FROM bocks WHERE card_type = '{$explode[1]}'");
+                $idscore1 = Table::getUniqueValueFromDB("SELECT `score1` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
+                $idscore2 = Table::getUniqueValueFromDB("SELECT `score2` FROM `bocks` WHERE `card_type` = '{$explode[1]}'");
                 $color1 = '0';
                 $color2 = '0';
 
                 if($idscore1 != 0)
                 {
-                    $color1 = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$idscore1}'");
-                    self::DbQuery("UPDATE bocks SET score1 = 0 WHERE card_type = '{$explode[1]}'");
-                    self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore1}'");
-                    $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore1}'");
+                    $color1 = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`='{$idscore1}'");
+                    Table::DbQuery("UPDATE `bocks` SET `score1` = 0 WHERE `card_type` = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` +1 WHERE `player_id`='{$idscore1}'");
+                    $new_nb_token = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`='{$idscore1}'");
 
                     $mobile = 'token_'.$explode[1].'_'.$idscore1;
 
@@ -2166,10 +2175,10 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 if($idscore2 != 0)
                 {
-                    $color2 = self::getUniqueValueFromDB("SELECT player_color FROM player WHERE player_id='{$idscore2}'");
-                    self::DbQuery("UPDATE bocks SET score2 = 0 WHERE card_type = '{$explode[1]}'");
-                    self::DbQuery("UPDATE player SET player_token = player_token +1 WHERE player_id='{$idscore2}'");
-                    $new_nb_token = self::getUniqueValueFromDB("SELECT player_token FROM player WHERE player_id='{$idscore2}'");
+                    $color2 = Table::getUniqueValueFromDB("SELECT `player_color` FROM `player` WHERE `player_id`='{$idscore2}'");
+                    Table::DbQuery("UPDATE `bocks` SET `score2` = 0 WHERE `card_type` = '{$explode[1]}'");
+                    Table::DbQuery("UPDATE `player` SET `player_token` = `player_token` +1 WHERE `player_id`='{$idscore2}'");
+                    $new_nb_token = Table::getUniqueValueFromDB("SELECT `player_token` FROM `player` WHERE `player_id`='{$idscore2}'");
 
                     $mobile = 'token_'.$explode[1].'_'.$idscore2;
 
