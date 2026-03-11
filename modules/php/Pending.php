@@ -1242,7 +1242,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${`player_name`} remove ${log} (from ${combi})'),
+                        clienttranslate('${player_name} remove ${log} (from ${combi})'),
                         array(
                             'player_name' => $this->player_name,
                             'log' => game::$instance->getLogsType($this->player_color),
@@ -1671,7 +1671,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${`player_name`} moves ${color} (from ${log1} to ${log2})'),
+                        clienttranslate('${player_name} moves ${color} (from ${log1} to ${log2})'),
                         array(
                             'player_name' => $this->player_name,
                             'color' => game::$instance->getLogsType($color),
@@ -1996,7 +1996,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${`player_name`} remove ${log} (from ${combi})'),
+                        clienttranslate('${player_name} remove ${log} (from ${combi})'),
                         array(
                             'player_name' => $this->player_name,
                             'log' => game::$instance->getLogsType($this->player_color),
@@ -2086,7 +2086,7 @@ function argHappy2($parg1, $parg2) // RECUP TOKEN
 
                 game::$instance->notifyAllPlayers(
                         'message',
-                        clienttranslate('${`player_name`} moves ${color} (from ${log1} to ${log2})'),
+                        clienttranslate('${player_name} moves ${color} (from ${log1} to ${log2})'),
                         array(
                             'player_name' => $this->player_name,
                             'color' => game::$instance->getLogsType($color),
