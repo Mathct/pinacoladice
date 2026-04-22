@@ -32,7 +32,7 @@ class Pending
         $this->game_mode = game::$instance->getGameStateValue('game_mode');
 
         /// PREFERENCE DE CONFIRMATION
-        $this->player_pref_confirm = game::$instance->getUniqueValueFromDB("SELECT `pgp_value` FROM `bga_user_preferences` WHERE `pgp_player`='{$this->player_id}' AND `pgp_preference_id` = 100");
+        $this->player_pref_confirm = game::$instance->userPreferences->get($this->player_id, 100);
     }
     
     function argNormalTurn($parg1, $parg2) // DICE 1
